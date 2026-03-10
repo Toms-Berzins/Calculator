@@ -10,39 +10,54 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 2px solid var(--border);
 }
 
 .pageTitle {
   color: var(--text-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 1.375rem;
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .pageSubtitle {
-  margin-top: 0.125rem;
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0.375rem;
 }
 
 /* ── Feedback banner ─────────────────────────────────────────────────────── */
 .feedback {
-  border-radius: 0.75rem;
+  border-radius: 2px;
   padding: 0.625rem 0.875rem;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .feedbackSuccess {
   color: var(--status-accepted-text);
   background: var(--status-accepted-bg);
-  border: 1px solid var(--status-accepted-text);
+  border: 1.5px solid var(--status-accepted-text);
+  box-shadow: 2px 2px 0 var(--status-accepted-text);
 }
 
 .feedbackError {
   color: var(--status-rejected-text);
   background: var(--status-rejected-bg);
-  border: 1px solid var(--status-rejected-text);
+  border: 1.5px solid var(--status-rejected-text);
+  box-shadow: 2px 2px 0 var(--status-rejected-text);
 }
 
 /* ── Stats strip ─────────────────────────────────────────────────────────── */
@@ -53,58 +68,110 @@
 }
 
 .statCard {
+  --stat-col: var(--text-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.125rem;
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  padding: 0.75rem 0.5rem;
+  border: 2px solid var(--nb-ink);
+  border-radius: 0;
+  padding: 0.625rem 0.5rem;
   background: var(--bg-surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  color: var(--stat-col);
+  transition: box-shadow 100ms ease, transform 100ms ease;
+}
+
+.statCard:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--nb-ink);
+}
+
+/* Per-stat color — value inherits currentColor from the card modifier */
+.statTotal    { --stat-col: var(--text-strong); }
+.statCompany  { --stat-col: var(--status-sent-text); }
+.statEmail    { --stat-col: var(--status-accepted-text); }
+.statPhone    { --stat-col: var(--status-draft-text); }
+
+/* Dark mode: accent shadow per card type */
+@media (prefers-color-scheme: dark) {
+  .statCompany       { box-shadow: 3px 3px 0 var(--status-sent-text); }
+  .statCompany:hover { box-shadow: 5px 5px 0 var(--status-sent-text); }
+  .statEmail         { box-shadow: 3px 3px 0 var(--status-accepted-text); }
+  .statEmail:hover   { box-shadow: 5px 5px 0 var(--status-accepted-text); }
+  .statPhone         { box-shadow: 3px 3px 0 var(--status-draft-text); }
+  .statPhone:hover   { box-shadow: 5px 5px 0 var(--status-draft-text); }
 }
 
 .statValue {
   font-size: 1.375rem;
-  font-weight: 700;
+  font-weight: 900;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  color: var(--accent-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: -0.03em;
+  color: currentColor;
 }
 
 .statLabel {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: currentColor;
+  opacity: 0.65;
 }
 
 /* ── Add customer (collapsible) ──────────────────────────────────────────── */
 .createDetails {
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
   background: var(--bg-surface);
   box-shadow: var(--shadow-card);
   overflow: hidden;
+  margin-bottom: 0.25rem;
+  transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
+}
+
+.createDetails[open] {
+  box-shadow: var(--shadow-hover);
+  transform: translate(-1px, -1px);
 }
 
 .createSummary {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.875rem 1.125rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--accent-text);
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-strong);
   cursor: pointer;
   list-style: none;
-  transition: background 120ms;
+  background: linear-gradient(to bottom, var(--bg-surface), var(--bg-muted));
+  border-bottom: 1.5px solid transparent;
+  transition: background 120ms cubic-bezier(0.25, 0, 0.6, 1);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.createDetails[open] > .createSummary {
+  border-bottom-color: var(--border);
+  background: var(--bg-muted);
 }
 
 .createSummary:hover {
   background: var(--bg-muted);
+}
+
+.createSummary:active {
+  background: var(--border-muted);
+  transform: translateY(1px);
 }
 
 .createSummary::-webkit-details-marker {
@@ -117,7 +184,7 @@
 
 .createCard {
   padding: 0 1.125rem 1rem;
-  border-top: 1px solid var(--border-muted);
+  border-top: none;
 }
 
 /* ── Shared form styles ──────────────────────────────────────────────────── */
@@ -134,9 +201,12 @@
 .fieldLabel {
   display: block;
   margin-bottom: 0.25rem;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .actionRow {
@@ -155,7 +225,8 @@
 /* ── Empty state ─────────────────────────────────────────────────────────── */
 .emptyCard {
   background: var(--bg-surface);
-  border: 1px dashed var(--border);
+  border: 1.5px dashed var(--border);
+  border-radius: 2px;
 }
 
 .emptyIcon {
@@ -168,16 +239,16 @@
 
 /* ── Table wrap ──────────────────────────────────────────────────────────── */
 .tableWrap {
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
   background: var(--bg-surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: 3px 3px 0 var(--border);
   overflow: hidden;
 }
 
 /* ── Table row ───────────────────────────────────────────────────────────── */
 .tableRow {
-  border-bottom: 1px solid var(--border-muted);
+  border-bottom: 1.5px solid var(--border-muted);
 }
 
 .tableRow:last-child {
@@ -190,7 +261,7 @@
   flex-wrap: wrap;
   gap: 0.625rem 0.875rem;
   padding: 0.75rem 1rem;
-  transition: background 100ms;
+  transition: background 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .tableRow:hover > .rowMain {
@@ -204,11 +275,13 @@
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 9999px;
-  background: var(--accent-muted);
-  color: var(--accent-text);
+  border-radius: 2px; /* Hard square stamp — no circles */
+  border: 1.5px solid var(--border);
+  background: color-mix(in srgb, var(--text-strong) 8%, var(--bg-muted));
+  color: var(--text-strong);
   font-size: 0.9375rem;
   font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   flex-shrink: 0;
 }
 
@@ -250,11 +323,11 @@
   font-size: 0.8125rem;
   color: var(--text-muted);
   text-decoration: none;
-  transition: color 120ms;
+  transition: color 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .contactLink:hover {
-  color: var(--accent-text);
+  color: var(--text-strong);
 }
 
 /* ── Row actions ─────────────────────────────────────────────────────────── */
@@ -277,22 +350,27 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  border-radius: 0.625rem;
-  border: 1px solid var(--border);
+  border-radius: 2px;
+  border: 1.5px solid var(--border);
   background: transparent;
   color: var(--text-faint);
-  padding: 0.375rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   list-style: none;
   white-space: nowrap;
-  transition: color 120ms, border-color 120ms;
+  transition: color 120ms cubic-bezier(0.25, 0, 0.6, 1), border-color 120ms cubic-bezier(0.25, 0, 0.6, 1), box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .editSummary:hover {
-  color: var(--accent-text);
-  border-color: var(--accent);
+  color: var(--text-strong);
+  border-color: var(--text-strong);
+  box-shadow: 2px 2px 0 var(--border);
+  transform: translate(-1px, -1px);
 }
 
 .editSummary::-webkit-details-marker {
@@ -304,16 +382,18 @@
 }
 
 .editDetails[open] .editSummary {
-  color: var(--accent-text);
-  border-color: var(--accent);
-  background: var(--accent-muted);
+  color: var(--text-strong);
+  border-color: var(--text-strong);
+  background: color-mix(in srgb, var(--text-strong) 6%, transparent);
+  box-shadow: 2px 2px 0 var(--border);
+  transform: translate(-1px, -1px);
 }
 
 /* ── Edit panel (full-width, shown via :has selector) ────────────────────── */
 .editPanel {
   display: none;
   padding: 0.875rem 1rem;
-  border-top: 1px solid var(--border-muted);
+  border-top: 1.5px solid var(--border-muted);
   background: var(--bg-muted);
 }
 
@@ -326,18 +406,28 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.625rem;
-  border: 1px solid var(--status-rejected-text);
+  border-radius: 2px;
+  border: 1.5px solid var(--status-rejected-text);
   background: var(--status-rejected-bg);
   color: var(--status-rejected-text);
-  padding: 0.375rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  transition: opacity 120ms;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--status-rejected-text);
+  transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .deleteButton:hover {
-  opacity: 0.85;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--status-rejected-text);
+}
+
+.deleteButton:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 /* ── Delete modal ────────────────────────────────────────────────────────── */
@@ -355,10 +445,10 @@
 .modalCard {
   width: 100%;
   max-width: 24rem;
-  border-radius: 1.25rem;
-  border: 1px solid var(--border);
+  border-radius: 2px;
+  border: 1.5px solid var(--border);
   background: var(--bg-surface);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 5px 5px 0 var(--border);
   padding: 1.25rem;
 }
 
@@ -366,6 +456,8 @@
   color: var(--text-strong);
   font-size: 1rem;
   font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: -0.03em;
 }
 
 .modalText {

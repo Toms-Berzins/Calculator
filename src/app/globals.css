@@ -1,46 +1,54 @@
 @import 'tailwindcss';
 
-/* ── Design tokens ─────────────────────────────────────────────────────── */
+/* ── Design tokens: Soft Industrial ────────────────────────────────────── */
 :root {
   /* Backgrounds */
-  --bg-base:    #f8fafc;
+  --bg-base:    #f5f5f5; /* Subfloor matte white */
   --bg-surface: #ffffff;
-  --bg-muted:   #f1f5f9;
+  --bg-muted:   #e0e0e0; /* Un-tinted structural gray */
 
   /* Borders */
-  --border:     #e2e8f0;
-  --border-muted: #f1f5f9;
+  --border:       #bdbdbd; /* Concrete */
+  --border-muted: #e0e0e0;
 
   /* Text */
-  --text-strong:  #0f172a;
-  --text-default: #334155;
-  --text-muted:   #64748b;
-  --text-faint:   #94a3b8;
+  --text-strong:  #1b1b1b;
+  --text-default: #353636; /* Harsh, legible charcoal */
+  --text-muted:   #5e5e5e;
+  --text-faint:   #797979; /* Steel border/faint text */
 
-  /* Accent — indigo */
-  --accent:       #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-muted: #eef2ff;
-  --accent-text:  #4338ca;
+  /* Accent — Hyperlink Blue & Safety Gold */
+  --accent:       #3255e3; /* Pure functional blue */
+  --accent-hover: #1e3bb3;
+  --accent-muted: rgba(50, 85, 227, 0.1);
+  --accent-text:  #3255e3;
+  
+  --warning:      #feba50; /* Safety Gold */
 
   /* Status */
-  --status-draft-bg:    #f8fafc;
-  --status-draft-text:  #64748b;
-  --status-sent-bg:     #eff6ff;
-  --status-sent-text:   #1d4ed8;
-  --status-accepted-bg: #f0fdf4;
-  --status-accepted-text: #15803d;
-  --status-rejected-bg: #fff1f2;
-  --status-rejected-text: #be123c;
+  --status-draft-bg:    #e0e0e0;
+  --status-draft-text:  #353636;
+  --status-sent-bg:     rgba(50, 85, 227, 0.1);
+  --status-sent-text:   #3255e3;
+  --status-accepted-bg: rgba(34, 139, 34, 0.15); /* Industrial green */
+  --status-accepted-text: #1b5e20;
+  --status-rejected-bg: rgba(220, 53, 69, 0.1); /* Alert red */
+  --status-rejected-text: #b02a37;
 
   /* Sidebar */
-  --sidebar-bg:     #ffffff;
-  --sidebar-border: #e2e8f0;
+  --sidebar-bg:     #f0f0f0;  /* Slightly darker than surface — panel shelf distinction */
+  --sidebar-border: #bdbdbd;
 
-  /* Shadows */
-  --shadow-card:  0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
-  --shadow-hover: 0 4px 20px rgba(15,23,42,0.10), 0 2px 6px rgba(15,23,42,0.05);
-  --shadow-glass: 0 8px 32px rgba(15,23,42,0.10);
+  /* Neubrutalism ink — fixed structural color for borders & offset shadows.
+     Never use text-strong here; ink must stay near-black in light mode
+     and a subtle ghost in dark mode (see @media below). */
+  --nb-ink:        #1b1b1b;
+  --nb-ink-hover:  #000000;
+
+  /* Shadows — hard flat offset (light mode: border-color offset for a stamped feel) */
+  --shadow-card:  3px 3px 0 #bdbdbd;   /* Hard stamped, no blur */
+  --shadow-hover: 5px 5px 0 #a3a3a3;   /* More pronounced on hover */
+  --shadow-glass: 4px 4px 0 #d4d4d4;
 
   /* Legacy compat */
   --background: var(--bg-base);
@@ -49,45 +57,163 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-base:    #0f172a;
-    --bg-surface: #1e293b;
-    --bg-muted:   #1e293b;
+    /* Backgrounds */
+    --bg-base:    #161616; /* Deep machine room dark */
+    --bg-surface: #1e1e1e; /* Equipment panel */
+    --bg-muted:   #2a2a2a; 
 
-    --border:       #334155;
-    --border-muted: #1e293b;
+    /* Borders — structural transparency like concrete seams */
+    --border:       rgba(255,255,255,0.12);
+    --border-muted: rgba(255,255,255,0.06);
 
-    --text-strong:  #f1f5f9;
-    --text-default: #cbd5e1;
-    --text-muted:   #94a3b8;
-    --text-faint:   #475569;
+    /* Text — opacity-based hierarchy (Blake Crosley 2026 technique: material honesty) */
+    --text-strong:  #ffffff;                    /* 100% */
+    --text-default: rgba(255,255,255,0.65);     /* 65% — secondary */
+    --text-muted:   rgba(255,255,255,0.4);      /* 40% — tertiary */
+    --text-faint:   rgba(255,255,255,0.18);     /* 18% — structural labels */
 
-    --accent:       #6366f1;
-    --accent-hover: #818cf8;
-    --accent-muted: rgba(99,102,241,0.14);
-    --accent-text:  #a5b4fc;
+    /* Accent */
+    --accent:       #4a6cf0; 
+    --accent-hover: #5d7df2;
+    --accent-muted: rgba(74, 108, 240, 0.15);
+    --accent-text:  #7591f4;
 
-    --status-draft-bg:    rgba(71,85,105,0.25);
-    --status-draft-text:  #94a3b8;
-    --status-sent-bg:     rgba(30,58,138,0.3);
-    --status-sent-text:   #93c5fd;
-    --status-accepted-bg: rgba(6,78,59,0.3);
-    --status-accepted-text: #6ee7b7;
-    --status-rejected-bg: rgba(127,29,29,0.3);
-    --status-rejected-text: #fca5a5;
+    --warning:      #fccb6c;
 
-    --sidebar-bg:     #1e293b;
-    --sidebar-border: #334155;
+    /* Status */
+    --status-draft-bg:    #333333;
+    --status-draft-text:  #a6a6a6;
+    --status-sent-bg:     rgba(74, 108, 240, 0.2);
+    --status-sent-text:   #7591f4;
+    --status-accepted-bg: rgba(56, 142, 60, 0.2);
+    --status-accepted-text: #66bb6a;
+    --status-rejected-bg: rgba(220, 53, 69, 0.2);
+    --status-rejected-text: #e57373;
 
-    --shadow-card:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-    --shadow-hover: 0 4px 20px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.25);
-    --shadow-glass: 0 8px 32px rgba(0,0,0,0.4);
+    /* Sidebar */
+    --sidebar-bg:     #1e1e1e;
+    --sidebar-border: #333333;
+
+    /* Neubrutalism ink — ghost ring on dark surfaces; shadows go
+       accent-coloured (see stat-card rule) not white */
+    --nb-ink:        rgba(255,255,255,0.18);
+    --nb-ink-hover:  rgba(255,255,255,0.28);
+
+    /* Shadows — hard flat offset (neobrutalist: shadows that cut glass) */
+    --shadow-card:  3px 3px 0 rgba(0,0,0,0.8);   /* Hard architectural offset */
+    --shadow-hover: 5px 5px 0 rgba(0,0,0,0.9);   /* Lifts further, harder */
+    --shadow-glass: 4px 4px 0 rgba(0,0,0,0.7);
 
     --background: var(--bg-base);
     --foreground: var(--text-default);
   }
 }
 
-/* ── Base styles ───────────────────────────────────────────────────────── */
+/* ── Soft Industrial Base Elements ────────────────────────────────────── */
+
+/* Tactile Buttons — neobrutalist flat hard-offset system */
+.btn-primary {
+  position: relative;
+  background: #1b1b1b; /* Near-black industrial stamp — not generic blue */
+  color: #ffffff;
+  border: 1.5px solid #000000;
+  border-radius: 2px !important; /* Hard industrial corners */
+  box-shadow: 3px 3px 0 #000000; /* Flat hard offset — no blur, no glow */
+  transition: all 120ms cubic-bezier(0.25, 0, 0.6, 1);
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:disabled {
+  background: var(--bg-muted);
+  border-color: var(--border);
+  color: var(--text-faint);
+  box-shadow: 1px 1px 0 var(--border);
+  cursor: not-allowed;
+}
+
+.btn-primary:not(:disabled):hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #000000; /* Shadow deepens as it lifts */
+}
+
+.btn-primary:not(:disabled):active {
+  transform: translate(3px, 3px); /* Stamps down */
+  box-shadow: 0 0 0 #000000; /* Shadow flattens as it hits the surface */
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-primary {
+    background: #f5f5f5;
+    color: #1b1b1b;
+    border-color: #f5f5f5;
+    box-shadow: 3px 3px 0 rgba(255,255,255,0.4);
+  }
+  .btn-primary:not(:disabled):hover {
+    box-shadow: 5px 5px 0 rgba(255,255,255,0.4);
+  }
+  .btn-primary:not(:disabled):active {
+    box-shadow: 0 0 0 rgba(255,255,255,0.4);
+  }
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--text-strong);
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--border);
+  transition: all 120ms cubic-bezier(0.25, 0, 0.6, 1);
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--border);
+}
+
+.btn-secondary:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--border);
+}
+
+/* Tactile Input Fields */
+input[type="text"], 
+input[type="number"], 
+select, 
+textarea {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 2px; /* Very sharp corners for inputs */
+  box-shadow: inset 0 1px 3px rgba(27, 27, 27, 0.06); /* Pressed into the screen */
+  color: var(--text-strong);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus, 
+input[type="number"]:focus, 
+select:focus, 
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 
+    inset 0 1px 3px rgba(27, 27, 27, 0.06),
+    0 0 0 2px var(--accent-muted); /* Functional glow, not heavily blurred */
+}
 body {
   background: var(--bg-base);
   color: var(--text-default);
@@ -107,21 +233,20 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
 
-/* ── Glassmorphism helpers ─────────────────────────────────────────────── */
+/* ── Persistent layer blur (header/nav context only — functional, not decorative) */
+/* Research: Blake Crosley 2026 — glassmorphism only justified when it communicates scroll layering */
 .glass {
-  background: rgba(255,255,255,0.72);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.5);
+  background: rgba(245,245,245,0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
 }
 @media (prefers-color-scheme: dark) {
   .glass {
-    background: rgba(30,41,59,0.80);
-    border-color: rgba(255,255,255,0.08);
+    background: rgba(22,22,22,0.92);
+    border-color: var(--border);
   }
 }
-
-/* Fallback for browsers that don't support backdrop-filter */
 @supports not (backdrop-filter: blur(1px)) {
   .glass { background: var(--bg-surface); }
 }
@@ -132,11 +257,11 @@ body {
   outline-offset: 2px;
 }
 
-/* ── Smooth transitions ────────────────────────────────────────────────── */
+/* ── Transitions — mechanical snap (DesignSignal 2026: 150ms sharp cuts not organic ease-in-out) */
 a, button, input, select, textarea {
-  transition-property: color, background-color, border-color, box-shadow, opacity;
-  transition-duration: 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: 120ms;
+  transition-timing-function: cubic-bezier(0.25, 0, 0.6, 1); /* Aggressive deceleration: snaps into place */
 }
 
 /* ── Server-component-safe utility classes ─────────────────────────────── */
@@ -144,36 +269,52 @@ a, button, input, select, textarea {
 /* Clickable card — replaces JS onMouseEnter/Leave shadow/border changes */
 .card-interactive {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--nb-ink); /* Neobrutalism: fixed ink, not text-color */
   box-shadow: var(--shadow-card);
-  transition: box-shadow 150ms ease, border-color 150ms ease;
+  transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 .card-interactive:hover {
   box-shadow: var(--shadow-hover);
-  border-color: rgba(79, 70, 229, 0.3);
+  transform: translate(-1px, -1px);
 }
 
-/* Primary gradient button */
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
-  color: #ffffff;
-  box-shadow: 0 2px 12px rgba(79,70,229,0.35);
-  transition: box-shadow 150ms ease, opacity 150ms ease;
-}
-.btn-primary:hover {
-  box-shadow: 0 4px 20px rgba(79,70,229,0.5);
+/* Soft Industrial Status Elements */
+  .status-badge {
+    border-radius: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    box-shadow: inset 0 0 0 1px var(--border);
 }
 
-/* Ghost / secondary button */
+/* Ghost / tertiary button */
 .btn-ghost {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 1.5px solid var(--border);
   color: var(--text-default);
-  box-shadow: var(--shadow-card);
-  transition: background 150ms ease;
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--border);
+  transition: all 120ms cubic-bezier(0.25, 0, 0.6, 1);
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-ghost:hover {
   background: var(--bg-muted);
+  color: var(--text-strong);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--border);
+}
+.btn-ghost:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--border);
 }
 
 /* Muted text link that turns accent on hover */
@@ -185,32 +326,87 @@ a, button, input, select, textarea {
   color: var(--accent-text);
 }
 
-/* Sidebar nav item */
+/* .nav-item — legacy global; sidebar now uses CSS module Sidebar.navLink/navLinkActive.
+   Kept here only as a fallback / for any one-off usages outside the sidebar. */
 .nav-item {
   color: var(--text-muted);
-  transition: background 150ms ease, color 150ms ease;
+  border: 1.5px solid transparent;
+  border-radius: 0;
+  transition: background 100ms ease, color 100ms ease, border-color 100ms ease, box-shadow 100ms ease, transform 80ms ease;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 .nav-item:hover {
   background: var(--bg-muted);
   color: var(--text-strong);
+  border-color: var(--border);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--border);
 }
 .nav-item.active {
-  background: var(--accent-muted);
-  color: var(--accent-text);
+  background: #1b1b1b;
+  color: #f5f5f5;
+  border-color: #1b1b1b;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.45);
+  font-weight: 700;
 }
 
-/* Form inputs */
-.input-field {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--text-strong);
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+@media (prefers-color-scheme: dark) {
+  .nav-item.active {
+    background: #f5f5f5;
+    color: #1b1b1b;
+    border-color: #f5f5f5;
+    box-shadow: 2px 2px 0 rgba(255,255,255,0.18);
+  }
 }
+
+/* Advanced Soft Industrial Form Inputs */
+.input-field {
+  background-color: var(--bg-surface) !important;
+  border: 1.5px solid var(--border);
+  color: var(--text-strong);
+  border-radius: 2px !important; /* Hard industrial corners — matches 2px system-wide */
+  padding-left: 0.875rem !important;
+  padding-right: 0.875rem !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  box-shadow: 
+    inset 0 2px 4px rgba(27, 27, 27, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 120ms cubic-bezier(0.25, 0, 0.6, 1), box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
+  font-size: 0.875rem; 
+  line-height: 1.5rem;
+  appearance: none;
+}
+
+select.input-field {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-color: var(--bg-surface) !important;
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1em;
+  padding-right: 2.5rem !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  select.input-field {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  }
+}
+
+.input-field:hover {
+  border-color: #8c8c8c;
+}
+
 .input-field:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+  background-color: var(--bg-surface) !important;
+  border-color: var(--text-strong);
+  box-shadow: 
+    inset 0 1px 2px rgba(27, 27, 27, 0.05),
+    3px 3px 0 var(--border); /* Hard flat focus offset — neobrutalist */
+  transform: translateY(-1px);
 }
+
 .input-field::placeholder {
   color: var(--text-faint);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; /* Put placeholder back to readable sans */
 }

@@ -12,9 +12,11 @@
 .track {
   position: relative;
   display: flex;
-  border-radius: 9999px;
+  border-radius: 2px; /* Hard corners — brutalist */
   padding: 2px;
   background: var(--bg-muted);
+  border: 1.5px solid var(--border);
+  box-shadow: 2px 2px 0 var(--border);
 }
 
 .track[data-locale='en'] .pill {
@@ -31,11 +33,17 @@
   position: absolute;
   top: 2px;
   bottom: 2px;
-  border-radius: 9999px;
-  background: var(--accent);
+  border-radius: 0; /* Hard square pill */
+  background: #1b1b1b; /* Matches btn-primary */
   transition:
-    left 200ms ease,
-    right 200ms ease;
+    left 120ms cubic-bezier(0.25, 0, 0.6, 1),
+    right 120ms cubic-bezier(0.25, 0, 0.6, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .pill {
+    background: #f5f5f5;
+  }
 }
 
 .option {
@@ -43,14 +51,22 @@
   z-index: 10;
   flex: 1;
   cursor: pointer;
-  border-radius: 9999px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
+  border-radius: 0;
+  padding: 0.2rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
-  transition: color 200ms ease;
+  transition: color 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .option[aria-pressed='true'] {
-  color: white;
+  color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .option[aria-pressed='true'] {
+    color: #1b1b1b;
+  }
 }

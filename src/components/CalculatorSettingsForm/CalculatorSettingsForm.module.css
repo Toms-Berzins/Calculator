@@ -1,7 +1,8 @@
 .card {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-card);
+  border: 2px solid var(--nb-ink);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--nb-ink);
 }
 
 /* ── Form header ───────────────────────────────── */
@@ -23,14 +24,16 @@
 }
 
 .unsavedBadge {
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.15rem 0.55rem;
-  border-radius: 9999px;
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--accent-text);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  letter-spacing: 0.01em;
+  border: 1.5px solid var(--accent-text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   white-space: nowrap;
 }
 
@@ -38,7 +41,7 @@
 .section {
   padding-bottom: 1.25rem;
   margin-bottom: 1.25rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--nb-ink);
 }
 
 .sectionLast {
@@ -47,11 +50,12 @@
 }
 
 .sectionTitle {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   margin-bottom: 0.75rem;
 }
 
@@ -113,9 +117,10 @@
 .deprHelper {
   margin-top: 0.5rem;
   padding: 0.75rem;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--bg-surface) 50%, var(--bg-base, #000) 50%);
-  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--bg-surface);
+  border: 2px solid var(--nb-ink);
+  box-shadow: 3px 3px 0 var(--nb-ink);
 }
 
 .deprResult {
@@ -125,7 +130,7 @@
   gap: 0.5rem;
   margin-top: 0.6rem;
   padding-top: 0.6rem;
-  border-top: 1px solid var(--border);
+  border-top: 2px solid var(--nb-ink);
 }
 
 .deprResultText {
@@ -134,21 +139,7 @@
   color: var(--text-strong);
 }
 
-.deprApplyBtn {
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: 0.4rem;
-  background: var(--accent);
-  color: var(--accent-fg, #fff);
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
 
-.deprApplyBtn:hover {
-  opacity: 0.85;
-}
 
 /* ── Form actions ──────────────────────────────── */
 .formActions {
@@ -159,22 +150,41 @@
 }
 
 .resetButton {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 2px solid var(--nb-ink);
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--nb-ink);
+  color: var(--text-strong);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
   white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: transform 100ms ease, box-shadow 100ms ease;
 }
 
 .resetButton:hover {
-  background: color-mix(in srgb, var(--border) 40%, transparent);
-  color: var(--text-strong);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--nb-ink);
 }
 
-/* Slightly brighter save button when there are unsaved changes */
+.resetButton:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--nb-ink);
+}
+
+/* Slightly lifted save button when there are unsaved changes */
 .dirtyButton {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dirtyButton {
+    box-shadow: 5px 5px 0 rgba(255,255,255,0.4);
+  }
 }
 
 /* ── Status messages ───────────────────────────── */

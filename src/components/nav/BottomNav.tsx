@@ -23,7 +23,7 @@ export function BottomNav() {
             className={`flex flex-1 flex-col items-center justify-center gap-1 pb-safe py-3 ${active ? styles.navItemActive : styles.navItemInactive}`}
           >
             <span
-              className={`flex items-center justify-center rounded-lg p-1 ${active ? styles.navIconActive : styles.navIconInactive}`}
+              className={`flex items-center justify-center p-1 ${active ? styles.navIconActive : styles.navIconInactive}`}
             >
               {l.icon}
             </span>

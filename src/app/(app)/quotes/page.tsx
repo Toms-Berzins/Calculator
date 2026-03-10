@@ -50,37 +50,29 @@ export default async function QuotesPage() {
   return (
     <div>
       {/* ── Page header ── */}
-      <div className={`mb-6 flex items-start justify-between ${styles.pageHeader}`}>
+      <div className={styles.pageHeader}>
         <div>
-          <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
+          <h1 className={styles.pageTitle}>
             {t.quotes.title}
           </h1>
           {all.length > 0 ? (
-            <div className={styles.pageHeaderMeta}>
-              {acceptedCount > 0 && (
-                <span className={`${styles.metaChip} ${styles.metaAccepted}`}>
-                  <span className={`${styles.statusDot} ${styles.dotAccepted}`} aria-hidden />
-                  {acceptedCount} {t.quotes.status.accepted}
-                </span>
-              )}
-              {sentCount > 0 && (
-                <span className={`${styles.metaChip} ${styles.metaSent}`}>
-                  <span className={`${styles.statusDot} ${styles.dotSent}`} aria-hidden />
-                  {sentCount} {t.quotes.status.sent}
-                </span>
-              )}
-              {draftCount > 0 && (
-                <span className={`${styles.metaChip} ${styles.metaDraft}`}>
-                  <span className={`${styles.statusDot} ${styles.dotDraft}`} aria-hidden />
-                  {draftCount} {t.quotes.status.draft}
-                </span>
-              )}
-              {rejectedCount > 0 && (
-                <span className={`${styles.metaChip} ${styles.metaRejected}`}>
-                  <span className={`${styles.statusDot} ${styles.dotRejected}`} aria-hidden />
-                  {rejectedCount} {t.quotes.status.rejected}
-                </span>
-              )}
+            <div className={styles.statsStrip}>
+              <div className={`${styles.statCard} ${styles.statAccepted}`}>
+                <span className={styles.statValue}>{acceptedCount}</span>
+                <span className={styles.statLabel}>{t.quotes.status.accepted}</span>
+              </div>
+              <div className={`${styles.statCard} ${styles.statSent}`}>
+                <span className={styles.statValue}>{sentCount}</span>
+                <span className={styles.statLabel}>{t.quotes.status.sent}</span>
+              </div>
+              <div className={`${styles.statCard} ${styles.statDraft}`}>
+                <span className={styles.statValue}>{draftCount}</span>
+                <span className={styles.statLabel}>{t.quotes.status.draft}</span>
+              </div>
+              <div className={`${styles.statCard} ${styles.statRejected}`}>
+                <span className={styles.statValue}>{rejectedCount}</span>
+                <span className={styles.statLabel}>{t.quotes.status.rejected}</span>
+              </div>
             </div>
           ) : (
             <p className={`mt-1 text-sm ${styles.quoteCount}`}>
@@ -162,7 +154,7 @@ export default async function QuotesPage() {
 
       {/* ── Empty state ── */}
       {!all.length && (
-        <div className={`flex flex-col items-center justify-center rounded-2xl py-20 text-center ${styles.emptyState}`}>
+        <div className={`flex flex-col items-center justify-center py-20 text-center ${styles.emptyState}`}>
           <div className={styles.emptyIconWrap}>
             <svg className="w-7 h-7" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
               <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
@@ -172,7 +164,7 @@ export default async function QuotesPage() {
           <p className={`mt-1 text-sm ${styles.emptyStateHint}`}>{t.quotes.createFirst}</p>
           <Link
             href="/quotes/new"
-            className="btn-primary mt-5 inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-semibold"
+            className="btn-primary mt-5 inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold"
           >
             <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />

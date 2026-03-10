@@ -95,11 +95,11 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-8">
-        <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
           {t.newQuote.title}
         </h1>
-        <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
+        <p className={styles.pageSubtitle}>
           {t.newQuote.subtitle}
         </p>
       </div>
@@ -111,7 +111,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
         onJobSelected={handleJobSelected}
       />
 
-      <div className={`mb-6 rounded-2xl p-4 ${styles.calculatorCard}`}>
+      <div className={`mb-6 p-4 ${styles.calculatorCard}`}>
         <JobConstantsEditor
           state={{
             constantChips,
@@ -140,7 +140,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
                 value={partName}
                 onChange={(e) => setPartName(e.target.value)}
                 placeholder={t.newQuote.jobPartNamePlaceholder}
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                className="input-field w-full px-3 py-2 text-sm"
               />
             </label>
           )}
@@ -152,7 +152,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
               step={1}
               value={partQuantity}
               onChange={(e) => setPartQuantity(Math.max(1, Number(e.target.value) || 1))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm"
+              className="input-field w-full px-3 py-2 text-sm"
             />
           </label>
           <label className="text-sm">
@@ -163,7 +163,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
               step={1}
               value={materialWeightGrams}
               onChange={(e) => setMaterialWeightGrams(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm"
+              className="input-field w-full px-3 py-2 text-sm"
             />
           </label>
           <label className="text-sm">
@@ -174,7 +174,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
               step={0.1}
               value={printTimeHours}
               onChange={(e) => setPrintTimeHours(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm"
+              className="input-field w-full px-3 py-2 text-sm"
             />
           </label>
           <label className="text-sm">
@@ -185,7 +185,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
               step={0.1}
               value={setupTimeHours}
               onChange={(e) => setSetupTimeHours(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm"
+              className="input-field w-full px-3 py-2 text-sm"
             />
           </label>
           <label className="text-sm md:col-span-2">
@@ -196,12 +196,12 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
               step={0.01}
               value={postProcessingCost}
               onChange={(e) => setPostProcessingCost(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm"
+              className="input-field w-full px-3 py-2 text-sm"
             />
           </label>
         </div>
 
-        <div className={`mt-4 rounded-xl p-3 ${styles.calculatorSummary}`}>
+        <div className={`mt-4 p-3 ${styles.calculatorSummary}`}>
           <div className="grid grid-cols-2 gap-y-0.5 text-sm">
             <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.materialCostRow}</span>
             <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.materialCost)}</span>
@@ -258,7 +258,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
                 step={0.1}
                 value={taxRate}
                 onChange={(e) => setTaxRate(Number(e.target.value))}
-                className="input-field w-20 rounded-lg px-2 py-1 text-right text-sm tabular-nums"
+                className="input-field w-20 px-2 py-1 text-right text-sm tabular-nums"
               />
             </div>
 
@@ -287,7 +287,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
       <button
         type="submit"
         disabled={submitting || !selectedJobId}
-        className="btn-primary mt-6 w-full rounded-xl py-4 text-base font-semibold disabled:opacity-60"
+        className="btn-primary mt-6 w-full py-4 text-base font-semibold disabled:opacity-60"
       >
         {submitting ? t.newQuote.creating : t.newQuote.createQuote}
       </button>

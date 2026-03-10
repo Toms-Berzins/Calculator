@@ -132,12 +132,12 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
       {!!stats.total && (
         <div className={styles.statsStrip}>
           {([
-            { value: stats.total,       label: t.customers.statTotal },
-            { value: stats.withCompany, label: t.customers.statCompany },
-            { value: stats.withEmail,   label: t.customers.statEmail },
-            { value: stats.withPhone,   label: t.customers.statPhone },
-          ] as const).map(({ value, label }) => (
-            <div key={label} className={styles.statCard}>
+            { value: stats.total,       label: t.customers.statTotal,   colorClass: styles.statTotal },
+            { value: stats.withCompany, label: t.customers.statCompany, colorClass: styles.statCompany },
+            { value: stats.withEmail,   label: t.customers.statEmail,   colorClass: styles.statEmail },
+            { value: stats.withPhone,   label: t.customers.statPhone,   colorClass: styles.statPhone },
+          ] as const).map(({ value, label, colorClass }) => (
+            <div key={label} className={`${styles.statCard} ${colorClass}`}>
               <span className={styles.statValue}>{value}</span>
               <span className={styles.statLabel}>{label}</span>
             </div>

@@ -38,8 +38,8 @@ export default function LoginPage() {
         <div className={styles.brandIconContainer}>
           Q
         </div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">QuoteCalc</h1>
-        <p className={`mt-1 text-sm ${styles.subtitle}`}>
+        <h1 className={styles.brandTitle}>QuoteCalc</h1>
+        <p className={styles.subtitle}>
           {t.login.subtitle}
         </p>
       </div>
@@ -60,15 +60,7 @@ export default function LoginPage() {
             aria-label="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={`block w-full rounded-xl px-4 py-3 text-sm text-white placeholder:opacity-30 focus:outline-none ${styles.input}`}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(99,102,241,0.8)'
-              e.currentTarget.style.background = 'rgba(255,255,255,0.10)'
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'
-              e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
-            }}
+            className={styles.input}
             placeholder="you@example.com"
           />
         </div>
@@ -88,15 +80,7 @@ export default function LoginPage() {
             aria-label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={`block w-full rounded-xl px-4 py-3 text-sm text-white placeholder:opacity-30 focus:outline-none ${styles.input}`}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(99,102,241,0.8)'
-              e.currentTarget.style.background = 'rgba(255,255,255,0.10)'
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'
-              e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
-            }}
+            className={styles.input}
             placeholder="••••••••"
           />
         </div>

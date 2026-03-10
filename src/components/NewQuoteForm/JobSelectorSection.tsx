@@ -131,129 +131,139 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
     <div className="mb-6">
       {!isCreatingNewJob ? (
         <>
-          <label className={`mb-1.5 block text-sm font-medium ${styles.jobLabel}`}>
+          <label className={styles.jobLabel}>
             {t.newQuote.job}
           </label>
-          <select
-            required
-            value={selectedJobId}
-            onChange={(e) => handleSelectJob(e.target.value)}
-            aria-label={t.newQuote.selectJob}
-            className="input-field w-full rounded-xl px-3 py-3 text-sm"
-          >
-            <option value="">{t.newQuote.selectJob}</option>
-            {jobOptions.map((job) => (
-              <option key={job.id} value={job.id}>
-                {job.title} — {job.customers?.company ?? job.customers?.name ?? '?'}
-              </option>
-            ))}
-            <option value={CREATE_NEW_JOB_VALUE}>{t.newQuote.createNewJob}</option>
-          </select>
+          <div className={styles.jobSelectWrap}>
+            <select
+              required
+              value={selectedJobId}
+              onChange={(e) => handleSelectJob(e.target.value)}
+              aria-label={t.newQuote.selectJob}
+              className={styles.jobSelect}
+            >
+              <option value="">{t.newQuote.selectJob}</option>
+              {jobOptions.map((job) => (
+                <option key={job.id} value={job.id}>
+                  {job.title} — {job.customers?.company ?? job.customers?.name ?? '?'}
+                </option>
+              ))}
+              <option value={CREATE_NEW_JOB_VALUE}>{t.newQuote.createNewJob}</option>
+            </select>
+          </div>
         </>
       ) : null}
 
       {isCreatingNewJob && (
-        <div className={`rounded-xl p-3 ${styles.calculatorSummary}`}>
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <span className={`text-sm font-medium ${styles.jobLabel}`}>{t.newQuote.createNewJob.replace(/^\+ /, '')}</span>
+        <div className={styles.createJobPanel}>
+          <div className={styles.createJobHeader}>
+            <span className={styles.jobLabel}>{t.newQuote.createNewJob.replace(/^\+ /, '')}</span>
             <button
               type="button"
               onClick={() => handleSelectJob('')}
-              className="btn-ghost rounded-lg px-2.5 py-1 text-xs font-medium"
+              className="btn-ghost px-2.5 py-1 text-xs font-medium"
             >
               ← {t.newQuote.cancel}
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <label className="text-sm md:col-span-2">
-              <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobTitle}</span>
-              <input
-                type="text"
-                value={newJobTitle}
-                onChange={(e) => setNewJobTitle(e.target.value)}
-                placeholder={t.newQuote.jobTitlePlaceholder}
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-              />
-            </label>
-            <label className="text-sm md:col-span-2">
-              <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.customer}</span>
-              <select
-                value={newJobCustomerId}
-                onChange={(e) => {
-                  setNewJobCustomerId(e.target.value)
-                  setCreateCustomerError('')
-                  setCreateJobError('')
-                }}
-                aria-label={t.newQuote.selectCustomer}
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-              >
-                <option value="">{t.newQuote.selectCustomer}</option>
-                {customerOptions.map((customer) => (
-                  <option key={customer.id} value={customer.id}>
-                    {customer.company ?? customer.name}
-                  </option>
-                ))}
-                <option value={CREATE_NEW_CUSTOMER_VALUE}>{t.newQuote.createNewCustomer}</option>
-              </select>
-            </label>
-          </div>
+          <div className={styles.createJobCard}>
+            <div className={styles.createJobForm}>
+              <div className={styles.createJobGrid}>
+                <label className="text-sm md:col-span-2">
+                  <span className={styles.createJobFieldLabel}>{t.newQuote.jobTitle}</span>
+                  <input
+                    type="text"
+                    value={newJobTitle}
+                    onChange={(e) => setNewJobTitle(e.target.value)}
+                    placeholder={t.newQuote.jobTitlePlaceholder}
+                    className="input-field w-full px-3 py-2 text-sm"
+                  />
+                </label>
+                <label className="text-sm md:col-span-2">
+                  <span className={styles.createJobFieldLabel}>{t.newQuote.customer}</span>
+                  <select
+                    value={newJobCustomerId}
+                    onChange={(e) => {
+                      setNewJobCustomerId(e.target.value)
+                      setCreateCustomerError('')
+                      setCreateJobError('')
+                    }}
+                    aria-label={t.newQuote.selectCustomer}
+                    className="input-field w-full px-3 py-2 text-sm"
+                  >
+                    <option value="" disabled>{t.newQuote.selectCustomer}</option>
+                    {customerOptions.map((customer) => (
+                      <option key={customer.id} value={customer.id}>
+                        {customer.company ?? customer.name}
+                      </option>
+                    ))}
+                    <option value={CREATE_NEW_CUSTOMER_VALUE}>{t.newQuote.createNewCustomer}</option>
+                  </select>
+                </label>
+              </div>
 
-          {isCreatingNewCustomer && (
-            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-              <label className="text-sm md:col-span-2">
-                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.customerName}</span>
-                <input
-                  type="text"
-                  value={newCustomerName}
-                  onChange={(e) => setNewCustomerName(e.target.value)}
-                  placeholder={t.newQuote.customerNamePlaceholder}
-                  className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                />
-              </label>
-              <label className="text-sm md:col-span-2">
-                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.companyOptional}</span>
-                <input
-                  type="text"
-                  value={newCustomerCompany}
-                  onChange={(e) => setNewCustomerCompany(e.target.value)}
-                  placeholder={t.newQuote.companyPlaceholder}
-                  className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                />
-              </label>
+              {isCreatingNewCustomer && (
+                <div className={`mt-3 ${styles.createJobGrid}`}>
+                  <label className="text-sm md:col-span-2">
+                    <span className={styles.createJobFieldLabel}>{t.newQuote.customerName}</span>
+                    <input
+                      type="text"
+                      value={newCustomerName}
+                      onChange={(e) => setNewCustomerName(e.target.value)}
+                      placeholder={t.newQuote.customerNamePlaceholder}
+                      className="input-field w-full px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <label className="text-sm md:col-span-2">
+                    <span className={styles.createJobFieldLabel}>{t.newQuote.companyOptional}</span>
+                    <input
+                      type="text"
+                      value={newCustomerCompany}
+                      onChange={(e) => setNewCustomerCompany(e.target.value)}
+                      placeholder={t.newQuote.companyPlaceholder}
+                      className="input-field w-full px-3 py-2 text-sm"
+                    />
+                  </label>
 
-              {createCustomerError && (
-                <p role="alert" className={`text-xs ${styles.pageSubtitle} md:col-span-2`}>
-                  {createCustomerError}
+                  {createCustomerError && (
+                    <p role="alert" className={`text-xs md:col-span-2 ${styles.createJobFieldLabel}`}>
+                      {createCustomerError}
+                    </p>
+                  )}
+
+                  <div className={`md:col-span-2 ${styles.createJobActions}`}>
+                    <button
+                      type="button"
+                      onClick={handleCreateCustomer}
+                      disabled={creatingCustomer || !newCustomerName.trim()}
+                      className="btn-primary px-4 py-2 text-sm font-semibold disabled:opacity-60"
+                    >
+                      {creatingCustomer ? t.newQuote.creating3DPrint : t.newQuote.createCustomerAndSelect}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {createJobError && (
+                <p role="alert" className={`mt-2 text-xs ${styles.createJobFieldLabel}`}>
+                  {createJobError}
                 </p>
               )}
 
-              <button
-                type="button"
-                onClick={handleCreateCustomer}
-                disabled={creatingCustomer || !newCustomerName.trim()}
-                className="btn-ghost md:col-span-2 w-full rounded-lg py-2 text-sm font-medium disabled:opacity-60"
-              >
-                {creatingCustomer ? t.newQuote.creating3DPrint : t.newQuote.createCustomerAndSelect}
-              </button>
+              {!isCreatingNewCustomer && (
+                <div className={styles.createJobActions}>
+                  <button
+                    type="button"
+                    onClick={handleCreateJob}
+                    disabled={creatingJob || !newJobTitle.trim() || !newJobCustomerId}
+                    className="btn-primary px-4 py-2 text-sm font-semibold disabled:opacity-60"
+                  >
+                    {creatingJob ? t.newQuote.creating3DPrint : t.newQuote.createJobAndSelect}
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-
-          {createJobError && (
-            <p role="alert" className={`mt-2 text-xs ${styles.pageSubtitle}`}>
-              {createJobError}
-            </p>
-          )}
-
-          {!isCreatingNewCustomer && (
-            <button
-              type="button"
-              onClick={handleCreateJob}
-              disabled={creatingJob || !newJobTitle.trim() || !newJobCustomerId}
-              className="btn-ghost mt-3 w-full rounded-lg py-2 text-sm font-medium disabled:opacity-60"
-            >
-              {creatingJob ? t.newQuote.creating3DPrint : t.newQuote.createJobAndSelect}
-            </button>
-          )}
+          </div>
         </div>
       )}
     </div>

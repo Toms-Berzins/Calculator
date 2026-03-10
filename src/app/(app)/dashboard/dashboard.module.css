@@ -1,61 +1,123 @@
+/* ── Page header ── */
+.pageHeader {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 2px solid var(--border);
+}
+
 .pageTitle {
   color: var(--text-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.375rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .pageSubtitle {
   color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0.375rem;
 }
 
+/* ── Stat card internals ── */
 .statLabel {
   color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .statCount {
   color: var(--text-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 900;
+  letter-spacing: -0.03em;
 }
 
+/* Accent-coloured chevron, opacity managed via Tailwind on the element */
 .chevron {
-  color: var(--text-muted);
+  color: var(--stat-accent);
 }
 
 .quickActionsHeader {
   color: var(--text-faint);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+/* ── Neubrutalist stat cards — hard borders, offset shadow, accent left-bar ── */
 .statCard {
   --stat-accent: #4f46e5;
   --stat-accent-bg: rgba(79, 70, 229, 0.1);
-  --stat-blob: rgba(79, 70, 229, 0.25);
+  border-radius: 0 !important;               /* Sharp corners — no Tailwind rounded-* */
+  border: 2px solid var(--nb-ink);           /* Fixed ink — near-black light / ghost dark */
+  border-left: 4px solid var(--stat-accent); /* Accent identity bar */
+  padding: 1.25rem;
+  overflow: hidden;
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+
+.statCard:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--nb-ink);
+}
+
+.statCard:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0 var(--nb-ink) !important;
+}
+
+/* Dark mode: ghost border + accent-coloured shadow for each card.
+   The accent shadow is the canonical dark-mode neubrutalism technique —
+   coloured offset on a dark surface pops without resorting to white borders. */
+@media (prefers-color-scheme: dark) {
+  .statCard {
+    border-color: var(--nb-ink);              /* subtle ghost ring */
+    box-shadow: 3px 3px 0 var(--stat-accent);
+  }
+  .statCard:hover {
+    box-shadow: 5px 5px 0 var(--stat-accent);
+  }
+  .statCard:active {
+    box-shadow: 1px 1px 0 var(--stat-accent) !important;
+  }
 }
 
 .statQuotes {
   --stat-accent: #4f46e5;
   --stat-accent-bg: rgba(79, 70, 229, 0.1);
-  --stat-blob: rgba(79, 70, 229, 0.25);
 }
 
 .statJobs {
   --stat-accent: #0891b2;
   --stat-accent-bg: rgba(8, 145, 178, 0.1);
-  --stat-blob: rgba(8, 145, 178, 0.25);
 }
 
 .statCustomers {
   --stat-accent: #059669;
   --stat-accent-bg: rgba(5, 150, 105, 0.1);
-  --stat-blob: rgba(5, 150, 105, 0.25);
 }
 
+/* Soft ambient blob hidden — left-border accent replaces it */
 .statBlob {
-  filter: blur(12px);
-  background: radial-gradient(circle, var(--stat-blob) 0%, transparent 70%);
+  display: none;
 }
 
+/* Square icon container — hard corners + accent border */
 .statIcon {
   background: var(--stat-accent-bg);
   color: var(--stat-accent);
-  border-radius: 0.75rem;
-  padding: 0.625rem;
+  border-radius: 2px;                         /* Hard corners */
+  border: 1.5px solid var(--stat-accent);
+  padding: 0.5rem;
   margin-bottom: 0.75rem;
   display: inline-flex;
   align-items: center;
@@ -65,7 +127,7 @@
 .statBreakdown {
   margin-top: 0.625rem;
   padding-top: 0.625rem;
-  border-top: 1px solid color-mix(in srgb, var(--stat-accent) 18%, transparent);
+  border-top: 1.5px solid var(--border); /* Hard structural line */
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -75,7 +137,8 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.6875rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.625rem;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -83,17 +146,18 @@
   min-width: 0;
 }
 
+/* Square tick — replaces pill dot */
 .statBreakdownDot {
   width: 5px;
   height: 5px;
-  border-radius: 9999px;
+  border-radius: 0;
   background: var(--stat-accent);
   flex-shrink: 0;
-  opacity: 0.65;
+  opacity: 0.8;
 }
 
 .statBreakdownValue {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-strong);
   margin-right: 0.1rem;
 }
@@ -107,7 +171,7 @@
 .revenueStrip {
   margin-top: 0.625rem;
   padding-top: 0.625rem;
-  border-top: 1px solid color-mix(in srgb, var(--stat-accent) 18%, transparent);
+  border-top: 1.5px solid var(--border); /* Hard structural line */
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -122,17 +186,22 @@
 }
 
 .revenueLabel {
-  font-size: 0.6875rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
 .revenueValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--stat-accent);
-  tabular-nums: initial;
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
 .errorBanner {

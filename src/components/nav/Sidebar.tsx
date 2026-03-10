@@ -29,7 +29,7 @@ export function Sidebar() {
       <div className="px-5 py-5">
         <div className="flex items-center gap-2.5">
           <div
-            className={`flex h-7 w-7 items-center justify-center rounded-lg text-white text-xs font-bold ${styles.brandIcon}`}
+            className={`flex h-7 w-7 items-center justify-center text-white text-xs font-bold ${styles.brandIcon}`}
           >
             Q
           </div>
@@ -45,22 +45,19 @@ export function Sidebar() {
       <div className={`${styles.divider} ${styles.dividerInset}`} />
 
       {/* Nav links */}
-      <nav className="flex-1 px-3 pt-1 space-y-0.5">
+      <nav className={styles.navSection}>
+        <span className={styles.navSectionLabel} aria-hidden="true">Menu</span>
         {navLinks.map((l) => {
           const active = pathname.startsWith(l.href)
           return (
             <Link
               key={l.href}
               href={l.href}
-              className={`nav-item flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium ${active ? 'active' : ''}`}
+              aria-current={active ? 'page' : undefined}
+              className={`${styles.navLink} ${active ? styles.navLinkActive : ''}`}
             >
               {l.icon}
               {t.nav[l.labelKey]}
-              {active && (
-                <span
-                  className={`ml-auto h-1.5 w-1.5 rounded-full ${styles.activeIndicator}`}
-                />
-              )}
             </Link>
           )
         })}
@@ -72,7 +69,7 @@ export function Sidebar() {
         <LanguageSwitcher />
         <button
           onClick={handleSignOut}
-          className="nav-item flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium"
+          className={styles.navLink}
         >
           <svg
             className="w-5 h-5 shrink-0"

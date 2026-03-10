@@ -8,9 +8,9 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>{t.settings.title}</h1>
-        <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>{t.settings.title}</h1>
+        <p className={styles.pageSubtitle}>
           {t.settings.subtitle}
         </p>
       </div>

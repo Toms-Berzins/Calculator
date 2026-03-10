@@ -47,9 +47,9 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
   return (
     <>
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className={`text-base font-semibold ${styles.pageTitle}`}>{t.newQuote.calculator}</h2>
-          <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
+        <div className={styles.pageHeader}>
+          <h2 className={styles.pageTitle}>{t.newQuote.calculator}</h2>
+          <p className={styles.pageSubtitle}>
             {t.newQuote.calculatorHint}
           </p>
         </div>
@@ -57,7 +57,7 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
           type="button"
           onClick={onUndoRemoveConstant}
           disabled={!canUndoRemove}
-          className="btn-ghost inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium disabled:opacity-50"
+          className="btn-ghost inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium disabled:opacity-50"
         >
           <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
             <path d="M8.25 4.5 3.75 9l4.5 4.5v-3h3A3.75 3.75 0 0 1 15 14.25v1.25a.75.75 0 0 0 1.5 0v-1.25A5.25 5.25 0 0 0 11.25 9h-3v-4.5Z" />
@@ -79,7 +79,7 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
                   ? onCycleConstant(chip.key)
                   : onOpenConstantEditor(chip.key)
               }
-              className={`rounded-full px-4 py-2 text-sm ${styles.constantChipButton}`}
+              className={styles.constantChipButton}
             >
               {chip.label}: {chip.value}
             </button>

@@ -1,11 +1,10 @@
 .loginCard {
-  border-radius: 1rem;
+  background: var(--bg-surface);
+  border: 2px solid var(--nb-ink);
+  box-shadow: 4px 4px 0 var(--nb-ink);
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.07);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  border-radius: 0;
+  transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .brandIconContainer {
@@ -15,78 +14,139 @@
   width: 3rem;
   align-items: center;
   justify-content: center;
-  border-radius: 1rem;
-  color: white;
+  border: 1.5px solid var(--accent);
+  border-radius: 2px;
+  color: var(--accent);
   font-size: 1.25rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+  font-weight: 900;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: var(--accent-muted);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+
+.brandTitle {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.375rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: var(--text-strong);
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0.375rem;
 }
 
 .label {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-muted);
   margin-bottom: 0.375rem;
   display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .input {
   display: block;
   width: 100%;
-  border-radius: 0.75rem;
+  border-radius: 0;
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  color: white;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-strong);
+  background: var(--bg-surface);
+  border: 1.5px solid var(--nb-ink);
   outline: none;
+  transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1),
+              background 120ms cubic-bezier(0.25, 0, 0.6, 1),
+              border-color 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .input::placeholder {
-  opacity: 0.3;
+  color: var(--text-faint);
+  opacity: 1;
 }
 
-.inputFocus {
-  border: 1px solid rgba(99, 102, 241, 0.8);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.inputBlur {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
+.input:focus {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+  box-shadow: 3px 3px 0 var(--nb-ink);
 }
 
 .errorMessage {
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  background: rgba(190, 18, 60, 0.2);
-  border: 1px solid rgba(190, 18, 60, 0.35);
-  color: #fca5a5;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--status-rejected-bg);
+  border: 1.5px solid var(--status-rejected-text);
+  box-shadow: 2px 2px 0 var(--status-rejected-text);
+  color: var(--status-rejected-text);
+  border-radius: 0;
 }
 
+/* Matches .btn-primary from globals.css exactly */
 .submitButton {
+  position: relative;
   margin-top: 0.5rem;
   width: 100%;
-  border-radius: 0.75rem;
+  border-radius: 2px;
   padding: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: white;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  background: #1b1b1b;
+  border: 1.5px solid #000000;
+  box-shadow: 3px 3px 0 #000000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .submitButton:disabled {
-  opacity: 0.6;
-  box-shadow: none;
+  background: var(--bg-muted);
+  border-color: var(--border);
+  color: var(--text-faint);
+  box-shadow: 1px 1px 0 var(--border);
+  cursor: not-allowed;
 }
 
 .submitButton:not(:disabled):hover {
-  box-shadow: none;
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #000000;
+}
+
+.submitButton:not(:disabled):active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .submitButton {
+    background: #f5f5f5;
+    color: #1b1b1b;
+    border-color: #f5f5f5;
+    box-shadow: 3px 3px 0 rgba(255, 255, 255, 0.4);
+  }
+  .submitButton:not(:disabled):hover {
+    box-shadow: 5px 5px 0 rgba(255, 255, 255, 0.4);
+  }
+  .submitButton:not(:disabled):active {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
+  }
 }

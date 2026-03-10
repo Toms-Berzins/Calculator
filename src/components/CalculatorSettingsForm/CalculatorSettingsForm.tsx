@@ -46,7 +46,7 @@ function NumberField({ label, hint, value, step, suffix, onChange }: NumberField
           step={step}
           value={safeValue}
           onChange={(e) => onChange(Number(e.target.value))}
-          className={`input-field w-full rounded-lg px-3 py-2 text-sm ${suffix ? styles.inputWithSuffix : ''}`}
+          className={`input-field w-full px-3 py-2 text-sm ${suffix ? styles.inputWithSuffix : ''}`}
         />
         {suffix && <span className={styles.inputSuffix}>{suffix}</span>}
       </div>
@@ -125,7 +125,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`rounded-2xl p-5 ${styles.card}`}>
+    <form onSubmit={handleSubmit} className={`p-5 ${styles.card}`}>
       {/* Header row */}
       <div className={styles.formHeader}>
         <p className={`text-sm ${styles.label}`}>
@@ -200,7 +200,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
                         onChange={(e) =>
                           setDeprPrinterCost(Math.max(0, Number(e.target.value)))
                         }
-                        className={`input-field w-full rounded-lg px-3 py-1.5 text-xs ${styles.inputWithSuffix}`}
+                        className={`input-field w-full px-3 py-1.5 text-xs ${styles.inputWithSuffix}`}
                       />
                       <span className={styles.inputSuffix}>€</span>
                     </div>
@@ -218,7 +218,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
                         onChange={(e) =>
                           setDeprLifetimeHours(Math.max(1, Number(e.target.value)))
                         }
-                        className={`input-field w-full rounded-lg px-3 py-1.5 text-xs ${styles.inputWithSuffix}`}
+                        className={`input-field w-full px-3 py-1.5 text-xs ${styles.inputWithSuffix}`}
                       />
                       <span className={styles.inputSuffix}>h</span>
                     </div>
@@ -230,7 +230,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
                   </span>
                   <button
                     type="button"
-                    className={styles.deprApplyBtn}
+                    className="btn-primary px-3 py-2"
                     onClick={() => {
                       setNumber('machine_rate_per_hour', deprSuggestedRate)
                       setShowDeprHelper(false)
@@ -323,14 +323,14 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
         <button
           type="button"
           onClick={handleReset}
-          className={`rounded-xl px-4 py-3 text-sm font-medium ${styles.resetButton}`}
+          className={`px-4 py-3 ${styles.resetButton}`}
         >
           {t.settings.resetToDefaults}
         </button>
         <button
           type="submit"
           disabled={saving}
-          className={`btn-primary flex-1 rounded-xl py-3 text-sm font-semibold disabled:opacity-60 ${isDirty ? styles.dirtyButton : ''}`}
+          className={`btn-primary flex-1 py-3 disabled:opacity-60 ${isDirty ? styles.dirtyButton : ''}`}
         >
           {saving ? t.settings.saving : t.settings.saveConstants}
         </button>

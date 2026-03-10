@@ -152,11 +152,11 @@ export default async function DashboardPage() {
   return (
     <div>
       {/* Page header */}
-      <div className="mb-8">
-        <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
           {t.dashboard.title}
         </h1>
-        <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
+        <p className={styles.pageSubtitle}>
           {t.dashboard.subtitle}
         </p>
       </div>
@@ -177,12 +177,12 @@ export default async function DashboardPage() {
             key={s.label}
             href={s.href}
             aria-label={s.ariaLabel}
-            className={`card-interactive group relative overflow-hidden rounded-2xl p-5 ${styles.statCard} ${s.cardClass}`}
+            className={`card-interactive group relative ${styles.statCard} ${s.cardClass}`}
           >
             {/* Subtle ambient blob */}
             <div
               aria-hidden
-              className={`pointer-events-none absolute -right-4 -top-4 h-20 w-20 rounded-full opacity-40 ${styles.statBlob}`}
+              className={styles.statBlob}
             />
 
             <div className="relative">

@@ -1,28 +1,51 @@
 /* ── Create quote (collapsible) ─────────────────────────────────────────── */
 .createDetails {
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border: 1.5px solid var(--border);
+  border-radius: 2px; /* Hard industrial corners */
   background: var(--bg-surface);
   box-shadow: var(--shadow-card);
   overflow: hidden;
   margin-bottom: 1.5rem;
+  transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
+}
+
+.createDetails[open] {
+  box-shadow: var(--shadow-hover);
+  transform: translate(-1px, -1px); /* Lifts open like a panel being toggled */
 }
 
 .createSummary {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.875rem 1.125rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--accent-text);
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-strong);
   cursor: pointer;
   list-style: none;
-  transition: background 120ms;
+  background: linear-gradient(to bottom, var(--bg-surface), var(--bg-muted));
+  border-bottom: 1.5px solid transparent; /* collapses when closed */
+  transition: background 120ms cubic-bezier(0.25, 0, 0.6, 1);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.createDetails[open] > .createSummary {
+  border-bottom-color: var(--border); /* reveals divider when expanded */
+  background: var(--bg-muted);
 }
 
 .createSummary:hover {
   background: var(--bg-muted);
+}
+
+.createSummary:active {
+  background: var(--border-muted);
+  transform: translateY(1px);
 }
 
 .createSummary::-webkit-details-marker {
@@ -34,42 +57,96 @@
 }
 
 .createCard {
-  padding: 0 1.125rem 1rem;
-  border-top: 1px solid var(--border-muted);
+  padding: 0 1rem 1rem;
+  border-top: none; /* handled by summary border-bottom */
 }
 
 /* ── Page header ──────────────────────────────────────────────────────────── */
 .pageTitle {
   color: var(--text-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.375rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .pageHeader {
-  gap: 0.75rem;
-}
-
-.pageHeaderMeta {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.375rem;
-  margin-top: 0.4rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 2px solid var(--border);
 }
 
-.metaChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  border-radius: 9999px;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
+/* ── Page stats strip — replaces inline meta chips ── */
+.statsStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
-.metaAccepted { background: var(--status-accepted-bg); color: var(--status-accepted-text); }
-.metaSent     { background: var(--status-sent-bg);     color: var(--status-sent-text); }
-.metaDraft    { background: var(--status-draft-bg);    color: var(--status-draft-text); }
-.metaRejected { background: var(--status-rejected-bg); color: var(--status-rejected-text); }
+.statCard {
+  --stat-col: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  border: 2px solid var(--nb-ink);
+  border-radius: 0;
+  padding: 0.625rem 0.5rem;
+  background: var(--bg-surface);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  color: var(--stat-col);
+  transition: box-shadow 100ms ease, transform 100ms ease;
+}
+
+.statCard:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--nb-ink);
+}
+
+.statAccepted { --stat-col: var(--status-accepted-text); }
+.statSent     { --stat-col: var(--status-sent-text); }
+.statDraft    { --stat-col: var(--status-draft-text); }
+.statRejected { --stat-col: var(--status-rejected-text); }
+
+.statValue {
+  font-size: 1.375rem;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: -0.03em;
+  color: currentColor;
+}
+
+.statLabel {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: currentColor;
+  opacity: 0.65;
+}
+
+/* Dark mode: accent shadow per card type */
+@media (prefers-color-scheme: dark) {
+  .statAccepted { box-shadow: 3px 3px 0 var(--status-accepted-text); }
+  .statAccepted:hover { box-shadow: 5px 5px 0 var(--status-accepted-text); }
+  .statSent     { box-shadow: 3px 3px 0 var(--status-sent-text); }
+  .statSent:hover { box-shadow: 5px 5px 0 var(--status-sent-text); }
+  .statDraft    { box-shadow: 3px 3px 0 var(--status-draft-text); }
+  .statDraft:hover { box-shadow: 5px 5px 0 var(--status-draft-text); }
+  .statRejected { box-shadow: 3px 3px 0 var(--status-rejected-text); }
+  .statRejected:hover { box-shadow: 5px 5px 0 var(--status-rejected-text); }
+}
 
 .quoteCount {
   color: var(--text-muted);
@@ -82,25 +159,55 @@
 }
 
 .summaryCard {
+  --card-accent: #5e5e5e; /* default — overridden per variant below */
+
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--border);
-  border-radius: 1rem;
+  border: 2px solid var(--nb-ink);           /* Fixed ink — near-black light / ghost dark */
+  border-left: 4px solid var(--card-accent); /* Accent identity bar (replaces border-top) */
+  border-radius: 0;                          /* Sharp corners — full neubrutalism */
   padding: 0.875rem 1rem;
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  transition: box-shadow 100ms ease, transform 100ms ease;
+}
+
+.summaryCard:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--nb-ink);
+}
+
+.summaryCard:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--nb-ink);
 }
 
 .summaryCardAccepted {
+  --card-accent: #059669;
   background: var(--status-accepted-bg);
-  border-top-color: var(--status-accepted-text);
 }
 
 .summaryCardSent {
+  --card-accent: #3255e3;
   background: var(--status-sent-bg);
-  border-top-color: var(--status-sent-text);
 }
 
 .summaryCardDraft {
-  border-top-color: var(--status-draft-text);
+  --card-accent: #5e5e5e;
+}
+
+/* Dark mode: ghost border + accent-coloured shadow — same as dashboard stat cards */
+@media (prefers-color-scheme: dark) {
+  .summaryCard {
+    box-shadow: 3px 3px 0 var(--card-accent);
+  }
+  .summaryCard:hover {
+    box-shadow: 5px 5px 0 var(--card-accent);
+  }
+  .summaryCard:active {
+    box-shadow: 1px 1px 0 var(--card-accent);
+  }
+  .summaryCardAccepted { --card-accent: #66bb6a; }
+  .summaryCardSent     { --card-accent: #7591f4; }
+  .summaryCardDraft    { --card-accent: #a6a6a6; }
 }
 
 .summaryHeader {
@@ -111,33 +218,37 @@
   margin-bottom: 0.25rem;
 }
 
-/* Compact status pill shown in the card header */
+/* Compact status stamp shown in the card header */
 .summaryStatusBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  border-radius: 9999px;
-  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  padding: 0.15rem 0.45rem;
   font-size: 0.625rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .summaryLabel {
-  font-size: 0.6875rem;
-  font-weight: 600;
+  font-size: 0.5625rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   color: var(--text-faint);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .summaryValue {
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 900;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   color: var(--text-strong);
 }
 
@@ -151,36 +262,43 @@
 
 .summaryDivider {
   border: none;
-  border-top: 1px solid var(--border-muted);
+  border-top: 1.5px solid var(--nb-ink);
   margin: 0.5rem 0 0.375rem;
+  opacity: 0.15;
 }
 
 .summaryDescription {
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   line-height: 1.4;
   color: var(--text-muted);
 }
 
 .summaryDescriptionSub {
   margin-top: 0.2rem;
-  font-size: 0.6875rem;
+  font-size: 0.5625rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   line-height: 1.35;
   color: var(--text-faint);
-  font-style: italic;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 /* ── Empty state ────────────────────────────────────────────── */
 
 .emptyState {
   background: var(--bg-surface);
-  border: 1px dashed var(--border);
+  border: 1.5px dashed var(--border);
+  border-radius: 2px;
 }
 
 .emptyIconWrap {
   width: 3.25rem;
   height: 3.25rem;
-  border-radius: 1rem;
+  border-radius: 2px; /* Hard square */
+  border: 1.5px solid var(--border);
   background: var(--bg-muted);
   display: flex;
   align-items: center;
@@ -200,8 +318,9 @@
 
 .tableWrap {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
@@ -217,9 +336,10 @@
     align-items: center;
     padding: 0.625rem 1.25rem;
     background: var(--bg-muted);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1.5px solid var(--border);
     font-size: 0.6875rem;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--text-faint);
@@ -239,8 +359,9 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--border-muted);
+  border-left: 4px solid transparent;
   position: relative;
-  transition: background 120ms ease;
+  transition: background 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .tableRow:last-child {
@@ -252,10 +373,10 @@
 }
 
 /* Left accent strip + subtle background tint per status */
-.rowDraft    { border-left: 3px solid var(--status-draft-text); }
-.rowSent     { border-left: 3px solid var(--status-sent-text);     background: color-mix(in srgb, var(--status-sent-bg)     50%, transparent); }
-.rowAccepted { border-left: 3px solid var(--status-accepted-text); background: color-mix(in srgb, var(--status-accepted-bg) 50%, transparent); }
-.rowRejected { border-left: 3px solid var(--status-rejected-text); background: color-mix(in srgb, var(--status-rejected-bg) 50%, transparent); }
+.rowDraft    { border-left-color: var(--status-draft-text); }
+.rowSent     { border-left-color: var(--status-sent-text);     background: color-mix(in srgb, var(--status-sent-bg)     50%, transparent); }
+.rowAccepted { border-left-color: var(--status-accepted-text); background: color-mix(in srgb, var(--status-accepted-bg) 50%, transparent); }
+.rowRejected { border-left-color: var(--status-rejected-text); background: color-mix(in srgb, var(--status-rejected-bg) 50%, transparent); }
 
 /* The clickable area stretches across all columns */
 .rowLink {
@@ -325,10 +446,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  border-radius: 9999px;
-  padding: 0.3rem 0.65rem;
-  font-size: 0.75rem;
-  font-weight: 600;
+  border-radius: 2px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -337,6 +461,7 @@
   height: 6px;
   border-radius: 9999px;
   flex-shrink: 0;
+  background: currentColor;
 }
 
 .statusDraft    { background: var(--status-draft-bg);    color: var(--status-draft-text); }
@@ -424,13 +549,21 @@
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border-radius: 0.5rem;
-  color: var(--text-faint);
-  transition: background 120ms ease, color 120ms ease;
+  border-radius: 2px;
+  border: 1.5px solid var(--status-rejected-text);
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-text);
+  box-shadow: 2px 2px 0 var(--status-rejected-text);
+  transition: all 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
 
 .deleteBtn:hover {
-  background: var(--status-rejected-bg);
-  color: var(--status-rejected-text);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--status-rejected-text);
+}
+
+.deleteBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--status-rejected-text);
 }
 
