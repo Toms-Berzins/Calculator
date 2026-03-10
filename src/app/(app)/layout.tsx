@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!user) redirect('/login')
 
   return (
-    <div className="flex h-screen overflow-hidden bg-(--bg-base)">
+    <div className="flex min-h-screen h-dvh overflow-hidden bg-(--bg-base)">
       {/* Desktop sidebar */}
       <Sidebar />
 

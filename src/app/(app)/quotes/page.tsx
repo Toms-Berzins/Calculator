@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { deleteDraftQuote } from '@/lib/actions/quotes'
 import { formatCurrency } from '@/lib/utils/format'
 import styles from './quotes.module.css'
 
@@ -77,6 +78,7 @@ export default async function QuotesPage() {
       <ul className="space-y-2.5">
         {quotes?.map((q) => {
           const st = STATUS_STYLES[q.status ?? 'draft'] ?? STATUS_STYLES.draft
+          const isDraft = (q.status ?? 'draft') === 'draft'
           const jobTitle =
             (q.jobs as { title: string } | null)?.title ?? 'Untitled job'
           const customer =
@@ -84,12 +86,16 @@ export default async function QuotesPage() {
               ?.customers?.company ??
             (q.jobs as { customers: { name: string } | null } | null)?.customers?.name ??
             '—'
+          const deleteAction = deleteDraftQuote.bind(null, q.id)
 
           return (
-            <li key={q.id}>
+            <li
+              key={q.id}
+              className="card-interactive flex items-center gap-3 rounded-2xl px-5 py-4"
+            >
               <Link
                 href={`/quotes/${q.id}`}
-                className="card-interactive group flex items-center justify-between rounded-2xl px-5 py-4"
+                className="group flex min-w-0 flex-1 items-center justify-between"
               >
                 <div className="min-w-0">
                   <p
@@ -129,6 +135,18 @@ export default async function QuotesPage() {
                   </svg>
                 </div>
               </Link>
+
+              {isDraft && (
+                <form action={deleteAction} className="shrink-0">
+                  <button
+                    type="submit"
+                    className={styles.deleteDraftButton}
+                    aria-label={`Delete draft quote for ${jobTitle}`}
+                  >
+                    Delete
+                  </button>
+                </form>
+              )}
             </li>
           )
         })}

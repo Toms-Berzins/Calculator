@@ -1,7 +1,100 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/actions/jobs'
+import { redirect } from 'next/navigation'
+import { DeleteCustomerButton } from '@/components/customers/DeleteCustomerButton'
 import styles from './customers.module.css'
 
-export default async function CustomersPage() {
+interface CustomersPageProps {
+  searchParams?: Promise<{ status?: string; message?: string }>
+}
+
+function getErrorMessage(caught: unknown) {
+  if (caught instanceof Error && caught.message) return caught.message
+  return 'Something went wrong'
+}
+
+function readField(formData: FormData, key: string) {
+  const value = formData.get(key)
+  return typeof value === 'string' ? value : ''
+}
+
+function redirectWithStatus(status: 'success' | 'error', message: string) {
+  redirect(`/customers?status=${status}&message=${encodeURIComponent(message)}`)
+}
+
+function getCustomerFormPayload(formData: FormData) {
+  return {
+    id: readField(formData, 'id'),
+    name: readField(formData, 'name').trim(),
+    company: readField(formData, 'company'),
+    email: readField(formData, 'email'),
+    phone: readField(formData, 'phone'),
+    password: readField(formData, 'password'),
+  }
+}
+
+function redirectFromError(caught: unknown) {
+  redirectWithStatus('error', getErrorMessage(caught))
+}
+
+export default async function CustomersPage({ searchParams }: CustomersPageProps) {
+  const resolvedSearchParams = await searchParams
+  const status = resolvedSearchParams?.status
+  const message = resolvedSearchParams?.message
+
+  async function handleCreateCustomer(formData: FormData) {
+    'use server'
+
+    const { name, company, email, phone } = getCustomerFormPayload(formData)
+
+    if (!name) {
+      redirectWithStatus('error', 'Customer name is required')
+    }
+
+    try {
+      await createCustomer({ name, company, email, phone })
+    } catch (caught) {
+      redirectFromError(caught)
+    }
+
+    redirectWithStatus('success', 'Customer created')
+  }
+
+  async function handleUpdateCustomer(formData: FormData) {
+    'use server'
+
+    const { id, name, company, email, phone } = getCustomerFormPayload(formData)
+
+    if (!id || !name) {
+      redirectWithStatus('error', 'Customer name is required')
+    }
+
+    try {
+      await updateCustomer({ id, name, company, email, phone })
+    } catch (caught) {
+      redirectFromError(caught)
+    }
+
+    redirectWithStatus('success', 'Customer updated')
+  }
+
+  async function handleDeleteCustomer(formData: FormData) {
+    'use server'
+
+    const { id, password } = getCustomerFormPayload(formData)
+    if (!id) {
+      redirectWithStatus('error', 'Missing customer id')
+    }
+
+    try {
+      await deleteCustomer(id, password)
+    } catch (caught) {
+      redirectFromError(caught)
+    }
+
+    redirectWithStatus('success', 'Customer deleted')
+  }
+
   const supabase = await createServerSupabaseClient()
 
   const { data: customers } = await supabase
@@ -19,6 +112,62 @@ export default async function CustomersPage() {
           {customers?.length ?? 0} total
         </p>
       </div>
+
+      {message && (
+        <p
+          className={`${styles.feedback} ${status === 'error' ? styles.feedbackError : styles.feedbackSuccess}`}
+        >
+          {message}
+        </p>
+      )}
+
+      <section className={`mb-6 rounded-2xl p-4 ${styles.createCard}`}>
+        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>Add customer</h2>
+        <form action={handleCreateCustomer} className={styles.customerForm}>
+          <div className={styles.formGrid}>
+            <label className="text-sm">
+              <span className={styles.fieldLabel}>Name</span>
+              <input
+                name="name"
+                required
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                placeholder="Customer name"
+              />
+            </label>
+            <label className="text-sm">
+              <span className={styles.fieldLabel}>Company</span>
+              <input
+                name="company"
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                placeholder="Company (optional)"
+              />
+            </label>
+            <label className="text-sm">
+              <span className={styles.fieldLabel}>Email</span>
+              <input
+                name="email"
+                type="email"
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                placeholder="email@example.com"
+              />
+            </label>
+            <label className="text-sm">
+              <span className={styles.fieldLabel}>Phone</span>
+              <input
+                name="phone"
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                placeholder="+355..."
+              />
+            </label>
+          </div>
+
+          <div className={styles.actionRow}>
+            <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">
+              Create customer
+            </button>
+          </div>
+        </form>
+      </section>
 
       {!customers?.length && (
         <div
@@ -105,6 +254,61 @@ export default async function CustomersPage() {
                 )}
               </div>
             )}
+
+            <div className={styles.customerActions}>
+              <details className={styles.editDetails}>
+                <summary className={styles.editSummary}>Edit</summary>
+
+                <form action={handleUpdateCustomer} className={styles.customerForm}>
+                  <input type="hidden" name="id" value={c.id} />
+
+                  <div className={styles.formGrid}>
+                    <label className="text-sm">
+                      <span className={styles.fieldLabel}>Name</span>
+                      <input
+                        name="name"
+                        required
+                        defaultValue={c.name}
+                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      <span className={styles.fieldLabel}>Company</span>
+                      <input
+                        name="company"
+                        defaultValue={c.company ?? ''}
+                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      <span className={styles.fieldLabel}>Email</span>
+                      <input
+                        name="email"
+                        type="email"
+                        defaultValue={c.email ?? ''}
+                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      <span className={styles.fieldLabel}>Phone</span>
+                      <input
+                        name="phone"
+                        defaultValue={c.phone ?? ''}
+                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                      />
+                    </label>
+                  </div>
+
+                  <div className={styles.actionRow}>
+                    <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">
+                      Save changes
+                    </button>
+                  </div>
+                </form>
+              </details>
+
+              <DeleteCustomerButton customerId={c.id} action={handleDeleteCustomer} />
+            </div>
           </li>
         ))}
       </ul>

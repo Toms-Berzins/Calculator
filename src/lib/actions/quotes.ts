@@ -90,3 +90,32 @@ export async function updateQuoteStatus(quoteId: string, status: QuoteStatus) {
   revalidatePath(`/quotes/${quoteId}`)
   revalidatePath('/quotes')
 }
+
+export async function deleteDraftQuote(quoteId: string) {
+  const supabase = await createServerSupabaseClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) throw new Error('Unauthenticated')
+
+  const { data: quote, error: findError } = await supabase
+    .from('quotes')
+    .select('id, status')
+    .eq('id', quoteId)
+    .single()
+
+  if (findError || !quote) {
+    throw new Error(findError?.message ?? 'Quote not found')
+  }
+
+  if (quote.status !== 'draft') {
+    throw new Error('Only draft quotes can be deleted')
+  }
+
+  const { error: deleteError } = await supabase.from('quotes').delete().eq('id', quoteId)
+
+  if (deleteError) throw new Error(deleteError.message)
+
+  revalidatePath('/quotes')
+}

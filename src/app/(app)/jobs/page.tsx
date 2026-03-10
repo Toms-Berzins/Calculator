@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createJob, updateJob, deleteJob } from '@/lib/actions/jobs'
+import { DeleteJobButton } from '@/components/jobs/DeleteJobButton'
+import { redirect } from 'next/navigation'
 import styles from './jobs.module.css'
 
 const JOB_STATUS: Record<string, { label: string; className: string }> = {
@@ -9,13 +12,113 @@ const JOB_STATUS: Record<string, { label: string; className: string }> = {
   archived: { label: 'Archived', className: styles.statusArchived },
 }
 
-export default async function JobsPage() {
+const JOB_STATUS_VALUES = ['open', 'won', 'lost', 'archived'] as const
+
+interface JobsPageProps {
+  searchParams?: Promise<{ status?: string; message?: string }>
+}
+
+function getErrorMessage(caught: unknown) {
+  if (caught instanceof Error && caught.message) return caught.message
+  return 'Something went wrong'
+}
+
+function readField(formData: FormData, key: string) {
+  const value = formData.get(key)
+  return typeof value === 'string' ? value : ''
+}
+
+function redirectWithStatus(status: 'success' | 'error', message: string) {
+  redirect(`/jobs?status=${status}&message=${encodeURIComponent(message)}`)
+}
+
+function redirectFromError(caught: unknown) {
+  redirectWithStatus('error', getErrorMessage(caught))
+}
+
+function getJobStatus(value: string) {
+  if ((JOB_STATUS_VALUES as readonly string[]).includes(value)) {
+    return value as (typeof JOB_STATUS_VALUES)[number]
+  }
+  return 'open'
+}
+
+export default async function JobsPage({ searchParams }: JobsPageProps) {
+  const resolvedSearchParams = await searchParams
+  const status = resolvedSearchParams?.status
+  const message = resolvedSearchParams?.message
+
+  async function handleCreateJob(formData: FormData) {
+    'use server'
+
+    const title = readField(formData, 'title').trim()
+    const customerId = readField(formData, 'customerId')
+    const description = readField(formData, 'description')
+
+    if (!title || !customerId) {
+      redirectWithStatus('error', 'Job title and customer are required')
+    }
+
+    try {
+      await createJob({ title, description, customerId })
+    } catch (caught) {
+      redirectFromError(caught)
+    }
+
+    redirectWithStatus('success', 'Job created')
+  }
+
+  async function handleUpdateJob(formData: FormData) {
+    'use server'
+
+    const id = readField(formData, 'id')
+    const title = readField(formData, 'title').trim()
+    const customerId = readField(formData, 'customerId')
+    const description = readField(formData, 'description')
+    const statusValue = getJobStatus(readField(formData, 'status'))
+
+    if (!id || !title || !customerId) {
+      redirectWithStatus('error', 'Job title and customer are required')
+    }
+
+    try {
+      await updateJob({ id, title, customerId, description, status: statusValue })
+    } catch (caught) {
+      redirectFromError(caught)
+    }
+
+    redirectWithStatus('success', 'Job updated')
+  }
+
+  async function handleDeleteJob(formData: FormData) {
+    'use server'
+
+    const id = readField(formData, 'id')
+    const password = readField(formData, 'password')
+    if (!id) {
+      redirectWithStatus('error', 'Missing job id')
+    }
+
+    try {
+      await deleteJob(id, password)
+    } catch (caught) {
+      redirectFromError(caught)
+    }
+
+    redirectWithStatus('success', 'Job deleted')
+  }
+
   const supabase = await createServerSupabaseClient()
 
   const { data: jobs } = await supabase
     .from('jobs')
-    .select('id, title, description, status, created_at, customers ( name, company )')
+    .select('id, title, description, status, customer_id, created_at, customers ( name, company )')
     .order('created_at', { ascending: false })
+
+  const { data: customers } = await supabase
+    .from('customers')
+    .select('id, name, company')
+    .order('name')
 
   return (
     <div>
@@ -27,6 +130,59 @@ export default async function JobsPage() {
           {jobs?.length ?? 0} total
         </p>
       </div>
+
+      {message && (
+        <p className={`${styles.feedback} ${status === 'error' ? styles.feedbackError : styles.feedbackSuccess}`}>
+          {message}
+        </p>
+      )}
+
+      <section className={`mb-6 rounded-2xl p-4 ${styles.createCard}`}>
+        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>Add job</h2>
+        <form action={handleCreateJob} className={styles.jobForm}>
+          <div className={styles.formGrid}>
+            <label className="text-sm">
+              <span className={styles.fieldLabel}>Title</span>
+              <input
+                name="title"
+                required
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                placeholder="Job title"
+              />
+            </label>
+            <label className="text-sm">
+              <span className={styles.fieldLabel}>Customer</span>
+              <select
+                name="customerId"
+                required
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                defaultValue=""
+              >
+                <option value="" disabled>Select customer…</option>
+                {customers?.map((customer) => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.company ?? customer.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-sm md:col-span-2">
+              <span className={styles.fieldLabel}>Description</span>
+              <textarea
+                name="description"
+                rows={2}
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                placeholder="Optional description"
+              />
+            </label>
+          </div>
+          <div className={styles.actionRow}>
+            <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">
+              Create job
+            </button>
+          </div>
+        </form>
+      </section>
 
       {!jobs?.length && (
         <div
@@ -122,6 +278,74 @@ export default async function JobsPage() {
                   </svg>
                   {isOpenJob ? 'Continue job' : 'Create quote'}
                 </Link>
+              </div>
+
+              <div className={styles.jobActions}>
+                <details className={styles.editDetails}>
+                  <summary className={styles.editSummary}>Edit</summary>
+
+                  <form action={handleUpdateJob} className={styles.jobForm}>
+                    <input type="hidden" name="id" value={j.id} />
+
+                    <div className={styles.formGrid}>
+                      <label className="text-sm">
+                        <span className={styles.fieldLabel}>Title</span>
+                        <input
+                          name="title"
+                          required
+                          defaultValue={j.title}
+                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                        />
+                      </label>
+                      <label className="text-sm">
+                        <span className={styles.fieldLabel}>Customer</span>
+                        <select
+                          name="customerId"
+                          required
+                          defaultValue={j.customer_id}
+                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                        >
+                          {customers?.map((customer) => (
+                            <option key={customer.id} value={customer.id}>
+                              {customer.company ?? customer.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="text-sm">
+                        <span className={styles.fieldLabel}>Status</span>
+                        <select
+                          name="status"
+                          defaultValue={j.status ?? 'open'}
+                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                        >
+                          {JOB_STATUS_VALUES.map((value) => (
+                            <option key={value} value={value}>
+                              {value.charAt(0).toUpperCase() + value.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="text-sm md:col-span-2">
+                        <span className={styles.fieldLabel}>Description</span>
+                        <textarea
+                          name="description"
+                          rows={2}
+                          defaultValue={j.description ?? ''}
+                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                        />
+                      </label>
+                    </div>
+
+                    <div className={styles.actionRow}>
+                      <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">
+                        Save changes
+                      </button>
+                    </div>
+                  </form>
+                </details>
+
+                <DeleteJobButton jobId={j.id} action={handleDeleteJob} />
               </div>
             </li>
           )
