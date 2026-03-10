@@ -12,12 +12,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!user) redirect('/login')
 
   return (
-    <div className="flex min-h-screen h-dvh overflow-hidden bg-(--bg-base)">
+    <div className="flex min-h-screen h-dvh overflow-hidden">
       {/* Desktop sidebar */}
       <Sidebar />
 
       {/* Main content — scrollable */}
-      <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+      <main className="grid-bg flex-1 overflow-y-auto pb-20 md:pb-0">
         <div className="mx-auto max-w-4xl p-4 md:p-8">{children}</div>
       </main>
 
