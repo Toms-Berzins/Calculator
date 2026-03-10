@@ -9,7 +9,7 @@ import styles from './jobs.module.css'
 const JOB_STATUS_VALUES = ['open', 'won', 'lost', 'archived'] as const
 
 interface JobsPageProps {
-  searchParams?: Promise<{ status?: string; message?: string; jobStatus?: string }>
+  searchParams?: Promise<{ status?: string; message?: string; jobStatus?: string; q?: string; sort?: string; new?: string }>
 }
 
 function getErrorMessage(caught: unknown) {
@@ -46,6 +46,13 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     (JOB_STATUS_VALUES as readonly string[]).includes(resolvedSearchParams.jobStatus)
       ? (resolvedSearchParams.jobStatus as (typeof JOB_STATUS_VALUES)[number])
       : null
+  const newJobOpen = resolvedSearchParams?.new === '1'
+  const searchQuery = (resolvedSearchParams?.q ?? '').trim().toLowerCase()
+  const sortParam = (['newest', 'oldest', 'title'] as const).includes(
+    resolvedSearchParams?.sort as 'newest' | 'oldest' | 'title'
+  )
+    ? (resolvedSearchParams!.sort as 'newest' | 'oldest' | 'title')
+    : 'newest'
 
   async function handleCreateJob(formData: FormData) {
     'use server'
@@ -120,7 +127,9 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
   const { data: jobs } = await supabase
     .from('jobs')
     .select('id, title, description, status, customer_id, created_at, customers ( name, company )')
-    .order('created_at', { ascending: false })
+    .order(sortParam === 'title' ? 'title' : 'created_at', {
+      ascending: sortParam === 'oldest' || sortParam === 'title',
+    })
 
   const { data: customers } = await supabase
     .from('customers')
@@ -134,23 +143,51 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     archived: jobs?.filter((j) => j.status === 'archived').length ?? 0,
   }
 
-  const visibleJobs =
-    selectedJobStatus === null
-      ? jobs
-      : jobs?.filter((j) => (j.status ?? 'open') === selectedJobStatus)
+  const visibleJobs = jobs?.filter((j) => {
+    const matchesStatus = selectedJobStatus === null || (j.status ?? 'open') === selectedJobStatus
+    if (!matchesStatus) return false
+    if (!searchQuery) return true
+    const customerName =
+      (j.customers as { company: string; name: string } | null)?.company ??
+      (j.customers as { name: string } | null)?.name ??
+      ''
+    return (
+      j.title.toLowerCase().includes(searchQuery) ||
+      customerName.toLowerCase().includes(searchQuery) ||
+      (j.description ?? '').toLowerCase().includes(searchQuery)
+    )
+  })
+
+  function buildHref(overrides: Partial<{
+    jobStatus: string | null
+    sort: string
+    q: string
+    new: string
+  }> = {}) {
+    const next = new URLSearchParams()
+    if (status) next.set('status', status)
+    if (message) next.set('message', message)
+    const q = overrides.q !== undefined ? overrides.q : searchQuery
+    if (q) next.set('q', q)
+    const sort = overrides.sort !== undefined ? overrides.sort : sortParam
+    if (sort !== 'newest') next.set('sort', sort)
+    const js = overrides.jobStatus !== undefined ? overrides.jobStatus : selectedJobStatus
+    if (js) next.set('jobStatus', js)
+    if (overrides.new) next.set('new', overrides.new)
+    const query = next.toString()
+    return query ? `/jobs?${query}` : '/jobs'
+  }
 
   function getStatusFilterHref(jobStatus: (typeof JOB_STATUS_VALUES)[number]) {
-    const nextParams = new URLSearchParams()
+    return buildHref({ jobStatus: selectedJobStatus === jobStatus ? null : jobStatus })
+  }
 
-    if (status) nextParams.set('status', status)
-    if (message) nextParams.set('message', message)
+  function getAllHref() {
+    return buildHref({ jobStatus: null })
+  }
 
-    if (selectedJobStatus !== jobStatus) {
-      nextParams.set('jobStatus', jobStatus)
-    }
-
-    const query = nextParams.toString()
-    return query ? `/jobs?${query}` : '/jobs'
+  function getSortHref(sort: 'newest' | 'oldest' | 'title') {
+    return buildHref({ sort })
   }
 
   return (
@@ -158,10 +195,8 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
 
       {/* ── Header ── */}
       <div className={styles.pageHeader}>
-        <div>
-          <h1 className={styles.pageTitle}>{t.jobs.title}</h1>
-          <p className={styles.pageSubtitle}>{t.jobs.total(jobs?.length ?? 0)}</p>
-        </div>
+        <h1 className={styles.pageTitle}>{t.jobs.title}</h1>
+        <p className={styles.pageSubtitle}>{t.jobs.total(jobs?.length ?? 0)}</p>
       </div>
 
       {message && (
@@ -173,6 +208,13 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
       {/* ── Stats strip ── */}
       {!!jobs?.length && (
         <div className={styles.statsStrip}>
+          <Link
+            href={getAllHref()}
+            className={`${styles.statCard} ${styles.statCardLink} ${styles.statAll} ${selectedJobStatus === null && !searchQuery ? styles.statCardActive : ''}`}
+          >
+            <span className={styles.statValue}>{jobs.length}</span>
+            <span className={styles.statLabel}>{t.jobs.allJobs}</span>
+          </Link>
           {([
             { key: 'open',     cnt: statusCounts.open,     cls: styles.statOpen,     label: t.jobs.statusValues.open },
             { key: 'won',      cnt: statusCounts.won,      cls: styles.statWon,      label: t.jobs.statusValues.won },
@@ -191,8 +233,45 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         </div>
       )}
 
+      {/* ── Search + Sort controls ── */}
+      {!!jobs?.length && (
+        <div className={styles.controlsRow}>
+          <form method="get" action="/jobs" className={styles.searchForm}>
+            {selectedJobStatus && <input type="hidden" name="jobStatus" value={selectedJobStatus} />}
+            {sortParam !== 'newest' && <input type="hidden" name="sort" value={sortParam} />}
+            <div className={styles.searchInputWrap}>
+              <svg className={styles.searchIcon} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+              </svg>
+              <input
+                type="search"
+                name="q"
+                defaultValue={resolvedSearchParams?.q ?? ''}
+                placeholder={t.jobs.searchPlaceholder}
+                className={styles.searchInput}
+              />
+            </div>
+          </form>
+          <div className={styles.sortGroup}>
+            {([
+              { key: 'newest', label: t.jobs.sortNewest },
+              { key: 'oldest', label: t.jobs.sortOldest },
+              { key: 'title',  label: t.jobs.sortByTitle },
+            ] as const).map(({ key, label }) => (
+              <Link
+                key={key}
+                href={getSortHref(key)}
+                className={`${styles.sortBtn} ${sortParam === key ? styles.sortBtnActive : ''}`}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ── Add job (collapsible) ── */}
-      <details className={styles.createDetails}>
+      <details className={styles.createDetails} {...(newJobOpen ? { open: true } : {})}>
         <summary className={styles.createSummary}>
           <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -237,6 +316,19 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         </div>
       )}
 
+      {/* ── Filtered / search empty state ── */}
+      {!!jobs?.length && !visibleJobs?.length && (
+        <div className={`flex flex-col items-center justify-center rounded-2xl py-14 text-center ${styles.emptyCard}`}>
+          <svg className={`mb-3 w-10 h-10 ${styles.emptyIcon}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+          </svg>
+          <p className={`text-sm font-medium ${styles.emptyText}`}>{t.jobs.noJobsFiltered}</p>
+          <Link href="/jobs" className={`mt-3 text-sm font-semibold ${styles.clearFiltersLink}`}>
+            {t.jobs.clearFilters}
+          </Link>
+        </div>
+      )}
+
       {/* ── Jobs table ── */}
       {!!visibleJobs?.length && (
         <div className={styles.tableWrap}>
@@ -249,6 +341,17 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             const isOpenJob = (j.status ?? 'open') === 'open'
             const sk = j.status ?? 'open'
             const rowClass = styles[`row${sk.charAt(0).toUpperCase()}${sk.slice(1)}` as keyof typeof styles]
+            const dateStr = new Intl.DateTimeFormat('en-GB', {
+              day: 'numeric', month: 'short', year: 'numeric',
+            }).format(new Date(j.created_at))
+            const deleteLabels = {
+              trigger: t.jobs.deleteTrigger,
+              modalTitle: t.jobs.confirmDelete,
+              modalDesc: t.jobs.confirmDeleteDesc,
+              passwordLabel: t.jobs.passwordLabel,
+              cancel: t.jobs.cancelLabel,
+              confirm: t.jobs.deleteConfirm,
+            }
 
             return (
               <div key={j.id} className={`${styles.tableRow} ${rowClass ?? ''}`}>
@@ -263,6 +366,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                     )}
                     <span className={styles.rowCustomer}>{customer}</span>
                     {j.description && <span className={styles.rowDesc}>{j.description}</span>}
+                    <span className={styles.rowDate}>{dateStr}</span>
                   </div>
 
                   <span className={`${styles.statusBadge} ${st.badgeClass}`}>
@@ -277,7 +381,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                       </svg>
                       {isOpenJob ? t.jobs.continueJob : t.jobs.createQuote}
                     </Link>
-                    <DeleteJobButton jobId={j.id} action={handleDeleteJob} />
+                    <DeleteJobButton jobId={j.id} action={handleDeleteJob} labels={deleteLabels} />
                     {/* Edit toggle — panel is a full-width sibling below, shown via CSS :has() */}
                     <details className={styles.editDetails}>
                       <summary className={styles.editSummary}>

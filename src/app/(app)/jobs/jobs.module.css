@@ -7,9 +7,8 @@
 
 .pageHeader {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.125rem;
 }
 
 .pageTitle {
@@ -48,8 +47,14 @@
 /* ── Stats strip ─────────────────────────────────────────────────────────── */
 .statsStrip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+  .statsStrip {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 
 .statCard {
@@ -94,10 +99,99 @@
   text-transform: uppercase;
 }
 
+.statAll      { color: var(--text-muted); }
 .statOpen     { color: var(--status-accepted-text); }
 .statWon      { color: var(--status-sent-text); }
 .statLost     { color: var(--status-rejected-text); }
 .statArchived { color: var(--status-draft-text); }
+
+/* ── Search + Sort controls ──────────────────────────────────────────────── */
+.controlsRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.searchForm {
+  flex: 1;
+  min-width: 0;
+}
+
+.searchInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.625rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--text-faint);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem 0.5rem 2.125rem;
+  font-size: 0.875rem;
+  background: var(--bg-surface);
+  color: var(--text-strong);
+  outline: none;
+  transition: border-color 120ms;
+}
+
+.searchInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.searchInput::placeholder {
+  color: var(--text-faint);
+}
+
+/* native search cancel button */
+.searchInput::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.sortGroup {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.sortBtn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  padding: 0.375rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 120ms, border-color 120ms, background 120ms;
+}
+
+.sortBtn:hover {
+  color: var(--text-strong);
+  border-color: var(--border-muted);
+}
+
+.sortBtnActive {
+  color: var(--accent-text);
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+
 
 /* ── Create job (collapsible) ────────────────────────────────────────────── */
 .createDetails {
@@ -260,6 +354,23 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   margin-top: 0.125rem;
+}
+
+.rowDate {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin-top: 0.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Clear-filters link ──────────────────────────────────────────────────── */
+.clearFiltersLink {
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
+.clearFiltersLink:hover {
+  text-decoration: underline;
 }
 
 /* ── Status badge ────────────────────────────────────────────────────────── */

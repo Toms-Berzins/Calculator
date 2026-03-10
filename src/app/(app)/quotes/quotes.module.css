@@ -1,3 +1,44 @@
+/* ── Create quote (collapsible) ─────────────────────────────────────────── */
+.createDetails {
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.createSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-text);
+  cursor: pointer;
+  list-style: none;
+  transition: background 120ms;
+}
+
+.createSummary:hover {
+  background: var(--bg-muted);
+}
+
+.createSummary::-webkit-details-marker {
+  display: none;
+}
+
+.createSummary::marker {
+  content: '';
+}
+
+.createCard {
+  padding: 0 1.125rem 1rem;
+  border-top: 1px solid var(--border-muted);
+}
+
+/* ── Page header ──────────────────────────────────────────────────────────── */
 .pageTitle {
   color: var(--text-strong);
 }

@@ -3,6 +3,9 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { deleteDraftQuote } from '@/lib/actions/quotes'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { getDict } from '@/i18n/server'
+import { NewQuoteForm } from '@/components/NewQuoteForm/NewQuoteForm'
+import { getCalculatorSettings } from '@/lib/actions/calculatorSettings'
+import { DEFAULT_CALCULATOR_SETTINGS } from '@/lib/calculatorSettings'
 import styles from './quotes.module.css'
 
 export default async function QuotesPage() {
@@ -16,13 +19,25 @@ export default async function QuotesPage() {
     rejected: { rowClass: styles.rowRejected, badgeClass: styles.statusRejected, dotClass: styles.dotRejected, label: t.quotes.status.rejected, hint: t.quotes.statusHint.rejected, amountClass: styles.amountRejected },
   }
 
-  const { data: quotes } = await supabase
-    .from('quotes')
-    .select(`
-      id, status, total, created_at,
-      jobs ( title, customers ( name, company ) )
-    `)
-    .order('created_at', { ascending: false })
+  const [{ data: quotes }, { data: jobs }, { data: customers }, calculatorSettings] = await Promise.all([
+    supabase
+      .from('quotes')
+      .select(`
+        id, status, total, created_at,
+        jobs ( title, customers ( name, company ) )
+      `)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('jobs')
+      .select('id, title, customers ( name, company )')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('customers')
+      .select('id, name, company')
+      .order('name'),
+    getCalculatorSettings().catch(() => ({ values: DEFAULT_CALCULATOR_SETTINGS, updatedAt: null })),
+  ])
 
   const all = quotes ?? []
   const acceptedValue = all.filter((q) => q.status === 'accepted').reduce((s, q) => s + (q.total ?? 0), 0)
@@ -73,15 +88,6 @@ export default async function QuotesPage() {
             </p>
           )}
         </div>
-        <Link
-          href="/quotes/new"
-          className="btn-primary flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-          </svg>
-          {t.quotes.new}
-        </Link>
       </div>
 
       {/* ── Summary strip ── */}
@@ -136,6 +142,23 @@ export default async function QuotesPage() {
           </div>
         </div>
       )}
+
+      {/* ── New quote (collapsible) ── */}
+      <details className={styles.createDetails}>
+        <summary className={styles.createSummary}>
+          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          {t.quotes.new}
+        </summary>
+        <div className={styles.createCard}>
+          <NewQuoteForm
+            jobs={jobs ?? []}
+            customers={customers ?? []}
+            calculatorDefaults={calculatorSettings.values}
+          />
+        </div>
+      </details>
 
       {/* ── Empty state ── */}
       {!all.length && (

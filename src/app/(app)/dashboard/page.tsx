@@ -13,7 +13,7 @@ export default async function DashboardPage() {
     supabase.from('customers').select('id', { count: 'exact', head: true }),
     supabase
       .from('customers')
-      .select('name, company')
+      .select('id, name, company')
       .order('created_at', { ascending: false })
       .limit(3),
   ])
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
       detail: recentCustomers.length > 0 ? (
         <div className={styles.statBreakdown}>
           {recentCustomers.map((c) => (
-            <span key={c.name} className={styles.statBreakdownItem}>
+            <span key={c.id} className={styles.statBreakdownItem}>
               <span className={styles.statBreakdownDot} aria-hidden />
               {c.company ?? c.name}
             </span>
