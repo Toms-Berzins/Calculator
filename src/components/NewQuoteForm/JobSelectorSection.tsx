@@ -129,27 +129,41 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
 
   return (
     <div className="mb-6">
-      <label className={`mb-1.5 block text-sm font-medium ${styles.jobLabel}`}>
-        {t.newQuote.job}
-      </label>
-      <select
-        required
-        value={selectedJobId}
-        onChange={(e) => handleSelectJob(e.target.value)}
-        aria-label={t.newQuote.selectJob}
-        className="input-field w-full rounded-xl px-3 py-3 text-sm"
-      >
-        <option value="">{t.newQuote.selectJob}</option>
-        {jobOptions.map((job) => (
-          <option key={job.id} value={job.id}>
-            {job.title} — {job.customers?.company ?? job.customers?.name ?? '?'}
-          </option>
-        ))}
-        <option value={CREATE_NEW_JOB_VALUE}>{t.newQuote.createNewJob}</option>
-      </select>
+      {!isCreatingNewJob ? (
+        <>
+          <label className={`mb-1.5 block text-sm font-medium ${styles.jobLabel}`}>
+            {t.newQuote.job}
+          </label>
+          <select
+            required
+            value={selectedJobId}
+            onChange={(e) => handleSelectJob(e.target.value)}
+            aria-label={t.newQuote.selectJob}
+            className="input-field w-full rounded-xl px-3 py-3 text-sm"
+          >
+            <option value="">{t.newQuote.selectJob}</option>
+            {jobOptions.map((job) => (
+              <option key={job.id} value={job.id}>
+                {job.title} — {job.customers?.company ?? job.customers?.name ?? '?'}
+              </option>
+            ))}
+            <option value={CREATE_NEW_JOB_VALUE}>{t.newQuote.createNewJob}</option>
+          </select>
+        </>
+      ) : null}
 
       {isCreatingNewJob && (
-        <div className={`mt-3 rounded-xl p-3 ${styles.calculatorSummary}`}>
+        <div className={`rounded-xl p-3 ${styles.calculatorSummary}`}>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <span className={`text-sm font-medium ${styles.jobLabel}`}>{t.newQuote.createNewJob.replace(/^\+ /, '')}</span>
+            <button
+              type="button"
+              onClick={() => handleSelectJob('')}
+              className="btn-ghost rounded-lg px-2.5 py-1 text-xs font-medium"
+            >
+              ← {t.newQuote.cancel}
+            </button>
+          </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <label className="text-sm md:col-span-2">
               <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobTitle}</span>

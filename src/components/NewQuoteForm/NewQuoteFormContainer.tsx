@@ -37,6 +37,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
     editingConstant,
     editingConstantValue,
     editConstantError,
+    difficultyLabel,
     setEditingConstantValue,
     openConstantEditor,
     cycleConstant,
@@ -138,16 +139,18 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
         />
 
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-          <label className="text-sm md:col-span-2">
-            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
-            <input
-              type="text"
-              value={partName}
-              onChange={(e) => setPartName(e.target.value)}
-              placeholder={t.newQuote.jobPartNamePlaceholder}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm"
-            />
-          </label>
+          {selectedJobId && (
+            <label className="text-sm md:col-span-2">
+              <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
+              <input
+                type="text"
+                value={partName}
+                onChange={(e) => setPartName(e.target.value)}
+                placeholder={t.newQuote.jobPartNamePlaceholder}
+                className="input-field w-full rounded-lg px-3 py-2 text-sm"
+              />
+            </label>
+          )}
           <label className="text-sm">
             <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.quantity}</span>
             <input
@@ -206,13 +209,31 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
         </div>
 
         <div className={`mt-4 rounded-xl p-3 ${styles.calculatorSummary}`}>
-          <div className="grid grid-cols-2 gap-y-1 text-sm">
+          <div className="grid grid-cols-2 gap-y-0.5 text-sm">
+            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.materialCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.materialCost)}</span>
+            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.machineCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.machineCost)}</span>
+            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.laborCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.laborCost)}</span>
+            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.energyCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.energyCost)}</span>
+            {pricing.postProcessingCost > 0 && (
+              <>
+                <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.postProcessingLabel}</span>
+                <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.postProcessingCost)}</span>
+              </>
+            )}
+            <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
             <span className={styles.totalRow}>{t.newQuote.baseCostPerUnit}</span>
             <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.baseCost)}</span>
-            <span className={styles.totalRow}>{t.newQuote.riskMarginPerUnit}</span>
-            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.riskCost + pricing.marginAmount)}</span>
+            <span className={styles.totalRow}>{t.newQuote.riskPerUnit}</span>
+            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.riskCost)}</span>
+            <span className={styles.totalRow}>{t.newQuote.marginPerUnit}</span>
+            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.marginAmount)}</span>
             <span className={styles.totalRow}>{t.newQuote.difficultyFactor}</span>
-            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{jobConstants.difficulty_multiplier_percent}%</span>
+            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{difficultyLabel}</span>
+            <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
             <span className={`pt-1 font-semibold ${styles.pageTitle}`}>{t.newQuote.calculatedUnitPrice}</span>
             <span className={`pt-1 text-right font-bold tabular-nums ${styles.totalAccent}`}>{formatCurrency(calculatedUnitPrice)}</span>
             <span className={`pt-1 font-semibold ${styles.pageTitle}`}>{t.newQuote.calculatedLineTotal}</span>

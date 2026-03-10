@@ -16,6 +16,7 @@ interface UseJobConstantsResult {
   editingConstant: ConstantChip | null
   editingConstantValue: string
   editConstantError: string
+  difficultyLabel: string
   setEditingConstantValue: (value: string) => void
   openConstantEditor: (key: JobConstantKey) => void
   cycleConstant: (key: JobConstantKey) => void
@@ -162,5 +163,10 @@ export function useJobConstants(
     saveConstant,
     removeConstant,
     undoRemoveConstant,
+    difficultyLabel: (() => {
+      const rawValue = jobConstants.difficulty_multiplier_percent
+      const level = DIFFICULTY_LEVELS.find((l) => l.value === rawValue) ?? DIFFICULTY_LEVELS[0]
+      return `${t.newQuote.difficultyLevels[level.labelKey]} ${level.multiplier}`
+    })(),
   }
 }

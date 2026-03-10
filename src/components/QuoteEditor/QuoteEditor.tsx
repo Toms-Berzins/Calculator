@@ -69,6 +69,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
     editingConstant,
     editingConstantValue,
     editConstantError,
+    difficultyLabel,
     setEditingConstantValue,
     openConstantEditor,
     cycleConstant,
@@ -267,13 +268,31 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
         </div>
 
         <div className={styles.calculatorSummary}>
-          <div className="grid grid-cols-2 gap-y-1 text-sm">
+          <div className="grid grid-cols-2 gap-y-0.5 text-sm">
+            <span className={`text-xs ${styles.summaryLabel}`}>{t.newQuote.materialCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.materialCost)}</span>
+            <span className={`text-xs ${styles.summaryLabel}`}>{t.newQuote.machineCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.machineCost)}</span>
+            <span className={`text-xs ${styles.summaryLabel}`}>{t.newQuote.laborCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.laborCost)}</span>
+            <span className={`text-xs ${styles.summaryLabel}`}>{t.newQuote.energyCostRow}</span>
+            <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.energyCost)}</span>
+            {pricing.postProcessingCost > 0 && (
+              <>
+                <span className={`text-xs ${styles.summaryLabel}`}>{t.newQuote.postProcessingLabel}</span>
+                <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.postProcessingCost)}</span>
+              </>
+            )}
+            <div className="col-span-2 my-1.5 border-t border-current opacity-20" />
             <span className={styles.summaryLabel}>{t.newQuote.baseCostPerUnit}</span>
             <span className={`text-right tabular-nums ${styles.summaryValue}`}>{formatCurrency(pricing.baseCost)}</span>
-            <span className={styles.summaryLabel}>{t.newQuote.riskMarginPerUnit}</span>
-            <span className={`text-right tabular-nums ${styles.summaryValue}`}>{formatCurrency(pricing.riskCost + pricing.marginAmount)}</span>
+            <span className={styles.summaryLabel}>{t.newQuote.riskPerUnit}</span>
+            <span className={`text-right tabular-nums ${styles.summaryValue}`}>{formatCurrency(pricing.riskCost)}</span>
+            <span className={styles.summaryLabel}>{t.newQuote.marginPerUnit}</span>
+            <span className={`text-right tabular-nums ${styles.summaryValue}`}>{formatCurrency(pricing.marginAmount)}</span>
             <span className={styles.summaryLabel}>{t.newQuote.difficultyFactor}</span>
-            <span className={`text-right tabular-nums ${styles.summaryValue}`}>{jobConstants.difficulty_multiplier_percent}%</span>
+            <span className={`text-right tabular-nums ${styles.summaryValue}`}>{difficultyLabel}</span>
+            <div className="col-span-2 my-1.5 border-t border-current opacity-20" />
             <span className={`pt-1 font-semibold ${styles.summaryStrong}`}>{t.newQuote.calculatedUnitPrice}</span>
             <span className={`pt-1 text-right font-bold tabular-nums ${styles.summaryAccent}`}>{formatCurrency(calculatedUnitPrice)}</span>
             <span className={`pt-1 font-semibold ${styles.summaryStrong}`}>{t.newQuote.calculatedLineTotal}</span>
