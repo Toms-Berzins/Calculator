@@ -105,11 +105,11 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
   const supabase = await createServerSupabaseClient()
   const t = await getDict()
 
-  const JOB_STATUS: Record<string, { label: string; className: string }> = {
-    open: { label: t.jobs.statusValues.open, className: styles.statusOpen },
-    won: { label: t.jobs.statusValues.won, className: styles.statusWon },
-    lost: { label: t.jobs.statusValues.lost, className: styles.statusLost },
-    archived: { label: t.jobs.statusValues.archived, className: styles.statusArchived },
+  const JOB_STATUS: Record<string, { label: string; badgeClass: string }> = {
+    open: { label: t.jobs.statusValues.open, badgeClass: styles.statusOpen },
+    won: { label: t.jobs.statusValues.won, badgeClass: styles.statusWon },
+    lost: { label: t.jobs.statusValues.lost, badgeClass: styles.statusLost },
+    archived: { label: t.jobs.statusValues.archived, badgeClass: styles.statusArchived },
   }
 
   const { data: jobs } = await supabase
@@ -122,15 +122,22 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     .select('id, name, company')
     .order('name')
 
+  const statusCounts = {
+    open:     jobs?.filter((j) => (j.status ?? 'open') === 'open').length ?? 0,
+    won:      jobs?.filter((j) => j.status === 'won').length ?? 0,
+    lost:     jobs?.filter((j) => j.status === 'lost').length ?? 0,
+    archived: jobs?.filter((j) => j.status === 'archived').length ?? 0,
+  }
+
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
-          {t.jobs.title}
-        </h1>
-        <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-          {t.jobs.total(jobs?.length ?? 0)}
-        </p>
+    <div className={styles.shell}>
+
+      {/* ── Header ── */}
+      <div className={styles.pageHeader}>
+        <div>
+          <h1 className={styles.pageTitle}>{t.jobs.title}</h1>
+          <p className={styles.pageSubtitle}>{t.jobs.total(jobs?.length ?? 0)}</p>
+        </div>
       </div>
 
       {message && (
@@ -139,220 +146,161 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         </p>
       )}
 
-      <section className={`mb-6 rounded-2xl p-4 ${styles.createCard}`}>
-        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>{t.jobs.addJob}</h2>
-        <form action={handleCreateJob} className={styles.jobForm}>
-          <div className={styles.formGrid}>
-            <label className="text-sm">
-              <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
-              <input
-                name="title"
-                required
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder={t.jobs.titlePlaceholder}
-              />
-            </label>
-            <label className="text-sm">
-              <span className={styles.fieldLabel}>{t.jobs.customer}</span>
-              <select
-                name="customerId"
-                required
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                defaultValue=""
-              >
-                <option value="" disabled>{t.jobs.selectCustomer}</option>
-                {customers?.map((customer) => (
-                  <option key={customer.id} value={customer.id}>
-                    {customer.company ?? customer.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-sm md:col-span-2">
-              <span className={styles.fieldLabel}>{t.jobs.description}</span>
-              <textarea
-                name="description"
-                rows={2}
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder={t.jobs.descriptionPlaceholder}
-              />
-            </label>
-          </div>
-          <div className={styles.actionRow}>
-            <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">
-              {t.jobs.createJob}
-            </button>
-          </div>
-        </form>
-      </section>
-
-      {!jobs?.length && (
-        <div
-          className={`flex flex-col items-center justify-center rounded-2xl py-16 text-center ${styles.emptyCard}`}
-        >
-          <svg
-            className={`mb-3 w-10 h-10 ${styles.emptyIcon}`}
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden
-          >
-            <path
-              fillRule="evenodd"
-              d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
-              clipRule="evenodd"
-            />
-            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
-          </svg>
-          <p className={`text-sm font-medium ${styles.emptyText}`}>
-            {t.jobs.noJobs}
-          </p>
+      {/* ── Stats strip ── */}
+      {!!jobs?.length && (
+        <div className={styles.statsStrip}>
+          {([
+            { key: 'open',     cnt: statusCounts.open,     cls: styles.statOpen,     label: t.jobs.statusValues.open },
+            { key: 'won',      cnt: statusCounts.won,      cls: styles.statWon,      label: t.jobs.statusValues.won },
+            { key: 'lost',     cnt: statusCounts.lost,     cls: styles.statLost,     label: t.jobs.statusValues.lost },
+            { key: 'archived', cnt: statusCounts.archived, cls: styles.statArchived, label: t.jobs.statusValues.archived },
+          ] as const).map(({ key, cnt, cls, label }) => (
+            <div key={key} className={`${styles.statCard} ${cls}`}>
+              <span className={styles.statValue}>{cnt}</span>
+              <span className={styles.statLabel}>{label}</span>
+            </div>
+          ))}
         </div>
       )}
 
-      <ul className="space-y-2.5">
-        {jobs?.map((j) => {
-          const st = JOB_STATUS[j.status ?? 'open'] ?? JOB_STATUS.open
-          const customer =
-            (j.customers as { company: string; name: string } | null)?.company ??
-            (j.customers as { name: string } | null)?.name ??
-            '—'
-          const isOpenJob = (j.status ?? 'open') === 'open'
+      {/* ── Add job (collapsible) ── */}
+      <details className={styles.createDetails}>
+        <summary className={styles.createSummary}>
+          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          {t.jobs.addJob}
+        </summary>
+        <div className={styles.createCard}>
+          <form action={handleCreateJob} className={styles.jobForm}>
+            <div className={styles.formGrid}>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
+                <input name="title" required className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.jobs.titlePlaceholder} />
+              </label>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.jobs.customer}</span>
+                <select name="customerId" required className="input-field w-full rounded-lg px-3 py-2 text-sm" defaultValue="">
+                  <option value="" disabled>{t.jobs.selectCustomer}</option>
+                  {customers?.map((c) => (
+                    <option key={c.id} value={c.id}>{c.company ?? c.name}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm md:col-span-2">
+                <span className={styles.fieldLabel}>{t.jobs.description}</span>
+                <textarea name="description" rows={2} className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.jobs.descriptionPlaceholder} />
+              </label>
+            </div>
+            <div className={styles.actionRow}>
+              <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">{t.jobs.createJob}</button>
+            </div>
+          </form>
+        </div>
+      </details>
 
-          return (
-            <li
-              key={j.id}
-              className={`rounded-2xl px-5 py-4 ${styles.jobCard}`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  {isOpenJob ? (
-                    <Link
-                      href={`/quotes/new?jobId=${j.id}`}
-                      className={`truncate font-semibold text-sm ${styles.jobTitle} ${styles.jobLink}`}
-                    >
-                      {j.title}
+      {!jobs?.length && (
+        <div className={`flex flex-col items-center justify-center rounded-2xl py-16 text-center ${styles.emptyCard}`}>
+          <svg className={`mb-3 w-10 h-10 ${styles.emptyIcon}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" />
+            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+          </svg>
+          <p className={`text-sm font-medium ${styles.emptyText}`}>{t.jobs.noJobs}</p>
+        </div>
+      )}
+
+      {/* ── Jobs table ── */}
+      {!!jobs?.length && (
+        <div className={styles.tableWrap}>
+          {jobs.map((j) => {
+            const st = JOB_STATUS[j.status ?? 'open'] ?? JOB_STATUS.open
+            const customer =
+              (j.customers as { company: string; name: string } | null)?.company ??
+              (j.customers as { name: string } | null)?.name ??
+              '—'
+            const isOpenJob = (j.status ?? 'open') === 'open'
+            const sk = j.status ?? 'open'
+            const rowClass = styles[`row${sk.charAt(0).toUpperCase()}${sk.slice(1)}` as keyof typeof styles]
+
+            return (
+              <div key={j.id} className={`${styles.tableRow} ${rowClass ?? ''}`}>
+                <div className={styles.rowMain}>
+                  <div className={styles.rowInfo}>
+                    {isOpenJob ? (
+                      <Link href={`/quotes/new?jobId=${j.id}`} className={`${styles.rowTitle} ${styles.rowTitleLink}`}>
+                        {j.title}
+                      </Link>
+                    ) : (
+                      <span className={styles.rowTitle}>{j.title}</span>
+                    )}
+                    <span className={styles.rowCustomer}>{customer}</span>
+                    {j.description && <span className={styles.rowDesc}>{j.description}</span>}
+                  </div>
+
+                  <span className={`${styles.statusBadge} ${st.badgeClass}`}>
+                    <span className={styles.statusDot} aria-hidden />
+                    {st.label}
+                  </span>
+
+                  <div className={styles.rowActions}>
+                    <Link href={`/quotes/new?jobId=${j.id}`} className={styles.actionLink}>
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                      </svg>
+                      {isOpenJob ? t.jobs.continueJob : t.jobs.createQuote}
                     </Link>
-                  ) : (
-                    <p
-                      className={`truncate font-semibold text-sm ${styles.jobTitle}`}
-                    >
-                      {j.title}
-                    </p>
-                  )}
-                  <p
-                    className={`mt-0.5 text-sm ${styles.jobCustomer}`}
-                  >
-                    {customer}
-                  </p>
-                  {j.description && (
-                    <p
-                      className={`mt-2 text-sm line-clamp-2 ${styles.jobDescription}`}
-                    >
-                      {j.description}
-                    </p>
-                  )}
+                    <DeleteJobButton jobId={j.id} action={handleDeleteJob} />
+                  </div>
                 </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${styles.jobStatus} ${st.className}`}
-                >
-                  {st.label}
-                </span>
-              </div>
 
-              <div
-                className={`mt-3 pt-3 ${styles.jobDivider}`}
-              >
-                <Link
-                  href={`/quotes/new?jobId=${j.id}`}
-                  className={`inline-flex items-center gap-1.5 text-sm font-medium ${styles.jobLink}`}
-                >
-                  <svg
-                    className="w-3.5 h-3.5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {isOpenJob ? t.jobs.continueJob : t.jobs.createQuote}
-                </Link>
-              </div>
-
-              <div className={styles.jobActions}>
+                {/* Inline edit accordion */}
                 <details className={styles.editDetails}>
-                  <summary className={styles.editSummary}>{t.jobs.edit}</summary>
-
-                  <form action={handleUpdateJob} className={styles.jobForm}>
-                    <input type="hidden" name="id" value={j.id} />
-
-                    <div className={styles.formGrid}>
-                      <label className="text-sm">
-                        <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
-                        <input
-                          name="title"
-                          required
-                          defaultValue={j.title}
-                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                        />
-                      </label>
-                      <label className="text-sm">
-                        <span className={styles.fieldLabel}>{t.jobs.customer}</span>
-                        <select
-                          name="customerId"
-                          required
-                          defaultValue={j.customer_id}
-                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                        >
-                          {customers?.map((customer) => (
-                            <option key={customer.id} value={customer.id}>
-                              {customer.company ?? customer.name}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className="text-sm">
-                        <span className={styles.fieldLabel}>{t.jobs.status}</span>
-                        <select
-                          name="status"
-                          defaultValue={j.status ?? 'open'}
-                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                        >
-                          {JOB_STATUS_VALUES.map((value) => (
-                            <option key={value} value={value}>
-                              {t.jobs.statusValues[value]}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className="text-sm md:col-span-2">
-                        <span className={styles.fieldLabel}>{t.jobs.description}</span>
-                        <textarea
-                          name="description"
-                          rows={2}
-                          defaultValue={j.description ?? ''}
-                          className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                        />
-                      </label>
-                    </div>
-
-                    <div className={styles.actionRow}>
-                      <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">
-                        {t.jobs.saveChanges}
-                      </button>
-                    </div>
-                  </form>
+                  <summary className={styles.editSummary}>
+                    <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    {t.jobs.edit}
+                  </summary>
+                  <div className={styles.editPanel}>
+                    <form action={handleUpdateJob} className={styles.jobForm}>
+                      <input type="hidden" name="id" value={j.id} />
+                      <div className={styles.formGrid}>
+                        <label className="text-sm">
+                          <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
+                          <input name="title" required defaultValue={j.title} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+                        </label>
+                        <label className="text-sm">
+                          <span className={styles.fieldLabel}>{t.jobs.customer}</span>
+                          <select name="customerId" required defaultValue={j.customer_id} className="input-field w-full rounded-lg px-3 py-2 text-sm">
+                            {customers?.map((c) => (
+                              <option key={c.id} value={c.id}>{c.company ?? c.name}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="text-sm">
+                          <span className={styles.fieldLabel}>{t.jobs.status}</span>
+                          <select name="status" defaultValue={j.status ?? 'open'} className="input-field w-full rounded-lg px-3 py-2 text-sm">
+                            {JOB_STATUS_VALUES.map((value) => (
+                              <option key={value} value={value}>{t.jobs.statusValues[value]}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="text-sm md:col-span-2">
+                          <span className={styles.fieldLabel}>{t.jobs.description}</span>
+                          <textarea name="description" rows={2} defaultValue={j.description ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+                        </label>
+                      </div>
+                      <div className={styles.actionRow}>
+                        <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">{t.jobs.saveChanges}</button>
+                      </div>
+                    </form>
+                  </div>
                 </details>
-
-                <DeleteJobButton jobId={j.id} action={handleDeleteJob} />
               </div>
-            </li>
-          )
-        })}
-      </ul>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
