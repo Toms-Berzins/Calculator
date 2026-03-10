@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createCustomer, createJob } from '@/lib/actions/jobs'
+import { useT } from '@/i18n/context'
 import styles from './NewQuoteForm.module.css'
 import {
   CREATE_NEW_CUSTOMER_VALUE,
@@ -18,6 +19,7 @@ interface JobSelectorSectionProps {
 }
 
 export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelected }: JobSelectorSectionProps) {
+  const t = useT()
   const [jobOptions, setJobOptions] = useState(jobs)
   const [customerOptions, setCustomerOptions] = useState(customers)
   const [selectedJobId, setSelectedJobId] = useState(() =>
@@ -87,7 +89,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
       setNewJobTitle('')
       setNewJobCustomerId('')
     } catch (error) {
-      setCreateJobError(error instanceof Error ? error.message : 'Failed to create job')
+      setCreateJobError(error instanceof Error ? error.message : t.newQuote.failedToCreateJob)
     } finally {
       setCreatingJob(false)
     }
@@ -119,7 +121,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
       setNewCustomerName('')
       setNewCustomerCompany('')
     } catch (error) {
-      setCreateCustomerError(error instanceof Error ? error.message : 'Failed to create customer')
+      setCreateCustomerError(error instanceof Error ? error.message : t.newQuote.failedToCreateCustomer)
     } finally {
       setCreatingCustomer(false)
     }
@@ -128,39 +130,39 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
   return (
     <div className="mb-6">
       <label className={`mb-1.5 block text-sm font-medium ${styles.jobLabel}`}>
-        Job
+        {t.newQuote.job}
       </label>
       <select
         required
         value={selectedJobId}
         onChange={(e) => handleSelectJob(e.target.value)}
-        aria-label="Select a job"
+        aria-label={t.newQuote.selectJob}
         className="input-field w-full rounded-xl px-3 py-3 text-sm"
       >
-        <option value="">Select a job…</option>
+        <option value="">{t.newQuote.selectJob}</option>
         {jobOptions.map((job) => (
           <option key={job.id} value={job.id}>
             {job.title} — {job.customers?.company ?? job.customers?.name ?? '?'}
           </option>
         ))}
-        <option value={CREATE_NEW_JOB_VALUE}>+ Create new job…</option>
+        <option value={CREATE_NEW_JOB_VALUE}>{t.newQuote.createNewJob}</option>
       </select>
 
       {isCreatingNewJob && (
         <div className={`mt-3 rounded-xl p-3 ${styles.calculatorSummary}`}>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <label className="text-sm md:col-span-2">
-              <span className={`mb-1 block ${styles.totalRow}`}>Job title</span>
+              <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobTitle}</span>
               <input
                 type="text"
                 value={newJobTitle}
                 onChange={(e) => setNewJobTitle(e.target.value)}
-                placeholder="Example: Enclosure prototype"
+                placeholder={t.newQuote.jobTitlePlaceholder}
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
               />
             </label>
             <label className="text-sm md:col-span-2">
-              <span className={`mb-1 block ${styles.totalRow}`}>Customer</span>
+              <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.customer}</span>
               <select
                 value={newJobCustomerId}
                 onChange={(e) => {
@@ -168,16 +170,16 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
                   setCreateCustomerError('')
                   setCreateJobError('')
                 }}
-                aria-label="Select customer for new job"
+                aria-label={t.newQuote.selectCustomer}
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
               >
-                <option value="">Select customer…</option>
+                <option value="">{t.newQuote.selectCustomer}</option>
                 {customerOptions.map((customer) => (
                   <option key={customer.id} value={customer.id}>
                     {customer.company ?? customer.name}
                   </option>
                 ))}
-                <option value={CREATE_NEW_CUSTOMER_VALUE}>+ Create new customer…</option>
+                <option value={CREATE_NEW_CUSTOMER_VALUE}>{t.newQuote.createNewCustomer}</option>
               </select>
             </label>
           </div>
@@ -185,22 +187,22 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
           {isCreatingNewCustomer && (
             <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
               <label className="text-sm md:col-span-2">
-                <span className={`mb-1 block ${styles.totalRow}`}>Customer name</span>
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.customerName}</span>
                 <input
                   type="text"
                   value={newCustomerName}
                   onChange={(e) => setNewCustomerName(e.target.value)}
-                  placeholder="Example: John Smith"
+                  placeholder={t.newQuote.customerNamePlaceholder}
                   className="input-field w-full rounded-lg px-3 py-2 text-sm"
                 />
               </label>
               <label className="text-sm md:col-span-2">
-                <span className={`mb-1 block ${styles.totalRow}`}>Company (optional)</span>
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.companyOptional}</span>
                 <input
                   type="text"
                   value={newCustomerCompany}
                   onChange={(e) => setNewCustomerCompany(e.target.value)}
-                  placeholder="Example: Acme Labs"
+                  placeholder={t.newQuote.companyPlaceholder}
                   className="input-field w-full rounded-lg px-3 py-2 text-sm"
                 />
               </label>
@@ -217,7 +219,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
                 disabled={creatingCustomer || !newCustomerName.trim()}
                 className="btn-ghost md:col-span-2 w-full rounded-lg py-2 text-sm font-medium disabled:opacity-60"
               >
-                {creatingCustomer ? 'Creating…' : 'Create customer & select'}
+                {creatingCustomer ? t.newQuote.creating3DPrint : t.newQuote.createCustomerAndSelect}
               </button>
             </div>
           )}
@@ -235,7 +237,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
               disabled={creatingJob || !newJobTitle.trim() || !newJobCustomerId}
               className="btn-ghost mt-3 w-full rounded-lg py-2 text-sm font-medium disabled:opacity-60"
             >
-              {creatingJob ? 'Creating…' : 'Create job & select'}
+              {creatingJob ? t.newQuote.creating3DPrint : t.newQuote.createJobAndSelect}
             </button>
           )}
         </div>

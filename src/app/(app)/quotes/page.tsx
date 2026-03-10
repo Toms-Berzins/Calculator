@@ -2,17 +2,19 @@ import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { deleteDraftQuote } from '@/lib/actions/quotes'
 import { formatCurrency } from '@/lib/utils/format'
+import { getDict } from '@/i18n/server'
 import styles from './quotes.module.css'
-
-const STATUS_STYLES: Record<string, { className: string; label: string }> = {
-  draft: { className: styles.statusDraft, label: 'Draft' },
-  sent: { className: styles.statusSent, label: 'Sent' },
-  accepted: { className: styles.statusAccepted, label: 'Accepted' },
-  rejected: { className: styles.statusRejected, label: 'Rejected' },
-}
 
 export default async function QuotesPage() {
   const supabase = await createServerSupabaseClient()
+  const t = await getDict()
+
+  const STATUS_STYLES: Record<string, { className: string; label: string }> = {
+    draft: { className: styles.statusDraft, label: t.quotes.status.draft },
+    sent: { className: styles.statusSent, label: t.quotes.status.sent },
+    accepted: { className: styles.statusAccepted, label: t.quotes.status.accepted },
+    rejected: { className: styles.statusRejected, label: t.quotes.status.rejected },
+  }
 
   const { data: quotes } = await supabase
     .from('quotes')
@@ -29,10 +31,10 @@ export default async function QuotesPage() {
           <h1
             className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}
           >
-            Quotes
+            {t.quotes.title}
           </h1>
           <p className={`mt-1 text-sm ${styles.quoteCount}`}>
-            {quotes?.length ?? 0} total
+            {t.quotes.total(quotes?.length ?? 0)}
           </p>
         </div>
         <Link
@@ -46,7 +48,7 @@ export default async function QuotesPage() {
               clipRule="evenodd"
             />
           </svg>
-          New
+          {t.quotes.new}
         </Link>
       </div>
 
@@ -67,10 +69,10 @@ export default async function QuotesPage() {
             />
           </svg>
           <p className={`text-sm font-medium ${styles.emptyIconLabel}`}>
-            No quotes yet
+            {t.quotes.noQuotes}
           </p>
           <p className={`mt-1 text-sm ${styles.emptyStateHint}`}>
-            Create your first quote to get started
+            {t.quotes.createFirst}
           </p>
         </div>
       )}
@@ -80,7 +82,7 @@ export default async function QuotesPage() {
           const st = STATUS_STYLES[q.status ?? 'draft'] ?? STATUS_STYLES.draft
           const isDraft = (q.status ?? 'draft') === 'draft'
           const jobTitle =
-            (q.jobs as { title: string } | null)?.title ?? 'Untitled job'
+            (q.jobs as { title: string } | null)?.title ?? t.quotes.untitledJob
           const customer =
             (q.jobs as { customers: { name: string; company: string } | null } | null)
               ?.customers?.company ??
@@ -141,9 +143,9 @@ export default async function QuotesPage() {
                   <button
                     type="submit"
                     className={styles.deleteDraftButton}
-                    aria-label={`Delete draft quote for ${jobTitle}`}
+                    aria-label={`${t.quotes.delete} ${jobTitle}`}
                   >
-                    Delete
+                    {t.quotes.delete}
                   </button>
                 </form>
               )}

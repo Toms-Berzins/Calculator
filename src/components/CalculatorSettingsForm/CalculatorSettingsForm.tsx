@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { saveCalculatorSettings } from '@/lib/actions/calculatorSettings'
+import { useT } from '@/i18n/context'
 import type { CalculatorSettingsValues } from '@/lib/calculatorSettings'
 import styles from './CalculatorSettingsForm.module.css'
 
@@ -26,6 +27,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
+  const t = useT()
 
   function setNumber<K extends keyof CalculatorSettingsValues>(key: K, value: number) {
     setValues((prev) => ({ ...prev, [key]: Number.isFinite(value) ? Math.max(0, value) : 0 }))
@@ -47,7 +49,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
       if (caught instanceof Error && caught.message) {
         setError(caught.message)
       } else {
-        setError('Failed to save settings')
+        setError(t.settings.failedToSave)
       }
     } finally {
       setSaving(false)
@@ -57,15 +59,15 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
   return (
     <form onSubmit={handleSubmit} className={`rounded-2xl p-5 ${styles.card}`}>
       <p className={`mb-3 text-sm ${styles.label}`}>
-        Last saved:{' '}
+        {t.settings.lastSaved}{' '}
         <span className={styles.timestampValue}>
-          {updatedAt ? formatTimestamp(updatedAt) : 'Not saved yet'}
+          {updatedAt ? formatTimestamp(updatedAt) : t.settings.notSavedYet}
         </span>
       </p>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <label className="text-sm">
-          <span className={`mb-1 block ${styles.label}`}>Material price / kg</span>
+          <span className={`mb-1 block ${styles.label}`}>{t.settings.materialPrice}</span>
           <input
             type="number"
             min={0}
@@ -77,7 +79,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
         </label>
 
         <label className="text-sm">
-          <span className={`mb-1 block ${styles.label}`}>Machine rate / h</span>
+          <span className={`mb-1 block ${styles.label}`}>{t.settings.machineRate}</span>
           <input
             type="number"
             min={0}
@@ -89,7 +91,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
         </label>
 
         <label className="text-sm">
-          <span className={`mb-1 block ${styles.label}`}>Labor rate / h</span>
+          <span className={`mb-1 block ${styles.label}`}>{t.settings.laborRate}</span>
           <input
             type="number"
             min={0}
@@ -101,7 +103,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
         </label>
 
         <label className="text-sm">
-          <span className={`mb-1 block ${styles.label}`}>Power use (kW)</span>
+          <span className={`mb-1 block ${styles.label}`}>{t.settings.powerUse}</span>
           <input
             type="number"
             min={0}
@@ -113,7 +115,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
         </label>
 
         <label className="text-sm">
-          <span className={`mb-1 block ${styles.label}`}>Electricity / kWh</span>
+          <span className={`mb-1 block ${styles.label}`}>{t.settings.electricityRate}</span>
           <input
             type="number"
             min={0}
@@ -125,7 +127,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
         </label>
 
         <label className="text-sm">
-          <span className={`mb-1 block ${styles.label}`}>Failure rate (%)</span>
+          <span className={`mb-1 block ${styles.label}`}>{t.settings.failureRate}</span>
           <input
             type="number"
             min={0}
@@ -137,7 +139,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
         </label>
 
         <label className="text-sm md:col-span-2">
-          <span className={`mb-1 block ${styles.label}`}>Margin (%)</span>
+          <span className={`mb-1 block ${styles.label}`}>{t.settings.margin}</span>
           <input
             type="number"
             min={0}
@@ -150,14 +152,14 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
       </div>
 
       {error && <p className={`mt-3 text-sm ${styles.error}`}>{error}</p>}
-      {saved && !error && <p className={`mt-3 text-sm ${styles.success}`}>Saved</p>}
+      {saved && !error && <p className={`mt-3 text-sm ${styles.success}`}>{t.settings.saved}</p>}
 
       <button
         type="submit"
         disabled={saving}
         className="btn-primary mt-4 w-full rounded-xl py-3 text-sm font-semibold disabled:opacity-60"
       >
-        {saving ? 'Saving…' : 'Save constants'}
+        {saving ? t.settings.saving : t.settings.saveConstants}
       </button>
     </form>
   )

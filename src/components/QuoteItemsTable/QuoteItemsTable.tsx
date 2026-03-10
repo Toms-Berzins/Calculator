@@ -1,5 +1,6 @@
 import type { LineItem } from '@/hooks/useQuoteCalculator'
 import { formatCurrency } from '@/lib/utils/format'
+import { useT } from '@/i18n/context'
 import styles from './QuoteItemsTable.module.css'
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
+  const t = useT()
   return (
     <div className={styles.root}>
       {/* Desktop table */}
@@ -19,10 +21,10 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
             <tr
               className={`text-left text-xs font-semibold uppercase tracking-wide ${styles.tableHeader}`}
             >
-              <th className="px-3 py-3">Description</th>
-              <th className="w-24 px-3 py-3 text-right">Qty</th>
-              <th className="w-32 px-3 py-3 text-right">Unit Price</th>
-              <th className="w-32 px-3 py-3 text-right">Subtotal</th>
+              <th className="px-3 py-3">{t.table.description}</th>
+              <th className="w-24 px-3 py-3 text-right">{t.table.qty}</th>
+              <th className="w-32 px-3 py-3 text-right">{t.table.unitPrice}</th>
+              <th className="w-32 px-3 py-3 text-right">{t.table.subtotal}</th>
               <th className="w-12 px-3 py-3" />
             </tr>
           </thead>
@@ -34,8 +36,8 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
                     type="text"
                     value={item.description}
                     onChange={(e) => onUpdate(item.tempId, 'description', e.target.value)}
-                    placeholder="Item description"
-                    aria-label="Item description"
+                    placeholder={t.table.itemDescriptionPlaceholder}
+                    aria-label={t.table.itemDescriptionPlaceholder}
                     className="input-field w-full rounded-lg px-3 py-2 text-sm"
                   />
                 </td>
@@ -46,7 +48,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
                     step={0.001}
                     value={item.quantity}
                     onChange={(e) => onUpdate(item.tempId, 'quantity', Number(e.target.value))}
-                    aria-label="Quantity"
+                    aria-label={t.table.qty}
                     className="input-field w-full rounded-lg px-3 py-2 text-right text-sm tabular-nums"
                   />
                 </td>
@@ -57,7 +59,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
                     step={0.01}
                     value={item.unit_price}
                     onChange={(e) => onUpdate(item.tempId, 'unit_price', Number(e.target.value))}
-                    aria-label="Unit price"
+                    aria-label={t.table.unitPrice}
                     className="input-field w-full rounded-lg px-3 py-2 text-right text-sm tabular-nums"
                   />
                 </td>
@@ -70,7 +72,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
                   <button
                     type="button"
                     onClick={() => onRemove(item.tempId)}
-                    aria-label="Remove item"
+                    aria-label={t.table.removeItem}
                     className={styles.removeButton}
                   >
                     ×
@@ -93,14 +95,14 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
               type="text"
               value={item.description}
               onChange={(e) => onUpdate(item.tempId, 'description', e.target.value)}
-              placeholder="Description"
-              aria-label="Item description"
+              placeholder={t.table.itemDescriptionPlaceholder}
+              aria-label={t.table.itemDescriptionPlaceholder}
               className="input-field mb-2 w-full rounded-lg px-3 py-2 text-sm"
             />
             <div className="flex gap-2">
               <div className="flex-1">
                 <label className={`mb-0.5 block text-xs ${styles.mobileLabel}`}>
-                  Qty
+                  {t.table.qtyShort}
                 </label>
                 <input
                   type="number"
@@ -114,7 +116,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
               </div>
               <div className="flex-1">
                 <label className={`mb-0.5 block text-xs ${styles.mobileLabel}`}>
-                  Unit Price
+                  {t.table.unitPriceShort}
                 </label>
                 <input
                   type="number"
@@ -128,7 +130,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
               </div>
               <div className="flex-1 text-right">
                 <label className={`mb-0.5 block text-xs ${styles.mobileLabel}`}>
-                  Total
+                  {t.table.totalShort}
                 </label>
                 <p
                   className={`py-2 text-sm font-semibold tabular-nums ${styles.subtotalCell}`}
@@ -142,7 +144,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
               onClick={() => onRemove(item.tempId)}
               className={`mt-2 text-xs font-medium ${styles.removeButtonMobile}`}
             >
-              Remove
+              {t.table.remove}
             </button>
           </div>
         ))}
@@ -161,7 +163,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
             clipRule="evenodd"
           />
         </svg>
-        Add line item
+        {t.table.addItem}
       </button>
     </div>
   )

@@ -5,12 +5,15 @@ import { usePathname } from 'next/navigation'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { navLinks } from './navLinks'
+import { useT } from '@/i18n/context'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher/LanguageSwitcher'
 import styles from './Sidebar.module.css'
 
 export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
+  const t = useT()
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -52,7 +55,7 @@ export function Sidebar() {
               className={`nav-item flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium ${active ? 'active' : ''}`}
             >
               {l.icon}
-              {l.label}
+              {t.nav[l.labelKey]}
               {active && (
                 <span
                   className={`ml-auto h-1.5 w-1.5 rounded-full ${styles.activeIndicator}`}
@@ -63,9 +66,10 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Sign out */}
+      {/* Sign out + language switcher */}
       <div className="px-3 pb-5 pt-3">
         <div className={styles.dividerSpaced} />
+        <LanguageSwitcher />
         <button
           onClick={handleSignOut}
           className="nav-item flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium"
@@ -82,7 +86,7 @@ export function Sidebar() {
               clipRule="evenodd"
             />
           </svg>
-          Sign out
+          {t.nav.signOut}
         </button>
       </div>
     </aside>

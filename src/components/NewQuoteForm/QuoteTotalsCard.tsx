@@ -1,4 +1,5 @@
 import { formatCurrency } from '@/lib/utils/format'
+import { useT } from '@/i18n/context'
 import styles from './NewQuoteForm.module.css'
 
 interface QuoteTotalsCardProps {
@@ -16,17 +17,18 @@ export function QuoteTotalsCard({
   quoteTotal,
   onChangeTaxRate,
 }: QuoteTotalsCardProps) {
+  const t = useT()
   return (
     <div className={`w-full max-w-xs space-y-2.5 rounded-2xl p-4 ${styles.totalsCard}`}>
       <div className="flex items-center justify-between text-sm">
-        <span className={styles.totalRow}>Subtotal</span>
+        <span className={styles.totalRow}>{t.quote.subtotal}</span>
         <span className={`font-medium tabular-nums ${styles.totalAmount}`}>
           {formatCurrency(quoteSubtotal)}
         </span>
       </div>
       <div className="flex items-center justify-between text-sm">
         <label htmlFor="tax" className={styles.totalRow}>
-          VAT %
+          {t.quote.vat}
         </label>
         <input
           id="tax"
@@ -41,14 +43,14 @@ export function QuoteTotalsCard({
       </div>
       {taxRate > 0 && (
         <div className="flex items-center justify-between text-sm">
-          <span className={styles.totalRow}>VAT</span>
+          <span className={styles.totalRow}>{t.quote.vatAmount}</span>
           <span className={`font-medium tabular-nums ${styles.totalAmount}`}>
             {formatCurrency(quoteTaxAmount)}
           </span>
         </div>
       )}
       <div className={`flex items-center justify-between pt-2.5 text-base font-bold ${styles.divider}`}>
-        <span className={styles.pageTitle}>Total</span>
+        <span className={styles.pageTitle}>{t.quote.total}</span>
         <span className={`tabular-nums ${styles.totalAccent}`}>
           {formatCurrency(quoteTotal)}
         </span>

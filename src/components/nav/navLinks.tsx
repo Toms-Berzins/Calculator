@@ -1,8 +1,14 @@
 import type { ReactNode } from 'react'
+import type { Translations } from '@/i18n/en'
+
+export type NavLabelKey = keyof Pick<
+  Translations['nav'],
+  'dashboard' | 'quotes' | 'jobs' | 'customers' | 'settings'
+>
 
 export interface NavLink {
   href: string
-  label: string
+  labelKey: NavLabelKey
   icon: ReactNode
 }
 
@@ -11,7 +17,7 @@ const iconCls = 'w-5 h-5 shrink-0'
 export const navLinks: NavLink[] = [
   {
     href: '/dashboard',
-    label: 'Dashboard',
+    labelKey: 'dashboard',
     icon: (
       <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
         <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
@@ -20,7 +26,7 @@ export const navLinks: NavLink[] = [
   },
   {
     href: '/quotes',
-    label: 'Quotes',
+    labelKey: 'quotes',
     icon: (
       <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
         <path
@@ -33,7 +39,7 @@ export const navLinks: NavLink[] = [
   },
   {
     href: '/jobs',
-    label: 'Jobs',
+    labelKey: 'jobs',
     icon: (
       <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
         <path
@@ -47,7 +53,7 @@ export const navLinks: NavLink[] = [
   },
   {
     href: '/customers',
-    label: 'Customers',
+    labelKey: 'customers',
     icon: (
       <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
@@ -56,7 +62,7 @@ export const navLinks: NavLink[] = [
   },
   {
     href: '/settings',
-    label: 'Settings',
+    labelKey: 'settings',
     icon: (
       <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
         <path

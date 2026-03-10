@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/actions/jobs'
 import { redirect } from 'next/navigation'
+import { getDict } from '@/i18n/server'
 import { DeleteCustomerButton } from '@/components/customers/DeleteCustomerButton'
 import styles from './customers.module.css'
 
@@ -96,6 +97,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
   }
 
   const supabase = await createServerSupabaseClient()
+  const t = await getDict()
 
   const { data: customers } = await supabase
     .from('customers')
@@ -106,10 +108,10 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
     <div>
       <div className="mb-8">
         <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
-          Customers
+          {t.customers.title}
         </h1>
         <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-          {customers?.length ?? 0} total
+          {t.customers.total(customers?.length ?? 0)}
         </p>
       </div>
 
@@ -122,48 +124,48 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
       )}
 
       <section className={`mb-6 rounded-2xl p-4 ${styles.createCard}`}>
-        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>Add customer</h2>
+        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>{t.customers.addCustomer}</h2>
         <form action={handleCreateCustomer} className={styles.customerForm}>
           <div className={styles.formGrid}>
             <label className="text-sm">
-              <span className={styles.fieldLabel}>Name</span>
+              <span className={styles.fieldLabel}>{t.customers.name}</span>
               <input
                 name="name"
                 required
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder="Customer name"
+                placeholder={t.customers.namePlaceholder}
               />
             </label>
             <label className="text-sm">
-              <span className={styles.fieldLabel}>Company</span>
+              <span className={styles.fieldLabel}>{t.customers.company}</span>
               <input
                 name="company"
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder="Company (optional)"
+                placeholder={t.customers.companyPlaceholder}
               />
             </label>
             <label className="text-sm">
-              <span className={styles.fieldLabel}>Email</span>
+              <span className={styles.fieldLabel}>{t.customers.email}</span>
               <input
                 name="email"
                 type="email"
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder="email@example.com"
+                placeholder={t.customers.emailPlaceholder}
               />
             </label>
             <label className="text-sm">
-              <span className={styles.fieldLabel}>Phone</span>
+              <span className={styles.fieldLabel}>{t.customers.phone}</span>
               <input
                 name="phone"
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder="+355..."
+                placeholder={t.customers.phonePlaceholder}
               />
             </label>
           </div>
 
           <div className={styles.actionRow}>
             <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">
-              Create customer
+              {t.customers.createCustomer}
             </button>
           </div>
         </form>
@@ -182,7 +184,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
           </svg>
           <p className={`text-sm font-medium ${styles.emptyText}`}>
-            No customers yet
+            {t.customers.noCustomers}
           </p>
         </div>
       )}
@@ -257,14 +259,14 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
 
             <div className={styles.customerActions}>
               <details className={styles.editDetails}>
-                <summary className={styles.editSummary}>Edit</summary>
+                <summary className={styles.editSummary}>{t.customers.edit}</summary>
 
                 <form action={handleUpdateCustomer} className={styles.customerForm}>
                   <input type="hidden" name="id" value={c.id} />
 
                   <div className={styles.formGrid}>
                     <label className="text-sm">
-                      <span className={styles.fieldLabel}>Name</span>
+                      <span className={styles.fieldLabel}>{t.customers.name}</span>
                       <input
                         name="name"
                         required
@@ -273,7 +275,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                       />
                     </label>
                     <label className="text-sm">
-                      <span className={styles.fieldLabel}>Company</span>
+                      <span className={styles.fieldLabel}>{t.customers.company}</span>
                       <input
                         name="company"
                         defaultValue={c.company ?? ''}
@@ -281,7 +283,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                       />
                     </label>
                     <label className="text-sm">
-                      <span className={styles.fieldLabel}>Email</span>
+                      <span className={styles.fieldLabel}>{t.customers.email}</span>
                       <input
                         name="email"
                         type="email"
@@ -290,7 +292,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                       />
                     </label>
                     <label className="text-sm">
-                      <span className={styles.fieldLabel}>Phone</span>
+                      <span className={styles.fieldLabel}>{t.customers.phone}</span>
                       <input
                         name="phone"
                         defaultValue={c.phone ?? ''}
@@ -301,7 +303,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
 
                   <div className={styles.actionRow}>
                     <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">
-                      Save changes
+                      {t.customers.saveChanges}
                     </button>
                   </div>
                 </form>

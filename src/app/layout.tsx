@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { getLocale } from '@/i18n/server'
+import { TranslationsProvider } from '@/i18n/context'
 
 export const metadata: Metadata = {
   title: 'QuoteCalc',
@@ -22,12 +24,18 @@ export const viewport: Viewport = {
   userScalable: false,
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale()
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
       </head>
-      <body className="antialiased" suppressHydrationWarning>{children}</body>
+      <body className="antialiased" suppressHydrationWarning>
+        <TranslationsProvider locale={locale}>
+          {children}
+        </TranslationsProvider>
+      </body>
     </html>
   )
 }

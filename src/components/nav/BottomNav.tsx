@@ -3,10 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { navLinks } from './navLinks'
+import { useT } from '@/i18n/context'
 import styles from './BottomNav.module.css'
 
 export function BottomNav() {
   const pathname = usePathname()
+  const t = useT()
 
   return (
     <nav
@@ -28,7 +30,7 @@ export function BottomNav() {
             <span
               className={`text-[10px] font-medium leading-none ${active ? styles.navLabelActive : styles.navLabelInactive}`}
             >
-              {l.label}
+              {t.nav[l.labelKey]}
             </span>
           </Link>
         )

@@ -14,9 +14,11 @@ import {
 } from './NewQuoteForm.types'
 import { useJobConstants } from './useJobConstants'
 import { useQuotePricing } from './useQuotePricing'
+import { useT } from '@/i18n/context'
 import styles from './NewQuoteForm.module.css'
 
 export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId }: NewQuoteFormProps) {
+  const t = useT()
   const calculatedItemTempId = 'calculated-3d-print-item'
   const [selectedJobId, setSelectedJobId] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -100,10 +102,10 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
     <form onSubmit={handleSubmit}>
       <div className="mb-8">
         <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
-          New Quote
+          {t.newQuote.title}
         </h1>
         <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-          Select a job and add line items
+          {t.newQuote.subtitle}
         </p>
       </div>
 
@@ -135,17 +137,17 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
 
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
           <label className="text-sm md:col-span-2">
-            <span className={`mb-1 block ${styles.totalRow}`}>Job / Part name</span>
+            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
             <input
               type="text"
               value={partName}
               onChange={(e) => setPartName(e.target.value)}
-              placeholder="Example: Gear housing prototype"
+              placeholder={t.newQuote.jobPartNamePlaceholder}
               className="input-field w-full rounded-lg px-3 py-2 text-sm"
             />
           </label>
           <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>Quantity</span>
+            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.quantity}</span>
             <input
               type="number"
               min={1}
@@ -156,7 +158,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             />
           </label>
           <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>Material weight (g)</span>
+            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.materialWeight}</span>
             <input
               type="number"
               min={0}
@@ -167,7 +169,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             />
           </label>
           <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>Print time (h)</span>
+            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.printTime}</span>
             <input
               type="number"
               min={0}
@@ -178,7 +180,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             />
           </label>
           <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>Setup time (h)</span>
+            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.setupTime}</span>
             <input
               type="number"
               min={0}
@@ -189,7 +191,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             />
           </label>
           <label className="text-sm md:col-span-2">
-            <span className={`mb-1 block ${styles.totalRow}`}>Post-processing cost</span>
+            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.postProcessing}</span>
             <input
               type="number"
               min={0}
@@ -203,19 +205,19 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
 
         <div className={`mt-4 rounded-xl p-3 ${styles.calculatorSummary}`}>
           <div className="grid grid-cols-2 gap-y-1 text-sm">
-            <span className={styles.totalRow}>Base cost / unit</span>
+            <span className={styles.totalRow}>{t.newQuote.baseCostPerUnit}</span>
             <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.baseCost)}</span>
-            <span className={styles.totalRow}>Risk + margin / unit</span>
+            <span className={styles.totalRow}>{t.newQuote.riskMarginPerUnit}</span>
             <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.riskCost + pricing.marginAmount)}</span>
-            <span className={styles.totalRow}>Difficulty factor</span>
+            <span className={styles.totalRow}>{t.newQuote.difficultyFactor}</span>
             <span className={`text-right tabular-nums ${styles.totalAmount}`}>{jobConstants.difficulty_multiplier_percent}%</span>
-            <span className={`pt-1 font-semibold ${styles.pageTitle}`}>Calculated unit price</span>
+            <span className={`pt-1 font-semibold ${styles.pageTitle}`}>{t.newQuote.calculatedUnitPrice}</span>
             <span className={`pt-1 text-right font-bold tabular-nums ${styles.totalAccent}`}>{formatCurrency(calculatedUnitPrice)}</span>
-            <span className={`pt-1 font-semibold ${styles.pageTitle}`}>Calculated line total</span>
+            <span className={`pt-1 font-semibold ${styles.pageTitle}`}>{t.newQuote.calculatedLineTotal}</span>
             <span className={`pt-1 text-right font-bold tabular-nums ${styles.totalAccent}`}>{formatCurrency(calculatedLineSubtotal)}</span>
           </div>
           <p className={`mt-2 text-xs ${styles.pageSubtitle}`}>
-            This calculated line is included automatically when you submit the quote.
+            {t.newQuote.calculatedLineNote}
           </p>
         </div>
       </div>
@@ -242,7 +244,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
         disabled={submitting || !selectedJobId}
         className="btn-primary mt-6 w-full rounded-xl py-4 text-base font-semibold disabled:opacity-60"
       >
-        {submitting ? 'Creating…' : 'Create Quote'}
+        {submitting ? t.newQuote.creating : t.newQuote.createQuote}
       </button>
     </form>
   )

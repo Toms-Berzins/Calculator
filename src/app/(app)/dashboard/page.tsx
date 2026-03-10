@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { getDict } from '@/i18n/server'
 import styles from './dashboard.module.css'
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient()
+  const t = await getDict()
 
   const [quotesRes, jobsRes, customersRes] = await Promise.all([
     supabase.from('quotes').select('id', { count: 'exact', head: true }),
@@ -13,7 +15,7 @@ export default async function DashboardPage() {
 
   const stats = [
     {
-      label: 'Total Quotes',
+      label: t.dashboard.totalQuotes,
       count: quotesRes.count ?? 0,
       href: '/quotes',
       cardClass: styles.statQuotes,
@@ -28,7 +30,7 @@ export default async function DashboardPage() {
       ),
     },
     {
-      label: 'Open Jobs',
+      label: t.dashboard.openJobs,
       count: jobsRes.count ?? 0,
       href: '/jobs',
       cardClass: styles.statJobs,
@@ -44,7 +46,7 @@ export default async function DashboardPage() {
       ),
     },
     {
-      label: 'Customers',
+      label: t.dashboard.customers,
       count: customersRes.count ?? 0,
       href: '/customers',
       cardClass: styles.statCustomers,
@@ -61,10 +63,10 @@ export default async function DashboardPage() {
       {/* Page header */}
       <div className="mb-8">
         <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
-          Dashboard
+          {t.dashboard.title}
         </h1>
         <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-          Overview of your quoting activity
+          {t.dashboard.subtitle}
         </p>
       </div>
 
@@ -116,7 +118,7 @@ export default async function DashboardPage() {
       {/* Quick actions */}
       <div className="mt-8">
         <h2 className={`mb-3 text-xs font-semibold uppercase tracking-widest ${styles.quickActionsHeader}`}>
-          Quick actions
+          {t.dashboard.quickActions}
         </h2>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
@@ -130,7 +132,7 @@ export default async function DashboardPage() {
                 clipRule="evenodd"
               />
             </svg>
-            New Quote
+            {t.dashboard.newQuote}
           </Link>
           <Link
             href="/jobs"
@@ -144,7 +146,7 @@ export default async function DashboardPage() {
               />
               <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
             </svg>
-            View Jobs
+            {t.dashboard.viewJobs}
           </Link>
         </div>
       </div>

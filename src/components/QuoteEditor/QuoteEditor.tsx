@@ -7,6 +7,7 @@ import { updateQuoteItems, updateQuoteStatus } from '@/lib/actions/quotes'
 import { generateAndStorePDF } from '@/lib/actions/pdf'
 import { QuoteItemsTable } from '@/components/QuoteItemsTable/QuoteItemsTable'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
+import { useT } from '@/i18n/context'
 import type { QuoteWithRelations, Quote, QuoteStatus } from '@/types/database'
 import styles from './QuoteEditor.module.css'
 
@@ -21,6 +22,7 @@ export function QuoteEditor({ quote }: Props) {
   const [pdfError, setPdfError] = useState('')
   const [generatingPdf, setGeneratingPdf] = useState(false)
   const [syncIndicator, setSyncIndicator] = useState(false)
+  const t = useT()
 
   const { items, taxRate, subtotal, taxAmount, total, addItem, removeItem, updateItem, setTaxRate } = useQuoteCalculator(
     quote.quote_items.map((i) => ({ ...i, tempId: i.id })),
@@ -49,7 +51,7 @@ export function QuoteEditor({ quote }: Props) {
       const url = await generateAndStorePDF(quote.id)
       setPdfUrl(url)
     } catch (error) {
-      setPdfError(error instanceof Error ? error.message : 'Failed to generate PDF')
+      setPdfError(error instanceof Error ? error.message : t.quote.generating)
     } finally {
       setGeneratingPdf(false)
     }
@@ -71,14 +73,14 @@ export function QuoteEditor({ quote }: Props) {
 
         <div className={styles.headerActions}>
           {syncIndicator && (
-            <span className={styles.syncBadge}>Syncing…</span>
+            <span className={styles.syncBadge}>{t.quote.syncing}</span>
           )}
           <button
             onClick={handleSave}
             disabled={saving}
             className={`btn-primary rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60 ${styles.headerSave}`}
           >
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? t.quote.saving : t.quote.save}
           </button>
         </div>
       </div>
@@ -86,9 +88,9 @@ export function QuoteEditor({ quote }: Props) {
       {/* Line items */}
       <section className={styles.itemsCard}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Line items</h2>
+          <h2 className={styles.sectionTitle}>{t.quote.lineItems}</h2>
           <span className={styles.sectionMeta}>
-            {items.length} {items.length === 1 ? 'item' : 'items'}
+            {t.quote.items(items.length)}
           </span>
         </div>
         <QuoteItemsTable
@@ -102,15 +104,15 @@ export function QuoteEditor({ quote }: Props) {
       <div className={styles.bottomGrid}>
         {/* Tax & totals */}
         <aside className={styles.totalsCard}>
-          <h2 className={styles.sectionTitle}>Summary</h2>
+          <h2 className={styles.sectionTitle}>{t.quote.summary}</h2>
           <div className={styles.totalsList}>
             <div className={styles.totalRow}>
-              <span className={styles.totalLabel}>Subtotal</span>
+              <span className={styles.totalLabel}>{t.quote.subtotal}</span>
               <span className={styles.totalValue}>{formatCurrency(subtotal)}</span>
             </div>
             <div className={styles.totalRow}>
               <label htmlFor="taxRate" className={styles.totalLabel}>
-                VAT %
+                {t.quote.vat}
               </label>
               <input
                 id="taxRate"
@@ -125,12 +127,12 @@ export function QuoteEditor({ quote }: Props) {
             </div>
             {taxRate > 0 && (
               <div className={styles.totalRow}>
-                <span className={styles.totalLabel}>VAT</span>
+                <span className={styles.totalLabel}>{t.quote.vatAmount}</span>
                 <span className={styles.totalValue}>{formatCurrency(taxAmount)}</span>
               </div>
             )}
             <div className={styles.totalDivider}>
-              <span className={styles.totalAmountLabel}>Total</span>
+              <span className={styles.totalAmountLabel}>{t.quote.total}</span>
               <span className={styles.totalAmount}>{formatCurrency(total)}</span>
             </div>
           </div>
@@ -139,14 +141,14 @@ export function QuoteEditor({ quote }: Props) {
         {/* Notes + status + PDF */}
         <section className={styles.metaCard}>
           <div>
-            <label htmlFor="notes" className={styles.fieldLabel}>Notes</label>
+            <label htmlFor="notes" className={styles.fieldLabel}>{t.quote.notes}</label>
             <textarea
               id="notes"
               rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Any additional notes for the customer…"
-              aria-label="Additional notes for the customer"
+              placeholder={t.quote.notesPlaceholder}
+              aria-label={t.quote.notesPlaceholder}
               className="input-field w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
@@ -160,7 +162,7 @@ export function QuoteEditor({ quote }: Props) {
               className={`input-field rounded-lg px-3 py-2 text-sm ${styles.statusSelect} ${styles.actionControl}`}
             >
               {['draft', 'sent', 'accepted', 'rejected'].map((s) => (
-                <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                <option key={s} value={s}>{t.quote.status[s as keyof typeof t.quote.status]}</option>
               ))}
             </select>
 
@@ -169,7 +171,7 @@ export function QuoteEditor({ quote }: Props) {
               disabled={generatingPdf}
               className={`btn-ghost rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60 ${styles.actionControl} ${styles.actionButton}`}
             >
-              {generatingPdf ? 'Generating…' : 'Generate PDF'}
+              {generatingPdf ? t.quote.generating : t.quote.generatePDF}
             </button>
 
             {pdfUrl && (
@@ -180,7 +182,7 @@ export function QuoteEditor({ quote }: Props) {
                 download
                 className={`btn-ghost rounded-lg px-4 py-2 text-sm font-semibold ${styles.downloadLink} ${styles.actionControl} ${styles.actionButton}`}
               >
-                Download PDF
+                {t.quote.downloadPDF}
               </a>
             )}
           </div>

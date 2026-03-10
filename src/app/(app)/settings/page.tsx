@@ -1,16 +1,17 @@
 import { getCalculatorSettings } from '@/lib/actions/calculatorSettings'
 import { CalculatorSettingsForm } from '@/components/CalculatorSettingsForm/CalculatorSettingsForm'
+import { getDict } from '@/i18n/server'
 import styles from './settings.module.css'
 
 export default async function SettingsPage() {
-  const settings = await getCalculatorSettings()
+  const [settings, t] = await Promise.all([getCalculatorSettings(), getDict()])
 
   return (
     <div>
       <div className="mb-8">
-        <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>Settings</h1>
+        <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>{t.settings.title}</h1>
         <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-          Pricing constants used by the 3D print calculator
+          {t.settings.subtitle}
         </p>
       </div>
 

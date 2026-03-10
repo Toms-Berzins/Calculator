@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useT } from '@/i18n/context'
 import styles from './login.module.css'
 
 export default function LoginPage() {
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
+  const t = useT()
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -38,7 +40,7 @@ export default function LoginPage() {
         </div>
         <h1 className="text-2xl font-bold text-white tracking-tight">QuoteCalc</h1>
         <p className={`mt-1 text-sm ${styles.subtitle}`}>
-          Sign in to your account
+          {t.login.subtitle}
         </p>
       </div>
 
@@ -48,7 +50,7 @@ export default function LoginPage() {
             htmlFor="email"
             className={styles.label}
           >
-            Email
+            {t.login.email}
           </label>
           <input
             id="email"
@@ -76,7 +78,7 @@ export default function LoginPage() {
             htmlFor="password"
             className={styles.label}
           >
-            Password
+            {t.login.password}
           </label>
           <input
             id="password"
@@ -110,7 +112,7 @@ export default function LoginPage() {
           disabled={loading}
           className={styles.submitButton}
         >
-          {loading ? 'Signing in…' : 'Sign in'}
+          {loading ? t.login.signingIn : t.login.signIn}
         </button>
       </form>
     </div>

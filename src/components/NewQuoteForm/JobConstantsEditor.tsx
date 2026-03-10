@@ -1,4 +1,5 @@
 import styles from './NewQuoteForm.module.css'
+import { useT } from '@/i18n/context'
 import type { ConstantChip, JobConstantKey } from './NewQuoteForm.types'
 
 interface JobConstantsEditorState {
@@ -24,6 +25,7 @@ interface JobConstantsEditorProps {
 }
 
 export function JobConstantsEditor(props: JobConstantsEditorProps) {
+  const t = useT()
   const {
     constantChips,
     canUndoRemove,
@@ -43,9 +45,9 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
     <>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className={`text-base font-semibold ${styles.pageTitle}`}>3D Print Calculator</h2>
+          <h2 className={`text-base font-semibold ${styles.pageTitle}`}>{t.newQuote.calculator}</h2>
           <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-            Tap a constant bubble to edit it for this job only.
+            {t.newQuote.calculatorHint}
           </p>
         </div>
         <button
@@ -57,7 +59,7 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
           <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
             <path d="M8.25 4.5 3.75 9l4.5 4.5v-3h3A3.75 3.75 0 0 1 15 14.25v1.25a.75.75 0 0 0 1.5 0v-1.25A5.25 5.25 0 0 0 11.25 9h-3v-4.5Z" />
           </svg>
-          <span>Undo</span>
+          <span>{t.newQuote.undo}</span>
         </button>
       </div>
 
@@ -97,7 +99,7 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
           <div className={`w-full max-w-md rounded-2xl p-4 ${styles.modalCard}`}>
             <div className="flex items-center justify-between gap-2">
               <h3 className={`text-base font-semibold ${styles.pageTitle}`}>
-                Edit {editingConstant.label} for this job
+                {t.newQuote.editConstantTitle(editingConstant.label)}
               </h3>
               <button
                 type="button"
@@ -137,14 +139,14 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
                 onClick={onCloseConstantEditor}
                 className="btn-ghost w-full rounded-lg py-2 text-sm font-medium"
               >
-                Cancel
+                {t.newQuote.cancel}
               </button>
               <button
                 type="button"
                 onClick={onSaveConstant}
                 className="btn-primary w-full rounded-lg py-2 text-sm font-medium"
               >
-                Save
+                {t.newQuote.save}
               </button>
             </div>
           </div>

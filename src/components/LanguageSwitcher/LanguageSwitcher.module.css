@@ -1,0 +1,56 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.icon {
+  color: var(--text-muted);
+}
+
+.track {
+  position: relative;
+  display: flex;
+  border-radius: 9999px;
+  padding: 2px;
+  background: var(--bg-muted);
+}
+
+.track[data-locale='en'] .pill {
+  left: 2px;
+  right: 50%;
+}
+
+.track[data-locale='lv'] .pill {
+  left: 50%;
+  right: 2px;
+}
+
+.pill {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: 9999px;
+  background: var(--accent);
+  transition:
+    left 200ms ease,
+    right 200ms ease;
+}
+
+.option {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  cursor: pointer;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 200ms ease;
+}
+
+.option[aria-pressed='true'] {
+  color: white;
+}

@@ -3,14 +3,8 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createJob, updateJob, deleteJob } from '@/lib/actions/jobs'
 import { DeleteJobButton } from '@/components/jobs/DeleteJobButton'
 import { redirect } from 'next/navigation'
+import { getDict } from '@/i18n/server'
 import styles from './jobs.module.css'
-
-const JOB_STATUS: Record<string, { label: string; className: string }> = {
-  open: { label: 'Open', className: styles.statusOpen },
-  won: { label: 'Won', className: styles.statusWon },
-  lost: { label: 'Lost', className: styles.statusLost },
-  archived: { label: 'Archived', className: styles.statusArchived },
-}
 
 const JOB_STATUS_VALUES = ['open', 'won', 'lost', 'archived'] as const
 
@@ -109,6 +103,14 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
   }
 
   const supabase = await createServerSupabaseClient()
+  const t = await getDict()
+
+  const JOB_STATUS: Record<string, { label: string; className: string }> = {
+    open: { label: t.jobs.statusValues.open, className: styles.statusOpen },
+    won: { label: t.jobs.statusValues.won, className: styles.statusWon },
+    lost: { label: t.jobs.statusValues.lost, className: styles.statusLost },
+    archived: { label: t.jobs.statusValues.archived, className: styles.statusArchived },
+  }
 
   const { data: jobs } = await supabase
     .from('jobs')
@@ -124,10 +126,10 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     <div>
       <div className="mb-8">
         <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
-          Jobs
+          {t.jobs.title}
         </h1>
         <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-          {jobs?.length ?? 0} total
+          {t.jobs.total(jobs?.length ?? 0)}
         </p>
       </div>
 
@@ -138,27 +140,27 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
       )}
 
       <section className={`mb-6 rounded-2xl p-4 ${styles.createCard}`}>
-        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>Add job</h2>
+        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>{t.jobs.addJob}</h2>
         <form action={handleCreateJob} className={styles.jobForm}>
           <div className={styles.formGrid}>
             <label className="text-sm">
-              <span className={styles.fieldLabel}>Title</span>
+              <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
               <input
                 name="title"
                 required
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder="Job title"
+                placeholder={t.jobs.titlePlaceholder}
               />
             </label>
             <label className="text-sm">
-              <span className={styles.fieldLabel}>Customer</span>
+              <span className={styles.fieldLabel}>{t.jobs.customer}</span>
               <select
                 name="customerId"
                 required
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
                 defaultValue=""
               >
-                <option value="" disabled>Select customer…</option>
+                <option value="" disabled>{t.jobs.selectCustomer}</option>
                 {customers?.map((customer) => (
                   <option key={customer.id} value={customer.id}>
                     {customer.company ?? customer.name}
@@ -167,18 +169,18 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
               </select>
             </label>
             <label className="text-sm md:col-span-2">
-              <span className={styles.fieldLabel}>Description</span>
+              <span className={styles.fieldLabel}>{t.jobs.description}</span>
               <textarea
                 name="description"
                 rows={2}
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder="Optional description"
+                placeholder={t.jobs.descriptionPlaceholder}
               />
             </label>
           </div>
           <div className={styles.actionRow}>
             <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">
-              Create job
+              {t.jobs.createJob}
             </button>
           </div>
         </form>
@@ -202,7 +204,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
           </svg>
           <p className={`text-sm font-medium ${styles.emptyText}`}>
-            No jobs yet
+            {t.jobs.noJobs}
           </p>
         </div>
       )}
@@ -276,20 +278,20 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {isOpenJob ? 'Continue job' : 'Create quote'}
+                  {isOpenJob ? t.jobs.continueJob : t.jobs.createQuote}
                 </Link>
               </div>
 
               <div className={styles.jobActions}>
                 <details className={styles.editDetails}>
-                  <summary className={styles.editSummary}>Edit</summary>
+                  <summary className={styles.editSummary}>{t.jobs.edit}</summary>
 
                   <form action={handleUpdateJob} className={styles.jobForm}>
                     <input type="hidden" name="id" value={j.id} />
 
                     <div className={styles.formGrid}>
                       <label className="text-sm">
-                        <span className={styles.fieldLabel}>Title</span>
+                        <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
                         <input
                           name="title"
                           required
@@ -298,7 +300,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                         />
                       </label>
                       <label className="text-sm">
-                        <span className={styles.fieldLabel}>Customer</span>
+                        <span className={styles.fieldLabel}>{t.jobs.customer}</span>
                         <select
                           name="customerId"
                           required
@@ -313,7 +315,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                         </select>
                       </label>
                       <label className="text-sm">
-                        <span className={styles.fieldLabel}>Status</span>
+                        <span className={styles.fieldLabel}>{t.jobs.status}</span>
                         <select
                           name="status"
                           defaultValue={j.status ?? 'open'}
@@ -321,13 +323,13 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                         >
                           {JOB_STATUS_VALUES.map((value) => (
                             <option key={value} value={value}>
-                              {value.charAt(0).toUpperCase() + value.slice(1)}
+                              {t.jobs.statusValues[value]}
                             </option>
                           ))}
                         </select>
                       </label>
                       <label className="text-sm md:col-span-2">
-                        <span className={styles.fieldLabel}>Description</span>
+                        <span className={styles.fieldLabel}>{t.jobs.description}</span>
                         <textarea
                           name="description"
                           rows={2}
@@ -339,7 +341,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
 
                     <div className={styles.actionRow}>
                       <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">
-                        Save changes
+                        {t.jobs.saveChanges}
                       </button>
                     </div>
                   </form>
