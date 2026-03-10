@@ -1,0 +1,50 @@
+.pageTitle {
+  color: var(--text-strong);
+}
+
+.quoteCount {
+  color: var(--text-muted);
+}
+
+.emptyState {
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+}
+
+.emptyIcon {
+  color: var(--text-faint);
+}
+
+.emptyIconLabel {
+  color: var(--text-muted);
+}
+
+.emptyStateHint {
+  color: var(--text-faint);
+}
+
+.jobTitle {
+  color: var(--text-strong);
+}
+
+.customerName {
+  color: var(--text-muted);
+}
+
+.statusBadge {
+  border-radius: 9999px;
+  padding: 0.625rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.quoteAmount {
+  color: var(--text-strong);
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.chevron {
+  color: var(--text-muted);
+}

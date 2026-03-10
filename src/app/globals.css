@@ -1,0 +1,216 @@
+@import 'tailwindcss';
+
+/* ── Design tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-base:    #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-muted:   #f1f5f9;
+
+  /* Borders */
+  --border:     #e2e8f0;
+  --border-muted: #f1f5f9;
+
+  /* Text */
+  --text-strong:  #0f172a;
+  --text-default: #334155;
+  --text-muted:   #64748b;
+  --text-faint:   #94a3b8;
+
+  /* Accent — indigo */
+  --accent:       #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-muted: #eef2ff;
+  --accent-text:  #4338ca;
+
+  /* Status */
+  --status-draft-bg:    #f8fafc;
+  --status-draft-text:  #64748b;
+  --status-sent-bg:     #eff6ff;
+  --status-sent-text:   #1d4ed8;
+  --status-accepted-bg: #f0fdf4;
+  --status-accepted-text: #15803d;
+  --status-rejected-bg: #fff1f2;
+  --status-rejected-text: #be123c;
+
+  /* Sidebar */
+  --sidebar-bg:     #ffffff;
+  --sidebar-border: #e2e8f0;
+
+  /* Shadows */
+  --shadow-card:  0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-hover: 0 4px 20px rgba(15,23,42,0.10), 0 2px 6px rgba(15,23,42,0.05);
+  --shadow-glass: 0 8px 32px rgba(15,23,42,0.10);
+
+  /* Legacy compat */
+  --background: var(--bg-base);
+  --foreground: var(--text-default);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-base:    #0f172a;
+    --bg-surface: #1e293b;
+    --bg-muted:   #1e293b;
+
+    --border:       #334155;
+    --border-muted: #1e293b;
+
+    --text-strong:  #f1f5f9;
+    --text-default: #cbd5e1;
+    --text-muted:   #94a3b8;
+    --text-faint:   #475569;
+
+    --accent:       #6366f1;
+    --accent-hover: #818cf8;
+    --accent-muted: rgba(99,102,241,0.14);
+    --accent-text:  #a5b4fc;
+
+    --status-draft-bg:    rgba(71,85,105,0.25);
+    --status-draft-text:  #94a3b8;
+    --status-sent-bg:     rgba(30,58,138,0.3);
+    --status-sent-text:   #93c5fd;
+    --status-accepted-bg: rgba(6,78,59,0.3);
+    --status-accepted-text: #6ee7b7;
+    --status-rejected-bg: rgba(127,29,29,0.3);
+    --status-rejected-text: #fca5a5;
+
+    --sidebar-bg:     #1e293b;
+    --sidebar-border: #334155;
+
+    --shadow-card:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-hover: 0 4px 20px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.25);
+    --shadow-glass: 0 8px 32px rgba(0,0,0,0.4);
+
+    --background: var(--bg-base);
+    --foreground: var(--text-default);
+  }
+}
+
+/* ── Base styles ───────────────────────────────────────────────────────── */
+body {
+  background: var(--bg-base);
+  color: var(--text-default);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui,
+    'Helvetica Neue', Arial, sans-serif;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* ── Glassmorphism helpers ─────────────────────────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.72);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+@media (prefers-color-scheme: dark) {
+  .glass {
+    background: rgba(30,41,59,0.80);
+    border-color: rgba(255,255,255,0.08);
+  }
+}
+
+/* Fallback for browsers that don't support backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass { background: var(--bg-surface); }
+}
+
+/* ── Focus ring ────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Smooth transitions ────────────────────────────────────────────────── */
+a, button, input, select, textarea {
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Server-component-safe utility classes ─────────────────────────────── */
+
+/* Clickable card — replaces JS onMouseEnter/Leave shadow/border changes */
+.card-interactive {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 150ms ease, border-color 150ms ease;
+}
+.card-interactive:hover {
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+/* Primary gradient button */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  color: #ffffff;
+  box-shadow: 0 2px 12px rgba(79,70,229,0.35);
+  transition: box-shadow 150ms ease, opacity 150ms ease;
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 20px rgba(79,70,229,0.5);
+}
+
+/* Ghost / secondary button */
+.btn-ghost {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-default);
+  box-shadow: var(--shadow-card);
+  transition: background 150ms ease;
+}
+.btn-ghost:hover {
+  background: var(--bg-muted);
+}
+
+/* Muted text link that turns accent on hover */
+.link-muted {
+  color: var(--text-muted);
+  transition: color 150ms ease;
+}
+.link-muted:hover {
+  color: var(--accent-text);
+}
+
+/* Sidebar nav item */
+.nav-item {
+  color: var(--text-muted);
+  transition: background 150ms ease, color 150ms ease;
+}
+.nav-item:hover {
+  background: var(--bg-muted);
+  color: var(--text-strong);
+}
+.nav-item.active {
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+
+/* Form inputs */
+.input-field {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-strong);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+}
+.input-field::placeholder {
+  color: var(--text-faint);
+}

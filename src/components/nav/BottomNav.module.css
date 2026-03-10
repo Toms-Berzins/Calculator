@@ -1,0 +1,33 @@
+.nav {
+  box-shadow: 0 -1px 0 var(--border);
+}
+
+.navItem {
+  min-height: 56px;
+}
+
+.navItemActive {
+  color: var(--accent);
+  min-height: 56px;
+}
+
+.navItemInactive {
+  color: var(--text-muted);
+  min-height: 56px;
+}
+
+.navIconActive {
+  background: var(--accent-muted);
+}
+
+.navIconInactive {
+  background: transparent;
+}
+
+.navLabelActive {
+  color: var(--accent-text);
+}
+
+.navLabelInactive {
+  color: var(--text-faint);
+}

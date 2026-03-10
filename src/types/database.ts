@@ -1,0 +1,186 @@
+// Auto-generated from Supabase schema.
+// Regenerate with: npx supabase gen types typescript --project-id YOUR_PROJECT_REF > src/types/database.ts
+
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
+
+export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
+export type JobStatus = 'open' | 'won' | 'lost' | 'archived'
+
+export interface Database {
+  public: {
+    Tables: {
+      customers: {
+        Row: {
+          id: string
+          name: string
+          company: string | null
+          email: string | null
+          phone: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          company?: string | null
+          email?: string | null
+          phone?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          company?: string | null
+          email?: string | null
+          phone?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      jobs: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          customer_id: string
+          status: JobStatus
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          customer_id: string
+          status?: JobStatus
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          customer_id?: string
+          status?: JobStatus
+          created_by?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'jobs_customer_id_fkey'
+            columns: ['customer_id']
+            isOneToOne: false
+            referencedRelation: 'customers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          id: string
+          job_id: string
+          created_by: string
+          status: QuoteStatus
+          subtotal: number
+          tax_rate: number
+          total: number
+          notes: string | null
+          pdf_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          job_id: string
+          created_by: string
+          status?: QuoteStatus
+          subtotal?: number
+          tax_rate?: number
+          total?: number
+          notes?: string | null
+          pdf_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          job_id?: string
+          created_by?: string
+          status?: QuoteStatus
+          subtotal?: number
+          tax_rate?: number
+          total?: number
+          notes?: string | null
+          pdf_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'quotes_job_id_fkey'
+            columns: ['job_id']
+            isOneToOne: false
+            referencedRelation: 'jobs'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      quote_items: {
+        Row: {
+          id: string
+          quote_id: string
+          description: string
+          quantity: number
+          unit_price: number
+          subtotal: number
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          quote_id: string
+          description: string
+          quantity?: number
+          unit_price?: number
+          subtotal?: number
+          sort_order?: number
+        }
+        Update: {
+          id?: string
+          quote_id?: string
+          description?: string
+          quantity?: number
+          unit_price?: number
+          subtotal?: number
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'quote_items_quote_id_fkey'
+            columns: ['quote_id']
+            isOneToOne: false
+            referencedRelation: 'quotes'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+    }
+    Views: Record<string, never>
+    Functions: Record<string, never>
+    Enums: {
+      job_status: JobStatus
+      quote_status: QuoteStatus
+    }
+    CompositeTypes: Record<string, never>
+  }
+}
+
+// Convenience row types
+export type Customer = Database['public']['Tables']['customers']['Row']
+export type Job = Database['public']['Tables']['jobs']['Row']
+export type Quote = Database['public']['Tables']['quotes']['Row']
+export type QuoteItem = Database['public']['Tables']['quote_items']['Row']
+
+// Quote with nested relations
+export type QuoteWithRelations = Quote & {
+  quote_items: QuoteItem[]
+  jobs: (Job & { customers: Customer | null }) | null
+}

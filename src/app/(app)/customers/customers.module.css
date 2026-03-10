@@ -1,0 +1,43 @@
+.pageTitle {
+  color: var(--text-strong);
+}
+
+.pageSubtitle {
+  color: var(--text-muted);
+}
+
+.emptyCard {
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+}
+
+.emptyIcon {
+  color: var(--text-faint);
+}
+
+.emptyText {
+  color: var(--text-muted);
+}
+
+.customerCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.customerName {
+  color: var(--text-strong);
+}
+
+.customerCompany {
+  color: var(--text-muted);
+}
+
+.avatar {
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+
+.contactDivider {
+  border-top: 1px solid var(--border-muted);
+}

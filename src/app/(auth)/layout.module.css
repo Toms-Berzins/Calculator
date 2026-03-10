@@ -1,0 +1,13 @@
+.authLayout {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 70%, #1e1b4b 100%);
+}
+
+.topBlob {
+  background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+  filter: blur(60px);
+}
+
+.bottomBlob {
+  background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+  filter: blur(60px);
+}

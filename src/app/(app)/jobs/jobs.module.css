@@ -1,0 +1,71 @@
+.pageTitle {
+  color: var(--text-strong);
+}
+
+.pageSubtitle {
+  color: var(--text-muted);
+}
+
+.emptyCard {
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+}
+
+.emptyIcon {
+  color: var(--text-faint);
+}
+
+.emptyText {
+  color: var(--text-muted);
+}
+
+.jobCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.jobTitle {
+  color: var(--text-strong);
+}
+
+.jobCustomer {
+  color: var(--text-muted);
+}
+
+.jobDescription {
+  color: var(--text-faint);
+}
+
+.jobStatus {
+  background: var(--status-bg);
+  color: var(--status-text);
+}
+
+.statusOpen {
+  --status-bg: var(--status-accepted-bg);
+  --status-text: var(--status-accepted-text);
+}
+
+.statusWon {
+  --status-bg: var(--status-sent-bg);
+  --status-text: var(--status-sent-text);
+}
+
+.statusLost {
+  --status-bg: var(--status-rejected-bg);
+  --status-text: var(--status-rejected-text);
+}
+
+.statusArchived {
+  --status-bg: var(--status-draft-bg);
+  --status-text: var(--status-draft-text);
+}
+
+.jobDivider {
+  border-top: 1px solid var(--border-muted);
+}
+
+.jobLink {
+  color: var(--accent-text);
+}

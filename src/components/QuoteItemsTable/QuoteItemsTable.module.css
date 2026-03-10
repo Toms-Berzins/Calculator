@@ -1,0 +1,43 @@
+.tableHeader {
+  border-bottom: 1px solid var(--border);
+  color: var(--text-faint);
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--border-muted);
+}
+
+.subtotalCell {
+  color: var(--text-strong);
+}
+
+.removeButton {
+  color: var(--text-faint);
+  transition: color 150ms, background 150ms;
+}
+
+.removeButton:hover {
+  color: var(--status-rejected-text);
+  background: var(--status-rejected-bg);
+}
+
+.mobileCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+}
+
+.mobileLabel {
+  color: var(--text-faint);
+}
+
+.addButton {
+  border-color: var(--border);
+  color: var(--text-muted);
+  background: transparent;
+  transition: border-color 150ms, color 150ms;
+}
+
+.addButton:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}

@@ -1,0 +1,33 @@
+.pageTitle {
+  color: var(--text-strong);
+}
+
+.pageSubtitle {
+  color: var(--text-muted);
+}
+
+.jobLabel {
+  color: var(--text-muted);
+}
+
+.totalsCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.totalRow {
+  color: var(--text-muted);
+}
+
+.totalAmount {
+  color: var(--text-strong);
+}
+
+.totalAccent {
+  color: var(--accent-text);
+}
+
+.divider {
+  border-top: 1px solid var(--border);
+}

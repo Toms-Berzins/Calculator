@@ -1,0 +1,63 @@
+.pageTitle {
+  color: var(--text-strong);
+}
+
+.pageSubtitle {
+  color: var(--text-muted);
+}
+
+.statLabel {
+  color: var(--text-muted);
+}
+
+.statCount {
+  color: var(--text-strong);
+}
+
+.chevron {
+  color: var(--text-muted);
+}
+
+.quickActionsHeader {
+  color: var(--text-faint);
+}
+
+.statCard {
+  --stat-accent: #4f46e5;
+  --stat-accent-bg: rgba(79, 70, 229, 0.1);
+  --stat-blob: rgba(79, 70, 229, 0.25);
+}
+
+.statQuotes {
+  --stat-accent: #4f46e5;
+  --stat-accent-bg: rgba(79, 70, 229, 0.1);
+  --stat-blob: rgba(79, 70, 229, 0.25);
+}
+
+.statJobs {
+  --stat-accent: #0891b2;
+  --stat-accent-bg: rgba(8, 145, 178, 0.1);
+  --stat-blob: rgba(8, 145, 178, 0.25);
+}
+
+.statCustomers {
+  --stat-accent: #059669;
+  --stat-accent-bg: rgba(5, 150, 105, 0.1);
+  --stat-blob: rgba(5, 150, 105, 0.25);
+}
+
+.statBlob {
+  filter: blur(12px);
+  background: radial-gradient(circle, var(--stat-blob) 0%, transparent 70%);
+}
+
+.statIcon {
+  background: var(--stat-accent-bg);
+  color: var(--stat-accent);
+  border-radius: 0.75rem;
+  padding: 0.625rem;
+  margin-bottom: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,27 @@
+.sidebar {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+}
+
+.brandIcon {
+  background: var(--accent);
+}
+
+.brandText {
+  color: var(--text-strong);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+.dividerSpaced {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 12px;
+}
+
+.activeIndicator {
+  background: var(--accent);
+}
