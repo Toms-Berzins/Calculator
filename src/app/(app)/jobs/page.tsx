@@ -250,52 +250,53 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                       {isOpenJob ? t.jobs.continueJob : t.jobs.createQuote}
                     </Link>
                     <DeleteJobButton jobId={j.id} action={handleDeleteJob} />
+                    {/* Edit toggle — panel is a full-width sibling below, shown via CSS :has() */}
+                    <details className={styles.editDetails}>
+                      <summary className={styles.editSummary}>
+                        <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                        {t.jobs.edit}
+                      </summary>
+                    </details>
                   </div>
                 </div>
 
-                {/* Inline edit accordion */}
-                <details className={styles.editDetails}>
-                  <summary className={styles.editSummary}>
-                    <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                    </svg>
-                    {t.jobs.edit}
-                  </summary>
-                  <div className={styles.editPanel}>
-                    <form action={handleUpdateJob} className={styles.jobForm}>
-                      <input type="hidden" name="id" value={j.id} />
-                      <div className={styles.formGrid}>
-                        <label className="text-sm">
-                          <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
-                          <input name="title" required defaultValue={j.title} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
-                        </label>
-                        <label className="text-sm">
-                          <span className={styles.fieldLabel}>{t.jobs.customer}</span>
-                          <select name="customerId" required defaultValue={j.customer_id} className="input-field w-full rounded-lg px-3 py-2 text-sm">
-                            {customers?.map((c) => (
-                              <option key={c.id} value={c.id}>{c.company ?? c.name}</option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="text-sm">
-                          <span className={styles.fieldLabel}>{t.jobs.status}</span>
-                          <select name="status" defaultValue={j.status ?? 'open'} className="input-field w-full rounded-lg px-3 py-2 text-sm">
-                            {JOB_STATUS_VALUES.map((value) => (
-                              <option key={value} value={value}>{t.jobs.statusValues[value]}</option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="text-sm md:col-span-2">
-                          <span className={styles.fieldLabel}>{t.jobs.description}</span>
-                          <textarea name="description" rows={2} defaultValue={j.description ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
-                        </label>
-                      </div>
-                      <div className={styles.actionRow}>
-                        <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">{t.jobs.saveChanges}</button>
-                      </div>
-                    </form>
-                  </div>
-                </details>
+                {/* Edit panel: full-width, shown via CSS :has(.editDetails[open]) */}
+                <div className={styles.editPanel}>
+                  <form action={handleUpdateJob} className={styles.jobForm}>
+                    <input type="hidden" name="id" value={j.id} />
+                    <div className={styles.formGrid}>
+                      <label className="text-sm">
+                        <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
+                        <input name="title" required defaultValue={j.title} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+                      </label>
+                      <label className="text-sm">
+                        <span className={styles.fieldLabel}>{t.jobs.customer}</span>
+                        <select name="customerId" required defaultValue={j.customer_id} className="input-field w-full rounded-lg px-3 py-2 text-sm">
+                          {customers?.map((c) => (
+                            <option key={c.id} value={c.id}>{c.company ?? c.name}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="text-sm">
+                        <span className={styles.fieldLabel}>{t.jobs.status}</span>
+                        <select name="status" defaultValue={j.status ?? 'open'} className="input-field w-full rounded-lg px-3 py-2 text-sm">
+                          {JOB_STATUS_VALUES.map((value) => (
+                            <option key={value} value={value}>{t.jobs.statusValues[value]}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="text-sm md:col-span-2">
+                        <span className={styles.fieldLabel}>{t.jobs.description}</span>
+                        <textarea name="description" rows={2} defaultValue={j.description ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+                      </label>
+                    </div>
+                    <div className={styles.actionRow}>
+                      <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">{t.jobs.saveChanges}</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             )
           })}

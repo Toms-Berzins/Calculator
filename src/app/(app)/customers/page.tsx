@@ -104,216 +104,176 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
     .select('id, name, company, email, phone')
     .order('name')
 
+  const stats = {
+    total:       customers?.length ?? 0,
+    withCompany: customers?.filter((c) => c.company).length ?? 0,
+    withEmail:   customers?.filter((c) => c.email).length ?? 0,
+    withPhone:   customers?.filter((c) => c.phone).length ?? 0,
+  }
+
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
-          {t.customers.title}
-        </h1>
-        <p className={`mt-1 text-sm ${styles.pageSubtitle}`}>
-          {t.customers.total(customers?.length ?? 0)}
-        </p>
+    <div className={styles.shell}>
+
+      {/* ── Header ── */}
+      <div className={styles.pageHeader}>
+        <div>
+          <h1 className={styles.pageTitle}>{t.customers.title}</h1>
+          <p className={styles.pageSubtitle}>{t.customers.total(stats.total)}</p>
+        </div>
       </div>
 
       {message && (
-        <p
-          className={`${styles.feedback} ${status === 'error' ? styles.feedbackError : styles.feedbackSuccess}`}
-        >
+        <p className={`${styles.feedback} ${status === 'error' ? styles.feedbackError : styles.feedbackSuccess}`}>
           {message}
         </p>
       )}
 
-      <section className={`mb-6 rounded-2xl p-4 ${styles.createCard}`}>
-        <h2 className={`text-sm font-semibold ${styles.pageTitle}`}>{t.customers.addCustomer}</h2>
-        <form action={handleCreateCustomer} className={styles.customerForm}>
-          <div className={styles.formGrid}>
-            <label className="text-sm">
-              <span className={styles.fieldLabel}>{t.customers.name}</span>
-              <input
-                name="name"
-                required
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder={t.customers.namePlaceholder}
-              />
-            </label>
-            <label className="text-sm">
-              <span className={styles.fieldLabel}>{t.customers.company}</span>
-              <input
-                name="company"
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder={t.customers.companyPlaceholder}
-              />
-            </label>
-            <label className="text-sm">
-              <span className={styles.fieldLabel}>{t.customers.email}</span>
-              <input
-                name="email"
-                type="email"
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder={t.customers.emailPlaceholder}
-              />
-            </label>
-            <label className="text-sm">
-              <span className={styles.fieldLabel}>{t.customers.phone}</span>
-              <input
-                name="phone"
-                className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                placeholder={t.customers.phonePlaceholder}
-              />
-            </label>
-          </div>
-
-          <div className={styles.actionRow}>
-            <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">
-              {t.customers.createCustomer}
-            </button>
-          </div>
-        </form>
-      </section>
-
-      {!customers?.length && (
-        <div
-          className={`flex flex-col items-center justify-center rounded-2xl py-16 text-center ${styles.emptyCard}`}
-        >
-          <svg
-            className={`mb-3 w-10 h-10 ${styles.emptyIcon}`}
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden
-          >
-            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-          </svg>
-          <p className={`text-sm font-medium ${styles.emptyText}`}>
-            {t.customers.noCustomers}
-          </p>
+      {/* ── Stats strip ── */}
+      {!!stats.total && (
+        <div className={styles.statsStrip}>
+          {([
+            { value: stats.total,       label: t.customers.statTotal },
+            { value: stats.withCompany, label: t.customers.statCompany },
+            { value: stats.withEmail,   label: t.customers.statEmail },
+            { value: stats.withPhone,   label: t.customers.statPhone },
+          ] as const).map(({ value, label }) => (
+            <div key={label} className={styles.statCard}>
+              <span className={styles.statValue}>{value}</span>
+              <span className={styles.statLabel}>{label}</span>
+            </div>
+          ))}
         </div>
       )}
 
-      <ul className="space-y-2.5">
-        {customers?.map((c) => (
-          <li
-            key={c.id}
-            className={`rounded-2xl px-5 py-4 ${styles.customerCard}`}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <p
-                  className={`font-semibold text-sm ${styles.customerName}`}
-                >
-                  {c.name}
-                </p>
-                {c.company && (
-                  <p className={`mt-0.5 text-sm ${styles.customerCompany}`}>
-                    {c.company}
-                  </p>
-                )}
-              </div>
-
-              {/* Avatar initial */}
-              <div
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${styles.avatar}`}
-              >
-                {c.name.charAt(0).toUpperCase()}
-              </div>
+      {/* ── Add customer (collapsible) ── */}
+      <details className={styles.createDetails}>
+        <summary className={styles.createSummary}>
+          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          {t.customers.addCustomer}
+        </summary>
+        <div className={styles.createCard}>
+          <form action={handleCreateCustomer} className={styles.customerForm}>
+            <div className={styles.formGrid}>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.customers.name}</span>
+                <input name="name" required className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.namePlaceholder} />
+              </label>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.customers.company}</span>
+                <input name="company" className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.companyPlaceholder} />
+              </label>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.customers.email}</span>
+                <input name="email" type="email" className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.emailPlaceholder} />
+              </label>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.customers.phone}</span>
+                <input name="phone" className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.phonePlaceholder} />
+              </label>
             </div>
+            <div className={styles.actionRow}>
+              <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">{t.customers.createCustomer}</button>
+            </div>
+          </form>
+        </div>
+      </details>
 
-            {(c.email || c.phone) && (
-              <div
-                className={`mt-3 flex flex-wrap gap-3 pt-3 ${styles.contactDivider}`}
-              >
-                {c.email && (
-                  <a
-                    href={`mailto:${c.email}`}
-                    className="link-muted flex items-center gap-1.5 text-sm"
-                  >
-                    <svg
-                      className="w-3.5 h-3.5 shrink-0"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden
-                    >
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                    </svg>
-                    {c.email}
-                  </a>
-                )}
-                {c.phone && (
-                  <a
-                    href={`tel:${c.phone}`}
-                    className="link-muted flex items-center gap-1.5 text-sm"
-                  >
-                    <svg
-                      className="w-3.5 h-3.5 shrink-0"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden
-                    >
-                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                    </svg>
-                    {c.phone}
-                  </a>
-                )}
+      {/* ── Empty state ── */}
+      {!customers?.length && (
+        <div className={`flex flex-col items-center justify-center rounded-2xl py-16 text-center ${styles.emptyCard}`}>
+          <svg className={`mb-3 w-10 h-10 ${styles.emptyIcon}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+          </svg>
+          <p className={`text-sm font-medium ${styles.emptyText}`}>{t.customers.noCustomers}</p>
+        </div>
+      )}
+
+      {/* ── Customers table ── */}
+      {!!customers?.length && (
+        <div className={styles.tableWrap}>
+          {customers.map((c) => (
+            <div key={c.id} className={styles.tableRow}>
+              <div className={styles.rowMain}>
+                {/* Avatar */}
+                <div className={styles.avatar} aria-hidden>
+                  {c.name.charAt(0).toUpperCase()}
+                </div>
+
+                {/* Identity */}
+                <div className={styles.rowInfo}>
+                  <span className={styles.rowName}>{c.name}</span>
+                  {c.company && <span className={styles.rowCompany}>{c.company}</span>}
+                </div>
+
+                {/* Contact links */}
+                <div className={styles.rowContact}>
+                  {c.email && (
+                    <a href={`mailto:${c.email}`} className={styles.contactLink}>
+                      <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                      </svg>
+                      {c.email}
+                    </a>
+                  )}
+                  {c.phone && (
+                    <a href={`tel:${c.phone}`} className={styles.contactLink}>
+                      <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                      {c.phone}
+                    </a>
+                  )}
+                </div>
+
+                {/* Delete + Edit toggle */}
+                <div className={styles.rowActions}>
+                  <DeleteCustomerButton customerId={c.id} action={handleDeleteCustomer} />
+                  {/* Edit toggle — panel is a full-width sibling below, shown via CSS :has() */}
+                  <details className={styles.editDetails}>
+                    <summary className={styles.editSummary}>
+                      <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                      {t.customers.edit}
+                    </summary>
+                  </details>
+                </div>
               </div>
-            )}
 
-            <div className={styles.customerActions}>
-              <details className={styles.editDetails}>
-                <summary className={styles.editSummary}>{t.customers.edit}</summary>
-
+              {/* Edit panel: full-width, shown via CSS :has(.editDetails[open]) */}
+              <div className={styles.editPanel}>
                 <form action={handleUpdateCustomer} className={styles.customerForm}>
                   <input type="hidden" name="id" value={c.id} />
-
                   <div className={styles.formGrid}>
                     <label className="text-sm">
                       <span className={styles.fieldLabel}>{t.customers.name}</span>
-                      <input
-                        name="name"
-                        required
-                        defaultValue={c.name}
-                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                      />
+                      <input name="name" required defaultValue={c.name} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
                     </label>
                     <label className="text-sm">
                       <span className={styles.fieldLabel}>{t.customers.company}</span>
-                      <input
-                        name="company"
-                        defaultValue={c.company ?? ''}
-                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                      />
+                      <input name="company" defaultValue={c.company ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
                     </label>
                     <label className="text-sm">
                       <span className={styles.fieldLabel}>{t.customers.email}</span>
-                      <input
-                        name="email"
-                        type="email"
-                        defaultValue={c.email ?? ''}
-                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                      />
+                      <input name="email" type="email" defaultValue={c.email ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
                     </label>
                     <label className="text-sm">
                       <span className={styles.fieldLabel}>{t.customers.phone}</span>
-                      <input
-                        name="phone"
-                        defaultValue={c.phone ?? ''}
-                        className="input-field w-full rounded-lg px-3 py-2 text-sm"
-                      />
+                      <input name="phone" defaultValue={c.phone ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
                     </label>
                   </div>
-
                   <div className={styles.actionRow}>
-                    <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">
-                      {t.customers.saveChanges}
-                    </button>
+                    <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">{t.customers.saveChanges}</button>
                   </div>
                 </form>
-              </details>
-
-              <DeleteCustomerButton customerId={c.id} action={handleDeleteCustomer} />
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

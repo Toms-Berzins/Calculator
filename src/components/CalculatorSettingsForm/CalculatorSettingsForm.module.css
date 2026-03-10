@@ -4,6 +4,16 @@
   box-shadow: var(--shadow-card);
 }
 
+/* ── Form header ───────────────────────────────── */
+.formHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
 .label {
   color: var(--text-muted);
 }
@@ -12,6 +22,162 @@
   color: var(--text-strong);
 }
 
+.unsavedBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent-text);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* ── Sections ──────────────────────────────────── */
+.section {
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionLast {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* ── Field label & hint ────────────────────────── */
+.fieldLabel {
+  color: var(--text-muted);
+}
+
+.fieldHint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+}
+
+/* ── Input with suffix badge ───────────────────── */
+.inputWrapper {
+  position: relative;
+}
+
+.inputWithSuffix {
+  padding-right: 3.25rem !important;
+}
+
+.inputSuffix {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--text-muted) 80%, transparent);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ── Depreciation helper ───────────────────────── */
+.deprToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--accent-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.deprToggle:hover {
+  opacity: 1;
+}
+
+.deprHelper {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--bg-surface) 50%, var(--bg-base, #000) 50%);
+  border: 1px solid var(--border);
+}
+
+.deprResult {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+}
+
+.deprResultText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.deprApplyBtn {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.4rem;
+  background: var(--accent);
+  color: var(--accent-fg, #fff);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.deprApplyBtn:hover {
+  opacity: 0.85;
+}
+
+/* ── Form actions ──────────────────────────────── */
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  align-items: stretch;
+}
+
+.resetButton {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.resetButton:hover {
+  background: color-mix(in srgb, var(--border) 40%, transparent);
+  color: var(--text-strong);
+}
+
+/* Slightly brighter save button when there are unsaved changes */
+.dirtyButton {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* ── Status messages ───────────────────────────── */
 .success {
   color: var(--accent-text);
 }

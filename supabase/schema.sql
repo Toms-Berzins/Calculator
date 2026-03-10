@@ -47,9 +47,15 @@ create table if not exists public.calculator_settings (
   electricity_rate_per_kwh  numeric(10, 2) not null default 0.18,
   failure_rate_percent      numeric(5, 2) not null default 12,
   margin_percent            numeric(5, 2) not null default 35,
+  -- Extra % added to raw filament cost to cover supports, brims, purge lines & waste
+  material_overhead_percent numeric(5, 2) not null default 10,
   created_at                timestamptz not null default now(),
   updated_at                timestamptz not null default now()
 );
+
+-- ── Migration: add material_overhead_percent to existing databases ────────────
+alter table public.calculator_settings
+  add column if not exists material_overhead_percent numeric(5, 2) not null default 10;
 
 -- ── Quotes ───────────────────────────────────────────────────
 do $$

@@ -8,6 +8,8 @@ export interface LineItem extends Omit<QuoteItem, 'id' | 'quote_id'> {
 export interface PrintPricingInput {
   materialWeightGrams: number
   materialPricePerKg: number
+  /** Extra % added to raw material cost to cover supports, brims, purge lines & waste (default 10) */
+  materialOverheadPercent: number
   printTimeHours: number
   machineRatePerHour: number
   setupTimeHours: number
@@ -16,6 +18,7 @@ export interface PrintPricingInput {
   electricityRatePerKwh: number
   postProcessingCost: number
   failureRatePercent: number
+  /** True profit margin: profit as a % of the final selling price, not markup on cost */
   marginPercent: number
 }
 
@@ -43,6 +46,7 @@ function roundCurrency(value: number) {
 export function calculate3DPrintPrice(input: PrintPricingInput): PrintPricingBreakdown {
   const materialWeightKg = toSafeNumber(input.materialWeightGrams) / 1000
   const materialPricePerKg = toSafeNumber(input.materialPricePerKg)
+  const materialOverheadPercent = toSafeNumber(input.materialOverheadPercent)
   const printTimeHours = toSafeNumber(input.printTimeHours)
   const machineRatePerHour = toSafeNumber(input.machineRatePerHour)
   const setupTimeHours = toSafeNumber(input.setupTimeHours)
@@ -53,7 +57,8 @@ export function calculate3DPrintPrice(input: PrintPricingInput): PrintPricingBre
   const failureRatePercent = toSafeNumber(input.failureRatePercent)
   const marginPercent = toSafeNumber(input.marginPercent)
 
-  const materialCost = materialWeightKg * materialPricePerKg
+  // Material cost includes overhead % for supports, brims, purge lines & waste
+  const materialCost = materialWeightKg * materialPricePerKg * (1 + materialOverheadPercent / 100)
   const machineCost = printTimeHours * machineRatePerHour
   const laborCost = setupTimeHours * laborRatePerHour
   const energyCost = (printTimeHours + setupTimeHours) * powerConsumptionKw * electricityRatePerKwh
@@ -61,8 +66,12 @@ export function calculate3DPrintPrice(input: PrintPricingInput): PrintPricingBre
   const baseCost = materialCost + machineCost + laborCost + energyCost + postProcessingCost
   const riskCost = baseCost * (failureRatePercent / 100)
   const costWithRisk = baseCost + riskCost
-  const marginAmount = costWithRisk * (marginPercent / 100)
-  const unitPrice = costWithRisk + marginAmount
+
+  // True profit margin: profit = margin% of the final selling price
+  // unitPrice = costWithRisk / (1 - margin%) — capped to avoid division by near-zero
+  const clampedMargin = Math.min(Math.max(marginPercent, 0), 99.9)
+  const unitPrice = clampedMargin < 0.001 ? costWithRisk : costWithRisk / (1 - clampedMargin / 100)
+  const marginAmount = unitPrice - costWithRisk
 
   return {
     materialCost: roundCurrency(materialCost),

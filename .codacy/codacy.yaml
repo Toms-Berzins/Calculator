@@ -1,7 +1,9 @@
 runtimes:
-    - node@22.2.0
     - python@3.11.11
+    - node@22.2.0
+    - go@1.22.3
 tools:
+    - pylint@3.3.6
     - eslint@8.57.0
-    - lizard@1.17.31
+    - revive@1.7.0
     - trivy@0.66.0

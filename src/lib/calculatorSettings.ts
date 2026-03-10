@@ -6,6 +6,8 @@ export interface CalculatorSettingsValues {
   electricity_rate_per_kwh: number
   failure_rate_percent: number
   margin_percent: number
+  /** Extra % added to raw filament weight cost for supports, brims, purge lines & waste */
+  material_overhead_percent: number
 }
 
 export interface CalculatorSettingsPayload {
@@ -21,4 +23,5 @@ export const DEFAULT_CALCULATOR_SETTINGS: CalculatorSettingsValues = {
   electricity_rate_per_kwh: 0.18,
   failure_rate_percent: 12,
   margin_percent: 35,
+  material_overhead_percent: 10,
 }

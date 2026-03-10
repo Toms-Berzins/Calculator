@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "exa-mcp-server"],
+      "env": {
+        "EXA_API_KEY": "b3383cf7-d5cf-4982-936c-76f18ab0bafb"
+      }
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "fc-fe8e90e45e444bfd9db1568b20fbd33f"
+      }
+    }
+  },
+  "inputs": []
+}

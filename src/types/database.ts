@@ -85,6 +85,7 @@ export interface Database {
           electricity_rate_per_kwh: number
           failure_rate_percent: number
           margin_percent: number
+          material_overhead_percent: number
           created_at: string
           updated_at: string
         }
@@ -98,6 +99,7 @@ export interface Database {
           electricity_rate_per_kwh?: number
           failure_rate_percent?: number
           margin_percent?: number
+          material_overhead_percent?: number
           created_at?: string
           updated_at?: string
         }
@@ -111,6 +113,7 @@ export interface Database {
           electricity_rate_per_kwh?: number
           failure_rate_percent?: number
           margin_percent?: number
+          material_overhead_percent?: number
           created_at?: string
           updated_at?: string
         }

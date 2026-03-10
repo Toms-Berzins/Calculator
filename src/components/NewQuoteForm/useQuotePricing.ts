@@ -24,6 +24,7 @@ export function useQuotePricing(input: UseQuotePricingInput) {
       calculate3DPrintPrice({
         materialWeightGrams: input.materialWeightGrams,
         materialPricePerKg: input.jobConstants.material_price_per_kg,
+        materialOverheadPercent: input.jobConstants.material_overhead_percent,
         printTimeHours: input.printTimeHours,
         machineRatePerHour: input.jobConstants.machine_rate_per_hour,
         setupTimeHours: input.setupTimeHours,
@@ -40,6 +41,7 @@ export function useQuotePricing(input: UseQuotePricingInput) {
       input.setupTimeHours,
       input.postProcessingCost,
       input.jobConstants.material_price_per_kg,
+      input.jobConstants.material_overhead_percent,
       input.jobConstants.machine_rate_per_hour,
       input.jobConstants.labor_rate_per_hour,
       input.jobConstants.power_consumption_kw,

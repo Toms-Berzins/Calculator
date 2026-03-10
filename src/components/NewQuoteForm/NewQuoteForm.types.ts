@@ -41,6 +41,7 @@ export type JobConstantKey =
   | 'electricity_rate_per_kwh'
   | 'failure_rate_percent'
   | 'margin_percent'
+  | 'material_overhead_percent'
   | 'difficulty_multiplier_percent'
 
 export interface ConstantDefinition {
@@ -59,6 +60,7 @@ export interface ConstantChip {
 
 export const CONSTANT_DEFINITIONS: ConstantDefinition[] = [
   { key: 'material_price_per_kg', label: 'Material/kg', step: 0.01 },
+  { key: 'material_overhead_percent', label: 'Mat. overhead', step: 0.1 },
   { key: 'machine_rate_per_hour', label: 'Machine/h', step: 0.01 },
   { key: 'labor_rate_per_hour', label: 'Labor/h', step: 0.01 },
   { key: 'power_consumption_kw', label: 'Power', step: 0.01 },

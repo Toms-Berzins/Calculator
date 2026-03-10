@@ -99,9 +99,11 @@ describe('useQuoteCalculator', () => {
   })
 
   it('calculates precise 3D print unit price breakdown', () => {
+    // materialOverheadPercent: 0 isolates margin formula changes
     const breakdown = calculate3DPrintPrice({
       materialWeightGrams: 200,
       materialPricePerKg: 25,
+      materialOverheadPercent: 0,
       printTimeHours: 8,
       machineRatePerHour: 5,
       setupTimeHours: 1,
@@ -110,6 +112,7 @@ describe('useQuoteCalculator', () => {
       electricityRatePerKwh: 0.2,
       postProcessingCost: 3,
       failureRatePercent: 10,
+      // 30% true margin: unitPrice = costWithRisk / (1 - 0.30)
       marginPercent: 30,
     })
 
@@ -119,7 +122,29 @@ describe('useQuoteCalculator', () => {
     expect(breakdown.energyCost).toBe(0.45)
     expect(breakdown.baseCost).toBe(68.45)
     expect(breakdown.riskCost).toBe(6.85)
-    expect(breakdown.marginAmount).toBe(22.59)
-    expect(breakdown.unitPrice).toBe(97.88)
+    // costWithRisk = 75.295, unitPrice = 75.295 / 0.70 = 107.56
+    expect(breakdown.marginAmount).toBe(32.27)
+    expect(breakdown.unitPrice).toBe(107.56)
+  })
+
+  it('applies material overhead to filament cost', () => {
+    const breakdown = calculate3DPrintPrice({
+      materialWeightGrams: 1000,
+      materialPricePerKg: 20,
+      materialOverheadPercent: 10,
+      printTimeHours: 0,
+      machineRatePerHour: 0,
+      setupTimeHours: 0,
+      laborRatePerHour: 0,
+      powerConsumptionKw: 0,
+      electricityRatePerKwh: 0,
+      postProcessingCost: 0,
+      failureRatePercent: 0,
+      marginPercent: 0,
+    })
+
+    // 1 kg × €20/kg × (1 + 10%) = €22
+    expect(breakdown.materialCost).toBe(22)
+    expect(breakdown.unitPrice).toBe(22)
   })
 })

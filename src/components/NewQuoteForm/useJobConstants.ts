@@ -33,6 +33,7 @@ export function useJobConstants(
     electricity_rate_per_kwh: calculatorDefaults.electricity_rate_per_kwh,
     failure_rate_percent: calculatorDefaults.failure_rate_percent,
     margin_percent: calculatorDefaults.margin_percent,
+    material_overhead_percent: calculatorDefaults.material_overhead_percent,
     difficulty_multiplier_percent: 100,
   })
   const [editingConstantKey, setEditingConstantKey] = useState<JobConstantKey | null>(null)
@@ -49,6 +50,7 @@ export function useJobConstants(
             ? `${rawValue.toFixed(2)} kW`
             : definition.key === 'failure_rate_percent' ||
                 definition.key === 'margin_percent' ||
+                definition.key === 'material_overhead_percent' ||
                 definition.key === 'difficulty_multiplier_percent'
               ? `${rawValue}%`
               : formatCurrency(rawValue)
