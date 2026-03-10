@@ -71,6 +71,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
     editConstantError,
     setEditingConstantValue,
     openConstantEditor,
+    cycleConstant,
     closeConstantEditor,
     saveConstant,
     removeConstant,
@@ -213,6 +214,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
           state={{ constantChips, canUndoRemove, editingConstant, editingConstantValue, editConstantError }}
           actions={{
             onOpenConstantEditor: openConstantEditor,
+            onCycleConstant: cycleConstant,
             onRemoveConstant: removeConstant,
             onUndoRemoveConstant: undoRemoveConstant,
             onCloseConstantEditor: closeConstantEditor,

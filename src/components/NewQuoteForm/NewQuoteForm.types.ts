@@ -46,9 +46,17 @@ export type JobConstantKey =
 
 export interface ConstantDefinition {
   key: JobConstantKey
-  label: string
   step: number
+  discrete?: boolean
 }
+
+export const DIFFICULTY_LEVELS = [
+  { value: 100, labelKey: 'easy'   as const, multiplier: '×1.0' },
+  { value: 120, labelKey: 'medium' as const, multiplier: '×1.2' },
+  { value: 150, labelKey: 'hard'   as const, multiplier: '×1.5' },
+] as const
+
+export type DifficultyLabelKey = typeof DIFFICULTY_LEVELS[number]['labelKey']
 
 export interface ConstantChip {
   key: JobConstantKey
@@ -59,13 +67,13 @@ export interface ConstantChip {
 }
 
 export const CONSTANT_DEFINITIONS: ConstantDefinition[] = [
-  { key: 'material_price_per_kg', label: 'Material/kg', step: 0.01 },
-  { key: 'material_overhead_percent', label: 'Mat. overhead', step: 0.1 },
-  { key: 'machine_rate_per_hour', label: 'Machine/h', step: 0.01 },
-  { key: 'labor_rate_per_hour', label: 'Labor/h', step: 0.01 },
-  { key: 'power_consumption_kw', label: 'Power', step: 0.01 },
-  { key: 'electricity_rate_per_kwh', label: 'Electricity', step: 0.01 },
-  { key: 'failure_rate_percent', label: 'Failure', step: 0.1 },
-  { key: 'margin_percent', label: 'Margin', step: 0.1 },
-  { key: 'difficulty_multiplier_percent', label: 'Difficulty', step: 1 },
+  { key: 'material_price_per_kg', step: 0.01 },
+  { key: 'material_overhead_percent', step: 0.1 },
+  { key: 'machine_rate_per_hour', step: 0.01 },
+  { key: 'labor_rate_per_hour', step: 0.01 },
+  { key: 'power_consumption_kw', step: 0.01 },
+  { key: 'electricity_rate_per_kwh', step: 0.01 },
+  { key: 'failure_rate_percent', step: 0.1 },
+  { key: 'margin_percent', step: 0.1 },
+  { key: 'difficulty_multiplier_percent', step: 1, discrete: true },
 ]

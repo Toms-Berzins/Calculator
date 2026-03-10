@@ -212,6 +212,22 @@ export const lv: Translations = {
     calculatedUnitPrice: 'Aprēķinātā vienības cena',
     calculatedLineTotal: 'Aprēķinātā rindas kopsumma',
     calculatedLineNote: 'Šī aprēķinātā rinda tiek pievienota automātiski, iesniedzot piedāvājumu.',
+    constantLabels: {
+      material_price_per_kg: 'Materiāls/kg',
+      material_overhead_percent: 'Mat. pieskaitāmie',
+      machine_rate_per_hour: 'Mašīna/h',
+      labor_rate_per_hour: 'Darbs/h',
+      power_consumption_kw: 'Jauda',
+      electricity_rate_per_kwh: 'Elektroenerģija',
+      failure_rate_percent: 'Atteikumi',
+      margin_percent: 'Peļņas norma',
+      difficulty_multiplier_percent: 'Grūtība',
+    },
+    difficultyLevels: {
+      easy:   'Viegli',
+      medium: 'Vidēji',
+      hard:   'Grūti',
+    },
   },
   common: {
     somethingWentWrong: 'Kaut kas nogāja greizi',

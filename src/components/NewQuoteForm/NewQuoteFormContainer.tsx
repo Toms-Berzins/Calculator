@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuoteCalculator } from '@/hooks/useQuoteCalculator'
 import { createQuote } from '@/lib/actions/quotes'
@@ -39,6 +39,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
     editConstantError,
     setEditingConstantValue,
     openConstantEditor,
+    cycleConstant,
     closeConstantEditor,
     saveConstant,
     removeConstant,
@@ -68,10 +69,10 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
     jobConstants,
   })
 
-  function handleJobSelected(jobId: string, title: string) {
+  const handleJobSelected = useCallback((jobId: string, title: string) => {
     setSelectedJobId(jobId)
     setPartName(title)
-  }
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -127,6 +128,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
           }}
           actions={{
             onOpenConstantEditor: openConstantEditor,
+            onCycleConstant: cycleConstant,
             onRemoveConstant: removeConstant,
             onUndoRemoveConstant: undoRemoveConstant,
             onCloseConstantEditor: closeConstantEditor,

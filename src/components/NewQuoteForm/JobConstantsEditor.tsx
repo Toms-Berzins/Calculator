@@ -1,5 +1,6 @@
 import styles from './NewQuoteForm.module.css'
 import { useT } from '@/i18n/context'
+import { CONSTANT_DEFINITIONS } from './NewQuoteForm.types'
 import type { ConstantChip, JobConstantKey } from './NewQuoteForm.types'
 
 interface JobConstantsEditorState {
@@ -12,6 +13,7 @@ interface JobConstantsEditorState {
 
 interface JobConstantsEditorActions {
   onOpenConstantEditor: (key: JobConstantKey) => void
+  onCycleConstant: (key: JobConstantKey) => void
   onRemoveConstant: (key: JobConstantKey) => void
   onUndoRemoveConstant: () => void
   onCloseConstantEditor: () => void
@@ -35,6 +37,7 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
   } = props.state
   const {
     onOpenConstantEditor,
+    onCycleConstant,
     onRemoveConstant,
     onUndoRemoveConstant,
     onCloseConstantEditor,
@@ -71,7 +74,11 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
           >
             <button
               type="button"
-              onClick={() => onOpenConstantEditor(chip.key)}
+              onClick={() =>
+                CONSTANT_DEFINITIONS.find((d) => d.key === chip.key)?.discrete
+                  ? onCycleConstant(chip.key)
+                  : onOpenConstantEditor(chip.key)
+              }
               className={`rounded-full px-4 py-2 text-sm ${styles.constantChipButton}`}
             >
               {chip.label}: {chip.value}

@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { formatCurrency } from '@/lib/utils/format'
+import { useT } from '@/i18n/context'
 import {
   CONSTANT_DEFINITIONS,
+  DIFFICULTY_LEVELS,
   type ConstantChip,
   type JobConstantKey,
   type NewQuoteFormProps,
@@ -16,6 +18,7 @@ interface UseJobConstantsResult {
   editConstantError: string
   setEditingConstantValue: (value: string) => void
   openConstantEditor: (key: JobConstantKey) => void
+  cycleConstant: (key: JobConstantKey) => void
   closeConstantEditor: () => void
   saveConstant: () => void
   removeConstant: (key: JobConstantKey) => void
@@ -25,6 +28,7 @@ interface UseJobConstantsResult {
 export function useJobConstants(
   calculatorDefaults: NewQuoteFormProps['calculatorDefaults'],
 ): UseJobConstantsResult {
+  const t = useT()
   const [jobConstants, setJobConstants] = useState<Record<JobConstantKey, number>>({
     material_price_per_kg: calculatorDefaults.material_price_per_kg,
     machine_rate_per_hour: calculatorDefaults.machine_rate_per_hour,
@@ -39,7 +43,14 @@ export function useJobConstants(
   const [editingConstantKey, setEditingConstantKey] = useState<JobConstantKey | null>(null)
   const [editingConstantValue, setEditingConstantValue] = useState('')
   const [editConstantError, setEditConstantError] = useState('')
-  const [removedConstantKeys, setRemovedConstantKeys] = useState<JobConstantKey[]>([])
+  const [removedConstants, setRemovedConstants] = useState<{ key: JobConstantKey; previousValue: number }[]>([])
+
+  const removedConstantKeys = removedConstants.map((r) => r.key)
+
+  /** The value a constant gets when removed — neutral/zero so it doesn't affect pricing */
+  function neutralValue(key: JobConstantKey): number {
+    return key === 'difficulty_multiplier_percent' ? 100 : 0
+  }
 
   const constantChips = useMemo(
     () =>
@@ -55,15 +66,23 @@ export function useJobConstants(
               ? `${rawValue}%`
               : formatCurrency(rawValue)
 
+        let displayValue = value
+        if (definition.key === 'difficulty_multiplier_percent') {
+          const level =
+            DIFFICULTY_LEVELS.find((l) => l.value === rawValue) ?? DIFFICULTY_LEVELS[0]
+          displayValue = `${t.newQuote.difficultyLevels[level.labelKey]} ${level.multiplier}`
+        }
+
         return {
           key: definition.key,
-          label: definition.label,
-          value,
+          label: t.newQuote.constantLabels[definition.key],
+          value: displayValue,
           step: definition.step,
           rawValue,
         }
       }),
-    [jobConstants],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [jobConstants, t],
   )
 
   const editingConstant = useMemo(
@@ -102,26 +121,43 @@ export function useJobConstants(
     closeConstantEditor()
   }
 
+  function cycleConstant(key: JobConstantKey) {
+    if (key !== 'difficulty_multiplier_percent') return
+    const current = jobConstants[key]
+    const idx = DIFFICULTY_LEVELS.findIndex((l) => l.value === current)
+    const next = DIFFICULTY_LEVELS[(idx + 1) % DIFFICULTY_LEVELS.length]
+    setJobConstants((prev) => ({ ...prev, [key]: next.value }))
+  }
+
   function removeConstant(key: JobConstantKey) {
-    setRemovedConstantKeys((prev) => (prev.includes(key) ? prev : [...prev, key]))
+    if (removedConstantKeys.includes(key)) return
+    const previousValue = jobConstants[key]
+    setRemovedConstants((prev) => [...prev, { key, previousValue }])
+    setJobConstants((prev) => ({ ...prev, [key]: neutralValue(key) }))
     if (editingConstantKey === key) {
       closeConstantEditor()
     }
   }
 
   function undoRemoveConstant() {
-    setRemovedConstantKeys((prev) => prev.slice(0, -1))
+    setRemovedConstants((prev) => {
+      if (prev.length === 0) return prev
+      const last = prev[prev.length - 1]
+      setJobConstants((jc) => ({ ...jc, [last.key]: last.previousValue }))
+      return prev.slice(0, -1)
+    })
   }
 
   return {
     jobConstants,
     constantChips: constantChips.filter((chip) => !removedConstantKeys.includes(chip.key)),
-    canUndoRemove: removedConstantKeys.length > 0,
+    canUndoRemove: removedConstants.length > 0,
     editingConstant,
     editingConstantValue,
     editConstantError,
     setEditingConstantValue,
     openConstantEditor,
+    cycleConstant,
     closeConstantEditor,
     saveConstant,
     removeConstant,

@@ -210,6 +210,22 @@ export const en = {
     calculatedUnitPrice: 'Calculated unit price',
     calculatedLineTotal: 'Calculated line total',
     calculatedLineNote: 'This calculated line is included automatically when you submit the quote.',
+    constantLabels: {
+      material_price_per_kg: 'Material/kg',
+      material_overhead_percent: 'Mat. overhead',
+      machine_rate_per_hour: 'Machine/h',
+      labor_rate_per_hour: 'Labor/h',
+      power_consumption_kw: 'Power',
+      electricity_rate_per_kwh: 'Electricity',
+      failure_rate_percent: 'Failure',
+      margin_percent: 'Margin',
+      difficulty_multiplier_percent: 'Difficulty',
+    },
+    difficultyLevels: {
+      easy:   'Easy',
+      medium: 'Medium',
+      hard:   'Hard',
+    },
   },
   common: {
     somethingWentWrong: 'Something went wrong',
