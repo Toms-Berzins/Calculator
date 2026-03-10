@@ -61,3 +61,38 @@
   align-items: center;
   justify-content: center;
 }
+
+.statBreakdown {
+  margin-top: 0.625rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid color-mix(in srgb, var(--stat-accent) 18%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statBreakdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statBreakdownDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--stat-accent);
+  flex-shrink: 0;
+  opacity: 0.65;
+}
+
+.statBreakdownValue {
+  font-weight: 600;
+  color: var(--text-strong);
+  margin-right: 0.1rem;
+}

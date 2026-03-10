@@ -27,6 +27,12 @@ export const lv: Translations = {
     createFirst: 'Izveidojiet savu pirmo piedāvājumu, lai sāktu',
     untitledJob: 'Nenosaukts darbs',
     delete: 'Dzēst',
+    jobCol: 'Darbs',
+    dateCol: 'Datums',
+    amountCol: 'Summa',
+    acceptedRevenue: 'Ieņēmumi',
+    pipelineValue: 'Gaidošie',
+    drafts: 'Melnraksti',
     status: {
       draft: 'Melnraksts',
       sent: 'Nosūtīts',
@@ -115,6 +121,7 @@ export const lv: Translations = {
     generating: 'Ģenerē…',
     downloadPDF: 'Lejupielādēt PDF',
     items: (n: number) => (n === 1 ? '1 vienums' : `${n} vienumi`),
+    addToQuote: 'Pievienot piedāvājumam',
     status: {
       draft: 'Melnraksts',
       sent: 'Nosūtīts',

@@ -7,16 +7,38 @@ export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient()
   const t = await getDict()
 
-  const [quotesRes, jobsRes, customersRes] = await Promise.all([
-    supabase.from('quotes').select('id', { count: 'exact', head: true }),
-    supabase.from('jobs').select('id', { count: 'exact', head: true }),
+  const [quotesRes, jobsRes, customersCountRes, recentCustomersRes] = await Promise.all([
+    supabase.from('quotes').select('status'),
+    supabase.from('jobs').select('status'),
     supabase.from('customers').select('id', { count: 'exact', head: true }),
+    supabase
+      .from('customers')
+      .select('name, company')
+      .order('created_at', { ascending: false })
+      .limit(3),
   ])
+
+  const quotes = quotesRes.data ?? []
+  const jobs = jobsRes.data ?? []
+  const recentCustomers = recentCustomersRes.data ?? []
+
+  const quoteBreakdown = [
+    { key: 'draft',    label: t.quotes.status.draft,    count: quotes.filter((q) => q.status === 'draft').length },
+    { key: 'sent',     label: t.quotes.status.sent,     count: quotes.filter((q) => q.status === 'sent').length },
+    { key: 'accepted', label: t.quotes.status.accepted, count: quotes.filter((q) => q.status === 'accepted').length },
+    { key: 'rejected', label: t.quotes.status.rejected, count: quotes.filter((q) => q.status === 'rejected').length },
+  ].filter((i) => i.count > 0)
+
+  const jobBreakdown = [
+    { key: 'open', label: t.jobs.statusValues.open, count: jobs.filter((j) => j.status === 'open').length },
+    { key: 'won',  label: t.jobs.statusValues.won,  count: jobs.filter((j) => j.status === 'won').length },
+    { key: 'lost', label: t.jobs.statusValues.lost, count: jobs.filter((j) => j.status === 'lost').length },
+  ].filter((i) => i.count > 0)
 
   const stats = [
     {
       label: t.dashboard.totalQuotes,
-      count: quotesRes.count ?? 0,
+      count: quotes.length,
       href: '/quotes',
       cardClass: styles.statQuotes,
       icon: (
@@ -28,10 +50,21 @@ export default async function DashboardPage() {
           />
         </svg>
       ),
+      detail: quoteBreakdown.length > 0 ? (
+        <div className={styles.statBreakdown}>
+          {quoteBreakdown.map((item) => (
+            <span key={item.key} className={styles.statBreakdownItem}>
+              <span className={styles.statBreakdownDot} aria-hidden />
+              <span className={styles.statBreakdownValue}>{item.count}</span>
+              {item.label}
+            </span>
+          ))}
+        </div>
+      ) : null,
     },
     {
       label: t.dashboard.openJobs,
-      count: jobsRes.count ?? 0,
+      count: jobs.length,
       href: '/jobs',
       cardClass: styles.statJobs,
       icon: (
@@ -44,10 +77,21 @@ export default async function DashboardPage() {
           <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
         </svg>
       ),
+      detail: jobBreakdown.length > 0 ? (
+        <div className={styles.statBreakdown}>
+          {jobBreakdown.map((item) => (
+            <span key={item.key} className={styles.statBreakdownItem}>
+              <span className={styles.statBreakdownDot} aria-hidden />
+              <span className={styles.statBreakdownValue}>{item.count}</span>
+              {item.label}
+            </span>
+          ))}
+        </div>
+      ) : null,
     },
     {
       label: t.dashboard.customers,
-      count: customersRes.count ?? 0,
+      count: customersCountRes.count ?? 0,
       href: '/customers',
       cardClass: styles.statCustomers,
       icon: (
@@ -55,6 +99,16 @@ export default async function DashboardPage() {
           <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
         </svg>
       ),
+      detail: recentCustomers.length > 0 ? (
+        <div className={styles.statBreakdown}>
+          {recentCustomers.map((c) => (
+            <span key={c.name} className={styles.statBreakdownItem}>
+              <span className={styles.statBreakdownDot} aria-hidden />
+              {c.company ?? c.name}
+            </span>
+          ))}
+        </div>
+      ) : null,
     },
   ]
 
@@ -96,6 +150,7 @@ export default async function DashboardPage() {
               >
                 {s.count}
               </p>
+              {'detail' in s && s.detail}
             </div>
 
             {/* Chevron */}

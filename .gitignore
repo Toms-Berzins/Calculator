@@ -24,6 +24,7 @@ node_modules
 
 # debug
 npm-debug.log*
+*.log
 
 # env files
 .env

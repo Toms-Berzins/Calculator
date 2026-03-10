@@ -13,11 +13,17 @@
 
 .tableHeader {
   border-bottom: 1px solid var(--border-muted);
+  background: var(--bg-muted);
   color: var(--text-faint);
 }
 
 .tableRow {
   border-bottom: 1px solid var(--border-muted);
+  transition: background 100ms ease;
+}
+
+.tableRow:hover {
+  background: var(--bg-muted);
 }
 
 .tableRow:last-child {

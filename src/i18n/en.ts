@@ -25,6 +25,12 @@ export const en = {
     createFirst: 'Create your first quote to get started',
     untitledJob: 'Untitled job',
     delete: 'Delete',
+    jobCol: 'Job',
+    dateCol: 'Date',
+    amountCol: 'Amount',
+    acceptedRevenue: 'Accepted revenue',
+    pipelineValue: 'In pipeline',
+    drafts: 'Drafts',
     status: {
       draft: 'Draft',
       sent: 'Sent',
@@ -113,6 +119,7 @@ export const en = {
     generating: 'Generating…',
     downloadPDF: 'Download PDF',
     items: (n: number) => (n === 1 ? '1 item' : `${n} items`),
+    addToQuote: 'Add to quote',
     status: {
       draft: 'Draft',
       sent: 'Sent',
