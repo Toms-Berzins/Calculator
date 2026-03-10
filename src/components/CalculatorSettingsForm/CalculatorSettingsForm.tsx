@@ -34,6 +34,8 @@ interface NumberFieldProps {
 }
 
 function NumberField({ label, hint, value, step, suffix, onChange }: NumberFieldProps) {
+  const safeValue = Number.isFinite(value) ? value : 0
+
   return (
     <label className="text-sm">
       <span className={`mb-1 block ${styles.fieldLabel}`}>{label}</span>
@@ -42,7 +44,7 @@ function NumberField({ label, hint, value, step, suffix, onChange }: NumberField
           type="number"
           min={0}
           step={step}
-          value={value}
+          value={safeValue}
           onChange={(e) => onChange(Number(e.target.value))}
           className={`input-field w-full rounded-lg px-3 py-2 text-sm ${suffix ? styles.inputWithSuffix : ''}`}
         />
@@ -53,9 +55,24 @@ function NumberField({ label, hint, value, step, suffix, onChange }: NumberField
   )
 }
 
+function normalizeSettingsValues(values: CalculatorSettingsValues): CalculatorSettingsValues {
+  return {
+    material_price_per_kg: values.material_price_per_kg ?? DEFAULT_CALCULATOR_SETTINGS.material_price_per_kg,
+    machine_rate_per_hour: values.machine_rate_per_hour ?? DEFAULT_CALCULATOR_SETTINGS.machine_rate_per_hour,
+    labor_rate_per_hour: values.labor_rate_per_hour ?? DEFAULT_CALCULATOR_SETTINGS.labor_rate_per_hour,
+    power_consumption_kw: values.power_consumption_kw ?? DEFAULT_CALCULATOR_SETTINGS.power_consumption_kw,
+    electricity_rate_per_kwh: values.electricity_rate_per_kwh ?? DEFAULT_CALCULATOR_SETTINGS.electricity_rate_per_kwh,
+    failure_rate_percent: values.failure_rate_percent ?? DEFAULT_CALCULATOR_SETTINGS.failure_rate_percent,
+    margin_percent: values.margin_percent ?? DEFAULT_CALCULATOR_SETTINGS.margin_percent,
+    material_overhead_percent: values.material_overhead_percent ?? DEFAULT_CALCULATOR_SETTINGS.material_overhead_percent,
+    packaging_cost: values.packaging_cost ?? DEFAULT_CALCULATOR_SETTINGS.packaging_cost,
+    shipping_cost: values.shipping_cost ?? DEFAULT_CALCULATOR_SETTINGS.shipping_cost,
+  }
+}
+
 export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Props) {
-  const [values, setValues] = useState(initialValues)
-  const [savedValues, setSavedValues] = useState(initialValues)
+  const [values, setValues] = useState(() => normalizeSettingsValues(initialValues))
+  const [savedValues, setSavedValues] = useState(() => normalizeSettingsValues(initialValues))
   const [updatedAt, setUpdatedAt] = useState(initialUpdatedAt)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -91,8 +108,9 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
 
     try {
       const updated = await saveCalculatorSettings(values)
-      setValues(updated.values)
-      setSavedValues(updated.values)
+      const normalizedValues = normalizeSettingsValues(updated.values)
+      setValues(normalizedValues)
+      setSavedValues(normalizedValues)
       setUpdatedAt(updated.updatedAt)
       setSaved(true)
     } catch (caught) {
@@ -278,6 +296,22 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
             step={0.1}
             suffix="%"
             onChange={(v) => setNumber('margin_percent', v)}
+          />
+          <NumberField
+            label={t.settings.packagingCost}
+            hint={t.settings.packagingCostHint}
+            value={values.packaging_cost}
+            step={0.01}
+            suffix="€"
+            onChange={(v) => setNumber('packaging_cost', v)}
+          />
+          <NumberField
+            label={t.settings.shippingCost}
+            hint={t.settings.shippingCostHint}
+            value={values.shipping_cost}
+            step={0.01}
+            suffix="€"
+            onChange={(v) => setNumber('shipping_cost', v)}
           />
         </div>
       </div>

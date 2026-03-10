@@ -8,6 +8,8 @@ export interface CalculatorSettingsValues {
   margin_percent: number
   /** Extra % added to raw filament weight cost for supports, brims, purge lines & waste */
   material_overhead_percent: number
+  packaging_cost: number
+  shipping_cost: number
 }
 
 export interface CalculatorSettingsPayload {
@@ -24,4 +26,6 @@ export const DEFAULT_CALCULATOR_SETTINGS: CalculatorSettingsValues = {
   failure_rate_percent: 12,
   margin_percent: 35,
   material_overhead_percent: 10,
+  packaging_cost: 0,
+  shipping_cost: 0,
 }

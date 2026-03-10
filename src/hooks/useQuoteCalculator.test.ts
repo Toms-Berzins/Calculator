@@ -111,6 +111,8 @@ describe('useQuoteCalculator', () => {
       powerConsumptionKw: 0.25,
       electricityRatePerKwh: 0.2,
       postProcessingCost: 3,
+      packagingCost: 0,
+      shippingCost: 0,
       failureRatePercent: 10,
       // 30% true margin: unitPrice = costWithRisk / (1 - 0.30)
       marginPercent: 30,
@@ -139,6 +141,8 @@ describe('useQuoteCalculator', () => {
       powerConsumptionKw: 0,
       electricityRatePerKwh: 0,
       postProcessingCost: 0,
+      packagingCost: 0,
+      shippingCost: 0,
       failureRatePercent: 0,
       marginPercent: 0,
     })
@@ -146,5 +150,30 @@ describe('useQuoteCalculator', () => {
     // 1 kg × €20/kg × (1 + 10%) = €22
     expect(breakdown.materialCost).toBe(22)
     expect(breakdown.unitPrice).toBe(22)
+  })
+
+  it('adds packaging and shipping costs to base cost and unit price', () => {
+    const breakdown = calculate3DPrintPrice({
+      materialWeightGrams: 0,
+      materialPricePerKg: 0,
+      materialOverheadPercent: 0,
+      printTimeHours: 0,
+      machineRatePerHour: 0,
+      setupTimeHours: 0,
+      laborRatePerHour: 0,
+      powerConsumptionKw: 0,
+      electricityRatePerKwh: 0,
+      postProcessingCost: 2,
+      packagingCost: 1.5,
+      shippingCost: 4,
+      failureRatePercent: 0,
+      marginPercent: 0,
+    })
+
+    expect(breakdown.postProcessingCost).toBe(2)
+    expect(breakdown.packagingCost).toBe(1.5)
+    expect(breakdown.shippingCost).toBe(4)
+    expect(breakdown.baseCost).toBe(7.5)
+    expect(breakdown.unitPrice).toBe(7.5)
   })
 })

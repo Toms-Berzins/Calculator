@@ -19,14 +19,21 @@ function isMissingColumnError(error: { code?: string; message?: string } | null)
   if (!error) return false
   // PostgreSQL undefined_column = 42703; PostgREST surfaces it as a 400 with this code
   if (error.code === '42703') return true
-  return error.message?.toLowerCase().includes('does not exist') ?? false
+  // PostgREST can also emit schema-cache missing-column errors
+  if (error.code === 'PGRST204') return true
+  const message = error.message?.toLowerCase() ?? ''
+  return (
+    message.includes('does not exist') ||
+    message.includes('could not find') && message.includes('column')
+  )
 }
 
 const BASE_SELECT =
   `material_price_per_kg, machine_rate_per_hour, labor_rate_per_hour, ` +
   `power_consumption_kw, electricity_rate_per_kwh, failure_rate_percent, margin_percent`
 
-const FULL_SELECT = `${BASE_SELECT}, material_overhead_percent, updated_at`
+const OVERHEAD_SELECT = `${BASE_SELECT}, material_overhead_percent, updated_at`
+const FULL_SELECT = `${BASE_SELECT}, material_overhead_percent, packaging_cost, shipping_cost, updated_at`
 const LEGACY_SELECT = `${BASE_SELECT}, updated_at`
 
 function mapSettingsValues(
@@ -41,6 +48,8 @@ function mapSettingsValues(
     failure_rate_percent: data.failure_rate_percent ?? DEFAULT_CALCULATOR_SETTINGS.failure_rate_percent,
     margin_percent: data.margin_percent ?? DEFAULT_CALCULATOR_SETTINGS.margin_percent,
     material_overhead_percent: data.material_overhead_percent ?? DEFAULT_CALCULATOR_SETTINGS.material_overhead_percent,
+    packaging_cost: data.packaging_cost ?? DEFAULT_CALCULATOR_SETTINGS.packaging_cost,
+    shipping_cost: data.shipping_cost ?? DEFAULT_CALCULATOR_SETTINGS.shipping_cost,
   }
 }
 
@@ -52,7 +61,7 @@ export async function getCalculatorSettings(): Promise<CalculatorSettingsPayload
 
   if (!user) throw new Error('Unauthenticated')
 
-  // Try the full select (including the new column)
+  // Try the newest schema first
   const { data, error } = await supabase
     .from('calculator_settings')
     .select(FULL_SELECT)
@@ -63,8 +72,29 @@ export async function getCalculatorSettings(): Promise<CalculatorSettingsPayload
     return { values: DEFAULT_CALCULATOR_SETTINGS, updatedAt: null }
   }
 
-  // Column not migrated yet — retry without it, use default for material_overhead_percent
+  // Column not migrated yet — retry with older schema(s)
   if (isMissingColumnError(error)) {
+    // First fallback: schema with material_overhead_percent but without packaging/shipping
+    const { data: overheadData, error: overheadError } = await supabase
+      .from('calculator_settings')
+      .select(OVERHEAD_SELECT)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (isMissingCalculatorSettingsTableError(overheadError)) {
+      return { values: DEFAULT_CALCULATOR_SETTINGS, updatedAt: null }
+    }
+    if (!overheadError) {
+      if (!overheadData) return { values: DEFAULT_CALCULATOR_SETTINGS, updatedAt: null }
+      return {
+        values: mapSettingsValues(overheadData as Partial<CalculatorSettingsValues> & { updated_at?: string }),
+        updatedAt: (overheadData as { updated_at?: string }).updated_at ?? null,
+      }
+    }
+
+    // Second fallback: fully legacy schema without material_overhead_percent
+    if (!isMissingColumnError(overheadError)) throw new Error(overheadError.message)
+
     const { data: legacyData, error: legacyError } = await supabase
       .from('calculator_settings')
       .select(LEGACY_SELECT)
@@ -113,9 +143,33 @@ export async function saveCalculatorSettings(
     throw new Error('Calculator settings table is missing. Run the SQL from supabase/schema.sql in your Supabase project.')
   }
 
-  // Column not migrated yet — save without it and remind the user
+  // Column not migrated yet — retry with older schema(s)
   if (isMissingColumnError(error)) {
-    const { material_overhead_percent: _omit, ...legacyValues } = values
+    const { packaging_cost: _omitPackaging, shipping_cost: _omitShipping, ...overheadValues } = values
+    const { data: overheadData, error: overheadError } = await supabase
+      .from('calculator_settings')
+      .upsert({ user_id: user.id, ...overheadValues }, { onConflict: 'user_id' })
+      .select(OVERHEAD_SELECT)
+      .single()
+
+    if (isMissingCalculatorSettingsTableError(overheadError)) {
+      throw new Error('Calculator settings table is missing. Run the SQL from supabase/schema.sql in your Supabase project.')
+    }
+
+    if (!overheadError && overheadData) {
+      revalidatePath('/settings')
+      revalidatePath('/quotes/new')
+      return {
+        values: mapSettingsValues(overheadData as Partial<CalculatorSettingsValues> & { updated_at?: string }),
+        updatedAt: (overheadData as { updated_at?: string }).updated_at ?? null,
+      }
+    }
+
+    if (!isMissingColumnError(overheadError)) {
+      throw new Error(overheadError?.message ?? 'Failed to save settings')
+    }
+
+    const { material_overhead_percent: _omitOverhead, ...legacyValues } = overheadValues
     const { data: legacyData, error: legacyError } = await supabase
       .from('calculator_settings')
       .upsert({ user_id: user.id, ...legacyValues }, { onConflict: 'user_id' })

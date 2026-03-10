@@ -6,7 +6,6 @@ import { useQuoteCalculator } from '@/hooks/useQuoteCalculator'
 import { useRealtimeQuote } from '@/hooks/useRealtimeQuote'
 import { updateQuoteItems, updateQuoteStatus } from '@/lib/actions/quotes'
 import { generateAndStorePDF } from '@/lib/actions/pdf'
-import { QuoteItemsTable } from '@/components/QuoteItemsTable/QuoteItemsTable'
 import { JobConstantsEditor } from '@/components/NewQuoteForm/JobConstantsEditor'
 import { useJobConstants } from '@/components/NewQuoteForm/useJobConstants'
 import { useQuotePricing } from '@/components/NewQuoteForm/useQuotePricing'
@@ -49,7 +48,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
 
   const t = useT()
 
-  const { items, taxRate, subtotal, taxAmount, total, addItem, removeItem, updateItem, setTaxRate, upsertItem } = useQuoteCalculator(
+  const { items, taxRate, subtotal, taxAmount, total, setTaxRate, upsertItem } = useQuoteCalculator(
     quote.quote_items.map((i) => ({ ...i, tempId: i.id })),
     quote.tax_rate,
   )
@@ -283,6 +282,18 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
                 <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.postProcessingCost)}</span>
               </>
             )}
+            {pricing.packagingCost > 0 && (
+              <>
+                <span className={`text-xs ${styles.summaryLabel}`}>{t.newQuote.packagingLabel}</span>
+                <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.packagingCost)}</span>
+              </>
+            )}
+            {pricing.shippingCost > 0 && (
+              <>
+                <span className={`text-xs ${styles.summaryLabel}`}>{t.newQuote.shippingLabel}</span>
+                <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.shippingCost)}</span>
+              </>
+            )}
             <div className="col-span-2 my-1.5 border-t border-current opacity-20" />
             <span className={styles.summaryLabel}>{t.newQuote.baseCostPerUnit}</span>
             <span className={`text-right tabular-nums ${styles.summaryValue}`}>{formatCurrency(pricing.baseCost)}</span>
@@ -309,20 +320,6 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
             </button>
           </div>
         </div>
-      </section>
-
-      {/* ── Line items ── */}
-      <section className={styles.itemsCard}>
-        <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>{t.quote.lineItems}</h2>
-          <span className={styles.sectionMeta}>{t.quote.items(items.length)}</span>
-        </div>
-        <QuoteItemsTable
-          items={items}
-          onAdd={addItem}
-          onRemove={removeItem}
-          onUpdate={updateItem}
-        />
       </section>
 
       {/* ── Bottom grid: notes + totals ── */}

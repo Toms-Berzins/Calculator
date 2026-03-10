@@ -42,6 +42,8 @@ export type JobConstantKey =
   | 'failure_rate_percent'
   | 'margin_percent'
   | 'material_overhead_percent'
+  | 'packaging_cost'
+  | 'shipping_cost'
   | 'difficulty_multiplier_percent'
 
 export interface ConstantDefinition {
@@ -75,5 +77,7 @@ export const CONSTANT_DEFINITIONS: ConstantDefinition[] = [
   { key: 'electricity_rate_per_kwh', step: 0.01 },
   { key: 'failure_rate_percent', step: 0.1 },
   { key: 'margin_percent', step: 0.1 },
+  { key: 'packaging_cost', step: 0.01 },
+  { key: 'shipping_cost', step: 0.01 },
   { key: 'difficulty_multiplier_percent', step: 1, discrete: true },
 ]

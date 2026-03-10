@@ -17,6 +17,8 @@ export interface PrintPricingInput {
   powerConsumptionKw: number
   electricityRatePerKwh: number
   postProcessingCost: number
+  packagingCost: number
+  shippingCost: number
   failureRatePercent: number
   /** True profit margin: profit as a % of the final selling price, not markup on cost */
   marginPercent: number
@@ -28,6 +30,8 @@ export interface PrintPricingBreakdown {
   laborCost: number
   energyCost: number
   postProcessingCost: number
+  packagingCost: number
+  shippingCost: number
   baseCost: number
   riskCost: number
   marginAmount: number
@@ -54,6 +58,8 @@ export function calculate3DPrintPrice(input: PrintPricingInput): PrintPricingBre
   const powerConsumptionKw = toSafeNumber(input.powerConsumptionKw)
   const electricityRatePerKwh = toSafeNumber(input.electricityRatePerKwh)
   const postProcessingCost = toSafeNumber(input.postProcessingCost)
+  const packagingCost = toSafeNumber(input.packagingCost)
+  const shippingCost = toSafeNumber(input.shippingCost)
   const failureRatePercent = toSafeNumber(input.failureRatePercent)
   const marginPercent = toSafeNumber(input.marginPercent)
 
@@ -63,7 +69,14 @@ export function calculate3DPrintPrice(input: PrintPricingInput): PrintPricingBre
   const laborCost = setupTimeHours * laborRatePerHour
   const energyCost = (printTimeHours + setupTimeHours) * powerConsumptionKw * electricityRatePerKwh
 
-  const baseCost = materialCost + machineCost + laborCost + energyCost + postProcessingCost
+  const baseCost =
+    materialCost +
+    machineCost +
+    laborCost +
+    energyCost +
+    postProcessingCost +
+    packagingCost +
+    shippingCost
   const riskCost = baseCost * (failureRatePercent / 100)
   const costWithRisk = baseCost + riskCost
 
@@ -79,6 +92,8 @@ export function calculate3DPrintPrice(input: PrintPricingInput): PrintPricingBre
     laborCost: roundCurrency(laborCost),
     energyCost: roundCurrency(energyCost),
     postProcessingCost: roundCurrency(postProcessingCost),
+    packagingCost: roundCurrency(packagingCost),
+    shippingCost: roundCurrency(shippingCost),
     baseCost: roundCurrency(baseCost),
     riskCost: roundCurrency(riskCost),
     marginAmount: roundCurrency(marginAmount),

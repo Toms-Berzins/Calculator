@@ -4,11 +4,9 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuoteCalculator } from '@/hooks/useQuoteCalculator'
 import { createQuote } from '@/lib/actions/quotes'
-import { QuoteItemsTable } from '@/components/QuoteItemsTable/QuoteItemsTable'
 import { formatCurrency } from '@/lib/utils/format'
 import { JobConstantsEditor } from './JobConstantsEditor'
 import { JobSelectorSection } from './JobSelectorSection'
-import { QuoteTotalsCard } from './QuoteTotalsCard'
 import {
   type NewQuoteFormProps,
 } from './NewQuoteForm.types'
@@ -47,8 +45,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
     undoRemoveConstant,
   } = useJobConstants(calculatorDefaults)
 
-  const { items, taxRate, subtotal, addItem, removeItem, updateItem, setTaxRate } =
-    useQuoteCalculator()
+  const { taxRate, subtotal, setTaxRate } = useQuoteCalculator()
 
   const {
     pricing,
@@ -87,13 +84,9 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
       subtotal: calculatedLineSubtotal,
       sort_order: 0,
     }
-    const extraItems = items
-      .filter((item) => item.tempId !== calculatedItemTempId)
-      .map((item, index) => ({ ...item, sort_order: index + 1 }))
-
     setSubmitting(true)
     try {
-      const quoteId = await createQuote(selectedJobId, taxRate, [calculatedItem, ...extraItems])
+      const quoteId = await createQuote(selectedJobId, taxRate, [calculatedItem])
       router.push(`/quotes/${quoteId}`)
     } finally {
       setSubmitting(false)
@@ -224,6 +217,18 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
                 <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.postProcessingCost)}</span>
               </>
             )}
+            {pricing.packagingCost > 0 && (
+              <>
+                <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.packagingLabel}</span>
+                <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.packagingCost)}</span>
+              </>
+            )}
+            {pricing.shippingCost > 0 && (
+              <>
+                <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.shippingLabel}</span>
+                <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.shippingCost)}</span>
+              </>
+            )}
             <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
             <span className={styles.totalRow}>{t.newQuote.baseCostPerUnit}</span>
             <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.baseCost)}</span>
@@ -233,33 +238,50 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.marginAmount)}</span>
             <span className={styles.totalRow}>{t.newQuote.difficultyFactor}</span>
             <span className={`text-right tabular-nums ${styles.totalAmount}`}>{difficultyLabel}</span>
-            <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
-            <span className={`pt-1 font-semibold ${styles.pageTitle}`}>{t.newQuote.calculatedUnitPrice}</span>
-            <span className={`pt-1 text-right font-bold tabular-nums ${styles.totalAccent}`}>{formatCurrency(calculatedUnitPrice)}</span>
-            <span className={`pt-1 font-semibold ${styles.pageTitle}`}>{t.newQuote.calculatedLineTotal}</span>
-            <span className={`pt-1 text-right font-bold tabular-nums ${styles.totalAccent}`}>{formatCurrency(calculatedLineSubtotal)}</span>
+
+            <div className={`col-span-2 my-2 border-t ${styles.divider}`} />
+
+            <span className={styles.totalRow}>{t.quote.subtotal}</span>
+            <span className={`text-right font-medium tabular-nums ${styles.totalAmount}`}>
+              {formatCurrency(quoteSubtotal)}
+            </span>
+
+            <label htmlFor="tax" className={styles.totalRow}>
+              {t.quote.vat}
+            </label>
+            <div className="text-right">
+              <input
+                id="tax"
+                type="number"
+                min={0}
+                max={100}
+                step={0.1}
+                value={taxRate}
+                onChange={(e) => setTaxRate(Number(e.target.value))}
+                className="input-field w-20 rounded-lg px-2 py-1 text-right text-sm tabular-nums"
+              />
+            </div>
+
+            {taxRate > 0 && (
+              <>
+                <span className={styles.totalRow}>{t.quote.vatAmount}</span>
+                <span className={`text-right font-medium tabular-nums ${styles.totalAmount}`}>
+                  {formatCurrency(quoteTaxAmount)}
+                </span>
+              </>
+            )}
+
+            <div className={`col-span-2 mt-2 pt-2.5 border-t flex items-center justify-between text-base font-bold ${styles.divider}`}>
+              <span className={styles.pageTitle}>{t.quote.total}</span>
+              <span className={`tabular-nums ${styles.totalAccent}`}>
+                {formatCurrency(quoteTotal)}
+              </span>
+            </div>
           </div>
           <p className={`mt-2 text-xs ${styles.pageSubtitle}`}>
             {t.newQuote.calculatedLineNote}
           </p>
         </div>
-      </div>
-
-      <QuoteItemsTable
-        items={items}
-        onAdd={addItem}
-        onRemove={removeItem}
-        onUpdate={updateItem}
-      />
-
-      <div className="mt-6 flex justify-end">
-        <QuoteTotalsCard
-          quoteSubtotal={quoteSubtotal}
-          taxRate={taxRate}
-          quoteTaxAmount={quoteTaxAmount}
-          quoteTotal={quoteTotal}
-          onChangeTaxRate={setTaxRate}
-        />
       </div>
 
       <button

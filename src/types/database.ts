@@ -86,6 +86,8 @@ export interface Database {
           failure_rate_percent: number
           margin_percent: number
           material_overhead_percent: number
+          packaging_cost: number
+          shipping_cost: number
           created_at: string
           updated_at: string
         }
@@ -100,6 +102,8 @@ export interface Database {
           failure_rate_percent?: number
           margin_percent?: number
           material_overhead_percent?: number
+          packaging_cost?: number
+          shipping_cost?: number
           created_at?: string
           updated_at?: string
         }
@@ -114,6 +118,8 @@ export interface Database {
           failure_rate_percent?: number
           margin_percent?: number
           material_overhead_percent?: number
+          packaging_cost?: number
+          shipping_cost?: number
           created_at?: string
           updated_at?: string
         }

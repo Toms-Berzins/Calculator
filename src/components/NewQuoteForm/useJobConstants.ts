@@ -39,6 +39,8 @@ export function useJobConstants(
     failure_rate_percent: calculatorDefaults.failure_rate_percent,
     margin_percent: calculatorDefaults.margin_percent,
     material_overhead_percent: calculatorDefaults.material_overhead_percent,
+    packaging_cost: calculatorDefaults.packaging_cost,
+    shipping_cost: calculatorDefaults.shipping_cost,
     difficulty_multiplier_percent: 100,
   })
   const [editingConstantKey, setEditingConstantKey] = useState<JobConstantKey | null>(null)
