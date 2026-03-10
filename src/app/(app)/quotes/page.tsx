@@ -9,11 +9,11 @@ export default async function QuotesPage() {
   const supabase = await createServerSupabaseClient()
   const t = await getDict()
 
-  const STATUS_META: Record<string, { rowClass: string; badgeClass: string; dotClass: string; label: string }> = {
-    draft:    { rowClass: styles.rowDraft,    badgeClass: styles.statusDraft,    dotClass: styles.dotDraft,    label: t.quotes.status.draft },
-    sent:     { rowClass: styles.rowSent,     badgeClass: styles.statusSent,     dotClass: styles.dotSent,     label: t.quotes.status.sent },
-    accepted: { rowClass: styles.rowAccepted, badgeClass: styles.statusAccepted, dotClass: styles.dotAccepted, label: t.quotes.status.accepted },
-    rejected: { rowClass: styles.rowRejected, badgeClass: styles.statusRejected, dotClass: styles.dotRejected, label: t.quotes.status.rejected },
+  const STATUS_META: Record<string, { rowClass: string; badgeClass: string; dotClass: string; label: string; hint: string; amountClass: string }> = {
+    draft:    { rowClass: styles.rowDraft,    badgeClass: styles.statusDraft,    dotClass: styles.dotDraft,    label: t.quotes.status.draft,    hint: t.quotes.statusHint.draft,    amountClass: styles.amountDraft },
+    sent:     { rowClass: styles.rowSent,     badgeClass: styles.statusSent,     dotClass: styles.dotSent,     label: t.quotes.status.sent,     hint: t.quotes.statusHint.sent,     amountClass: styles.amountSent },
+    accepted: { rowClass: styles.rowAccepted, badgeClass: styles.statusAccepted, dotClass: styles.dotAccepted, label: t.quotes.status.accepted, hint: t.quotes.statusHint.accepted, amountClass: styles.amountAccepted },
+    rejected: { rowClass: styles.rowRejected, badgeClass: styles.statusRejected, dotClass: styles.dotRejected, label: t.quotes.status.rejected, hint: t.quotes.statusHint.rejected, amountClass: styles.amountRejected },
   }
 
   const { data: quotes } = await supabase
@@ -27,19 +27,51 @@ export default async function QuotesPage() {
   const all = quotes ?? []
   const acceptedValue = all.filter((q) => q.status === 'accepted').reduce((s, q) => s + (q.total ?? 0), 0)
   const pipelineValue = all.filter((q) => q.status === 'sent').reduce((s, q) => s + (q.total ?? 0), 0)
+  const acceptedCount = all.filter((q) => q.status === 'accepted').length
+  const sentCount = all.filter((q) => q.status === 'sent').length
   const draftCount    = all.filter((q) => q.status === 'draft').length
+  const rejectedCount = all.filter((q) => q.status === 'rejected').length
 
   return (
     <div>
       {/* ── Page header ── */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className={`mb-6 flex items-start justify-between ${styles.pageHeader}`}>
         <div>
           <h1 className={`text-2xl font-bold tracking-tight ${styles.pageTitle}`}>
             {t.quotes.title}
           </h1>
-          <p className={`mt-1 text-sm ${styles.quoteCount}`}>
-            {t.quotes.total(all.length)}
-          </p>
+          {all.length > 0 ? (
+            <div className={styles.pageHeaderMeta}>
+              {acceptedCount > 0 && (
+                <span className={`${styles.metaChip} ${styles.metaAccepted}`}>
+                  <span className={`${styles.statusDot} ${styles.dotAccepted}`} aria-hidden />
+                  {acceptedCount} {t.quotes.status.accepted}
+                </span>
+              )}
+              {sentCount > 0 && (
+                <span className={`${styles.metaChip} ${styles.metaSent}`}>
+                  <span className={`${styles.statusDot} ${styles.dotSent}`} aria-hidden />
+                  {sentCount} {t.quotes.status.sent}
+                </span>
+              )}
+              {draftCount > 0 && (
+                <span className={`${styles.metaChip} ${styles.metaDraft}`}>
+                  <span className={`${styles.statusDot} ${styles.dotDraft}`} aria-hidden />
+                  {draftCount} {t.quotes.status.draft}
+                </span>
+              )}
+              {rejectedCount > 0 && (
+                <span className={`${styles.metaChip} ${styles.metaRejected}`}>
+                  <span className={`${styles.statusDot} ${styles.dotRejected}`} aria-hidden />
+                  {rejectedCount} {t.quotes.status.rejected}
+                </span>
+              )}
+            </div>
+          ) : (
+            <p className={`mt-1 text-sm ${styles.quoteCount}`}>
+              {t.quotes.total(all.length)}
+            </p>
+          )}
         </div>
         <Link
           href="/quotes/new"
@@ -55,17 +87,52 @@ export default async function QuotesPage() {
       {/* ── Summary strip ── */}
       {all.length > 0 && (
         <div className={`mb-6 grid grid-cols-3 gap-3 ${styles.summaryStrip}`}>
-          <div className={styles.summaryCard}>
-            <p className={styles.summaryLabel}>{t.quotes.acceptedRevenue}</p>
+          {/* Accepted revenue card */}
+          <div className={`${styles.summaryCard} ${styles.summaryCardAccepted}`}>
+            <div className={styles.summaryHeader}>
+              <p className={styles.summaryLabel}>{t.quotes.acceptedRevenue}</p>
+              <span className={`${styles.summaryStatusBadge} ${styles.statusAccepted}`}
+                    aria-label={t.quotes.status.accepted}>
+                <span className={`${styles.statusDot} ${styles.dotAccepted}`} aria-hidden />
+                {t.quotes.status.accepted}
+              </span>
+            </div>
             <p className={`${styles.summaryValue} ${styles.summaryAccepted}`}>{formatCurrency(acceptedValue)}</p>
+            <hr className={styles.summaryDivider} />
+            <p className={styles.summaryDescription}>{t.quotes.summaryDescription.acceptedRevenueMain(acceptedCount)}</p>
+            <p className={styles.summaryDescriptionSub}>{t.quotes.summaryDescription.acceptedRevenueRule}</p>
           </div>
-          <div className={styles.summaryCard}>
-            <p className={styles.summaryLabel}>{t.quotes.pipelineValue}</p>
+
+          {/* Pipeline / sent card */}
+          <div className={`${styles.summaryCard} ${styles.summaryCardSent}`}>
+            <div className={styles.summaryHeader}>
+              <p className={styles.summaryLabel}>{t.quotes.pipelineValue}</p>
+              <span className={`${styles.summaryStatusBadge} ${styles.statusSent}`}
+                    aria-label={t.quotes.status.sent}>
+                <span className={`${styles.statusDot} ${styles.dotSent}`} aria-hidden />
+                {t.quotes.status.sent}
+              </span>
+            </div>
             <p className={`${styles.summaryValue} ${styles.summarySent}`}>{formatCurrency(pipelineValue)}</p>
+            <hr className={styles.summaryDivider} />
+            <p className={styles.summaryDescription}>{t.quotes.summaryDescription.pipelineValueMain(sentCount)}</p>
+            <p className={styles.summaryDescriptionSub}>{t.quotes.summaryDescription.pipelineValueRule}</p>
           </div>
-          <div className={styles.summaryCard}>
-            <p className={styles.summaryLabel}>{t.quotes.drafts}</p>
+
+          {/* Drafts card */}
+          <div className={`${styles.summaryCard} ${styles.summaryCardDraft}`}>
+            <div className={styles.summaryHeader}>
+              <p className={styles.summaryLabel}>{t.quotes.drafts}</p>
+              <span className={`${styles.summaryStatusBadge} ${styles.statusDraft}`}
+                    aria-label={t.quotes.status.draft}>
+                <span className={`${styles.statusDot} ${styles.dotDraft}`} aria-hidden />
+                {t.quotes.status.draft}
+              </span>
+            </div>
             <p className={styles.summaryValue}>{draftCount}</p>
+            <hr className={styles.summaryDivider} />
+            <p className={styles.summaryDescription}>{t.quotes.summaryDescription.draftsMain(draftCount)}</p>
+            <p className={styles.summaryDescriptionSub}>{t.quotes.summaryDescription.draftsRule}</p>
           </div>
         </div>
       )}
@@ -130,16 +197,19 @@ export default async function QuotesPage() {
                       {q.created_at ? formatDate(q.created_at) : '—'}
                     </span>
 
-                    {/* Status badge */}
+                    {/* Status badge + hint */}
                     <span className={styles.colStatus}>
-                      <span className={`${styles.statusBadge} ${st.badgeClass}`}>
-                        <span className={`${styles.statusDot} ${st.dotClass}`} aria-hidden />
-                        {st.label}
+                      <span className={styles.statusGroup}>
+                        <span className={`${styles.statusBadge} ${st.badgeClass}`}>
+                          <span className={`${styles.statusDot} ${st.dotClass}`} aria-hidden />
+                          {st.label}
+                        </span>
+                        <span className={styles.statusHint}>{st.hint}</span>
                       </span>
                     </span>
 
-                    {/* Amount */}
-                    <span className={`${styles.colAmount} ${styles.quoteAmount}`}>
+                    {/* Amount — colored per status */}
+                    <span className={`${styles.colAmount} ${styles.quoteAmount} ${st.amountClass}`}>
                       {formatCurrency(q.total ?? 0)}
                     </span>
 

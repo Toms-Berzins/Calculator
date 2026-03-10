@@ -22,7 +22,7 @@ export const lv: Translations = {
   quotes: {
     title: 'Piedāvājumi',
     total: (n: number) => `Kopā: ${n}`,
-    new: 'Jauns',
+    new: 'Jauns piedāvājums',
     noQuotes: 'Vēl nav piedāvājumu',
     createFirst: 'Izveidojiet savu pirmo piedāvājumu, lai sāktu',
     untitledJob: 'Nenosaukts darbs',
@@ -33,11 +33,25 @@ export const lv: Translations = {
     acceptedRevenue: 'Ieņēmumi',
     pipelineValue: 'Gaidošie',
     drafts: 'Melnraksti',
+    summaryDescription: {
+      acceptedRevenueMain: (n: number) => n === 1 ? '1 piedāvājums apstiprināts kā uzvarēts' : `${n} piedāvājumi apstiprināti kā uzvarēti`,
+      acceptedRevenueRule: 'Fiksētie ieņēmumi · nav iekļauti aktīvajā pipelainā.',
+      pipelineValueMain: (n: number) => n === 1 ? '1 nosūtīts piedāvājums, gaida klienta lēmumu' : `${n} nosūtīti piedāvājumi, gaida klienta lēmumu`,
+      pipelineValueRule: 'Nosacītie ieņēmumi · pāriet uz Pieņemts vai Noraidīts pēc atbildes.',
+      draftsMain: (n: number) => n === 1 ? '1 piedāvājums tiek sagatavots, nav nosūtīts' : `${n} piedāvājumi tiek sagatavoti, nav nosūtīti`,
+      draftsRule: 'Nav ieskaitīti ieņēmumos un pipelainā.',
+    },
     status: {
       draft: 'Melnraksts',
       sent: 'Nosūtīts',
       accepted: 'Pieņemts',
       rejected: 'Noraidīts',
+    },
+    statusHint: {
+      draft: 'Nav nosūtīts klientam',
+      sent: 'Gaida atbildi',
+      accepted: 'Apstiprināts · uzvarēts',
+      rejected: 'Klients noraidīja',
     },
   },
   jobs: {

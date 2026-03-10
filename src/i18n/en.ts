@@ -20,7 +20,7 @@ export const en = {
   quotes: {
     title: 'Quotes',
     total: (n: number) => `${n} total`,
-    new: 'New',
+    new: 'New quote',
     noQuotes: 'No quotes yet',
     createFirst: 'Create your first quote to get started',
     untitledJob: 'Untitled job',
@@ -31,11 +31,25 @@ export const en = {
     acceptedRevenue: 'Accepted revenue',
     pipelineValue: 'In pipeline',
     drafts: 'Drafts',
+    summaryDescription: {
+      acceptedRevenueMain: (n: number) => n === 1 ? '1 quote confirmed as won' : `${n} quotes confirmed as won`,
+      acceptedRevenueRule: 'Booked revenue · excluded from open pipeline.',
+      pipelineValueMain: (n: number) => n === 1 ? '1 quote sent, awaiting client decision' : `${n} quotes sent, awaiting client decision`,
+      pipelineValueRule: 'Soft revenue · moves to Accepted or Rejected on reply.',
+      draftsMain: (n: number) => n === 1 ? '1 quote in progress, not yet sent' : `${n} quotes in progress, not yet sent`,
+      draftsRule: 'Not counted in revenue or pipeline totals.',
+    },
     status: {
       draft: 'Draft',
       sent: 'Sent',
       accepted: 'Accepted',
       rejected: 'Rejected',
+    },
+    statusHint: {
+      draft: 'Not sent to client',
+      sent: 'Awaiting reply',
+      accepted: 'Booked · won',
+      rejected: 'Declined by client',
     },
   },
   jobs: {

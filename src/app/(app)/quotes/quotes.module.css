@@ -2,6 +2,34 @@
   color: var(--text-strong);
 }
 
+.pageHeader {
+  gap: 0.75rem;
+}
+
+.pageHeaderMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.4rem;
+}
+
+.metaChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 9999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.metaAccepted { background: var(--status-accepted-bg); color: var(--status-accepted-text); }
+.metaSent     { background: var(--status-sent-bg);     color: var(--status-sent-text); }
+.metaDraft    { background: var(--status-draft-bg);    color: var(--status-draft-text); }
+.metaRejected { background: var(--status-rejected-bg); color: var(--status-rejected-text); }
+
 .quoteCount {
   color: var(--text-muted);
 }
@@ -15,8 +43,46 @@
 .summaryCard {
   background: var(--bg-surface);
   border: 1px solid var(--border);
+  border-top: 2px solid var(--border);
   border-radius: 1rem;
   padding: 0.875rem 1rem;
+}
+
+.summaryCardAccepted {
+  background: var(--status-accepted-bg);
+  border-top-color: var(--status-accepted-text);
+}
+
+.summaryCardSent {
+  background: var(--status-sent-bg);
+  border-top-color: var(--status-sent-text);
+}
+
+.summaryCardDraft {
+  border-top-color: var(--status-draft-text);
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Compact status pill shown in the card header */
+.summaryStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .summaryLabel {
@@ -25,7 +91,6 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-faint);
-  margin-bottom: 0.25rem;
 }
 
 .summaryValue {
@@ -41,6 +106,27 @@
 
 .summarySent {
   color: var(--status-sent-text);
+}
+
+.summaryDivider {
+  border: none;
+  border-top: 1px solid var(--border-muted);
+  margin: 0.5rem 0 0.375rem;
+}
+
+.summaryDescription {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.summaryDescriptionSub {
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--text-faint);
+  font-style: italic;
 }
 
 /* ── Empty state ────────────────────────────────────────────── */
@@ -124,11 +210,11 @@
   background: var(--bg-muted);
 }
 
-/* Left accent strip per status */
+/* Left accent strip + subtle background tint per status */
 .rowDraft    { border-left: 3px solid var(--status-draft-text); }
-.rowSent     { border-left: 3px solid var(--status-sent-text); }
-.rowAccepted { border-left: 3px solid var(--status-accepted-text); }
-.rowRejected { border-left: 3px solid var(--status-rejected-text); }
+.rowSent     { border-left: 3px solid var(--status-sent-text);     background: color-mix(in srgb, var(--status-sent-bg)     50%, transparent); }
+.rowAccepted { border-left: 3px solid var(--status-accepted-text); background: color-mix(in srgb, var(--status-accepted-bg) 50%, transparent); }
+.rowRejected { border-left: 3px solid var(--status-rejected-text); background: color-mix(in srgb, var(--status-rejected-bg) 50%, transparent); }
 
 /* The clickable area stretches across all columns */
 .rowLink {
@@ -221,6 +307,30 @@
 .dotSent     { background: var(--status-sent-text); }
 .dotAccepted { background: var(--status-accepted-text); }
 .dotRejected { background: var(--status-rejected-text); }
+
+/* Status badge group: badge + sub-hint stacked */
+.statusGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.statusHint {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-faint);
+  font-style: italic;
+  line-height: 1;
+  padding-left: 0.15rem;
+}
+
+/* Semantic coloring of the amount value per status */
+.amountAccepted { color: var(--status-accepted-text); }
+.amountSent     { color: var(--status-sent-text); }
+.amountDraft    { color: var(--text-muted); }
+.amountRejected { color: var(--status-rejected-text); }
 
 /* Amount */
 .colAmount {

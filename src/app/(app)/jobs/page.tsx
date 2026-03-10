@@ -9,7 +9,7 @@ import styles from './jobs.module.css'
 const JOB_STATUS_VALUES = ['open', 'won', 'lost', 'archived'] as const
 
 interface JobsPageProps {
-  searchParams?: Promise<{ status?: string; message?: string }>
+  searchParams?: Promise<{ status?: string; message?: string; jobStatus?: string }>
 }
 
 function getErrorMessage(caught: unknown) {
@@ -41,6 +41,11 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
   const resolvedSearchParams = await searchParams
   const status = resolvedSearchParams?.status
   const message = resolvedSearchParams?.message
+  const selectedJobStatus =
+    resolvedSearchParams?.jobStatus &&
+    (JOB_STATUS_VALUES as readonly string[]).includes(resolvedSearchParams.jobStatus)
+      ? (resolvedSearchParams.jobStatus as (typeof JOB_STATUS_VALUES)[number])
+      : null
 
   async function handleCreateJob(formData: FormData) {
     'use server'
@@ -129,6 +134,25 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     archived: jobs?.filter((j) => j.status === 'archived').length ?? 0,
   }
 
+  const visibleJobs =
+    selectedJobStatus === null
+      ? jobs
+      : jobs?.filter((j) => (j.status ?? 'open') === selectedJobStatus)
+
+  function getStatusFilterHref(jobStatus: (typeof JOB_STATUS_VALUES)[number]) {
+    const nextParams = new URLSearchParams()
+
+    if (status) nextParams.set('status', status)
+    if (message) nextParams.set('message', message)
+
+    if (selectedJobStatus !== jobStatus) {
+      nextParams.set('jobStatus', jobStatus)
+    }
+
+    const query = nextParams.toString()
+    return query ? `/jobs?${query}` : '/jobs'
+  }
+
   return (
     <div className={styles.shell}>
 
@@ -155,10 +179,14 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             { key: 'lost',     cnt: statusCounts.lost,     cls: styles.statLost,     label: t.jobs.statusValues.lost },
             { key: 'archived', cnt: statusCounts.archived, cls: styles.statArchived, label: t.jobs.statusValues.archived },
           ] as const).map(({ key, cnt, cls, label }) => (
-            <div key={key} className={`${styles.statCard} ${cls}`}>
+            <Link
+              key={key}
+              href={getStatusFilterHref(key)}
+              className={`${styles.statCard} ${styles.statCardLink} ${cls} ${selectedJobStatus === key ? styles.statCardActive : ''}`}
+            >
               <span className={styles.statValue}>{cnt}</span>
               <span className={styles.statLabel}>{label}</span>
-            </div>
+            </Link>
           ))}
         </div>
       )}
@@ -210,9 +238,9 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
       )}
 
       {/* ── Jobs table ── */}
-      {!!jobs?.length && (
+      {!!visibleJobs?.length && (
         <div className={styles.tableWrap}>
-          {jobs.map((j) => {
+          {visibleJobs.map((j) => {
             const st = JOB_STATUS[j.status ?? 'open'] ?? JOB_STATUS.open
             const customer =
               (j.customers as { company: string; name: string } | null)?.company ??
