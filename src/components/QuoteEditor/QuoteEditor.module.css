@@ -42,6 +42,19 @@
   font-weight: 600;
 }
 
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.headerSave {
+  min-height: 2.5rem;
+}
+
 .itemsCard,
 .metaCard,
 .totalsCard {
@@ -151,7 +164,18 @@
 }
 
 .statusSelect {
-  min-width: 8.5rem;
+  min-width: 0;
+}
+
+.actionControl {
+  width: 100%;
+  min-height: 2.5rem;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .downloadLink {
@@ -172,6 +196,18 @@
   .metaCard,
   .totalsCard {
     padding: 1.25rem;
+  }
+
+  .headerActions {
+    width: auto;
+  }
+
+  .actionControl {
+    width: auto;
+  }
+
+  .statusSelect {
+    min-width: 8.5rem;
   }
 }
 

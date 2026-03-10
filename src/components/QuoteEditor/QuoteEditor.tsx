@@ -69,14 +69,14 @@ export function QuoteEditor({ quote }: Props) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className={styles.headerActions}>
           {syncIndicator && (
             <span className={styles.syncBadge}>Syncing…</span>
           )}
           <button
             onClick={handleSave}
             disabled={saving}
-            className="btn-primary rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60"
+            className={`btn-primary rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60 ${styles.headerSave}`}
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -157,7 +157,7 @@ export function QuoteEditor({ quote }: Props) {
               id="quoteStatus"
               defaultValue={quote.status}
               onChange={(e) => updateQuoteStatus(quote.id, e.target.value as QuoteStatus)}
-              className={`input-field rounded-lg px-3 py-2 text-sm ${styles.statusSelect}`}
+              className={`input-field rounded-lg px-3 py-2 text-sm ${styles.statusSelect} ${styles.actionControl}`}
             >
               {['draft', 'sent', 'accepted', 'rejected'].map((s) => (
                 <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
@@ -167,7 +167,7 @@ export function QuoteEditor({ quote }: Props) {
             <button
               onClick={handleGeneratePDF}
               disabled={generatingPdf}
-              className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60"
+              className={`btn-ghost rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60 ${styles.actionControl} ${styles.actionButton}`}
             >
               {generatingPdf ? 'Generating…' : 'Generate PDF'}
             </button>
@@ -178,7 +178,7 @@ export function QuoteEditor({ quote }: Props) {
                 target="_blank"
                 rel="noopener noreferrer"
                 download
-                className={`btn-ghost rounded-lg px-4 py-2 text-sm font-semibold ${styles.downloadLink}`}
+                className={`btn-ghost rounded-lg px-4 py-2 text-sm font-semibold ${styles.downloadLink} ${styles.actionControl} ${styles.actionButton}`}
               >
                 Download PDF
               </a>
