@@ -5,10 +5,86 @@ export interface LineItem extends Omit<QuoteItem, 'id' | 'quote_id'> {
   tempId: string
 }
 
+export interface PrintPricingInput {
+  materialWeightGrams: number
+  materialPricePerKg: number
+  printTimeHours: number
+  machineRatePerHour: number
+  setupTimeHours: number
+  laborRatePerHour: number
+  powerConsumptionKw: number
+  electricityRatePerKwh: number
+  postProcessingCost: number
+  failureRatePercent: number
+  marginPercent: number
+}
+
+export interface PrintPricingBreakdown {
+  materialCost: number
+  machineCost: number
+  laborCost: number
+  energyCost: number
+  postProcessingCost: number
+  baseCost: number
+  riskCost: number
+  marginAmount: number
+  unitPrice: number
+}
+
+function toSafeNumber(value: number) {
+  if (!Number.isFinite(value)) return 0
+  return Math.max(0, value)
+}
+
+function roundCurrency(value: number) {
+  return Math.round(value * 100) / 100
+}
+
+export function calculate3DPrintPrice(input: PrintPricingInput): PrintPricingBreakdown {
+  const materialWeightKg = toSafeNumber(input.materialWeightGrams) / 1000
+  const materialPricePerKg = toSafeNumber(input.materialPricePerKg)
+  const printTimeHours = toSafeNumber(input.printTimeHours)
+  const machineRatePerHour = toSafeNumber(input.machineRatePerHour)
+  const setupTimeHours = toSafeNumber(input.setupTimeHours)
+  const laborRatePerHour = toSafeNumber(input.laborRatePerHour)
+  const powerConsumptionKw = toSafeNumber(input.powerConsumptionKw)
+  const electricityRatePerKwh = toSafeNumber(input.electricityRatePerKwh)
+  const postProcessingCost = toSafeNumber(input.postProcessingCost)
+  const failureRatePercent = toSafeNumber(input.failureRatePercent)
+  const marginPercent = toSafeNumber(input.marginPercent)
+
+  const materialCost = materialWeightKg * materialPricePerKg
+  const machineCost = printTimeHours * machineRatePerHour
+  const laborCost = setupTimeHours * laborRatePerHour
+  const energyCost = (printTimeHours + setupTimeHours) * powerConsumptionKw * electricityRatePerKwh
+
+  const baseCost = materialCost + machineCost + laborCost + energyCost + postProcessingCost
+  const riskCost = baseCost * (failureRatePercent / 100)
+  const costWithRisk = baseCost + riskCost
+  const marginAmount = costWithRisk * (marginPercent / 100)
+  const unitPrice = costWithRisk + marginAmount
+
+  return {
+    materialCost: roundCurrency(materialCost),
+    machineCost: roundCurrency(machineCost),
+    laborCost: roundCurrency(laborCost),
+    energyCost: roundCurrency(energyCost),
+    postProcessingCost: roundCurrency(postProcessingCost),
+    baseCost: roundCurrency(baseCost),
+    riskCost: roundCurrency(riskCost),
+    marginAmount: roundCurrency(marginAmount),
+    unitPrice: roundCurrency(unitPrice),
+  }
+}
+
 type Action =
   | { type: 'ADD_ITEM' }
   | { type: 'UPDATE_ITEM'; tempId: string; field: keyof LineItem; value: string | number }
   | { type: 'REMOVE_ITEM'; tempId: string }
+  | {
+      type: 'UPSERT_ITEM'
+      item: Omit<LineItem, 'subtotal'>
+    }
   | { type: 'SET_TAX_RATE'; value: number }
   | { type: 'LOAD_ITEMS'; items: LineItem[]; taxRate: number }
 
@@ -54,6 +130,25 @@ function reducer(state: State, action: Action): State {
         items: state.items.filter((i) => i.tempId !== action.tempId),
       }
 
+    case 'UPSERT_ITEM': {
+      const nextItem = recalc(action.item)
+      const existingIndex = state.items.findIndex((item) => item.tempId === action.item.tempId)
+
+      if (existingIndex === -1) {
+        return {
+          ...state,
+          items: [...state.items, nextItem],
+        }
+      }
+
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.tempId === nextItem.tempId ? nextItem : item,
+        ),
+      }
+    }
+
     case 'SET_TAX_RATE':
       return { ...state, taxRate: action.value }
 
@@ -89,6 +184,10 @@ export function useQuoteCalculator(initialItems: LineItem[] = [], initialTaxRate
     (value: number) => dispatch({ type: 'SET_TAX_RATE', value }),
     [],
   )
+  const upsertItem = useCallback(
+    (item: Omit<LineItem, 'subtotal'>) => dispatch({ type: 'UPSERT_ITEM', item }),
+    [],
+  )
   const loadItems = useCallback(
     (items: LineItem[], taxRate: number) => dispatch({ type: 'LOAD_ITEMS', items, taxRate }),
     [],
@@ -104,6 +203,7 @@ export function useQuoteCalculator(initialItems: LineItem[] = [], initialTaxRate
     removeItem,
     updateItem,
     setTaxRate,
+    upsertItem,
     loadItems,
   }
 }

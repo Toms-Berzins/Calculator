@@ -39,7 +39,7 @@ export function Sidebar() {
       </div>
 
       {/* Divider */}
-      <div className={styles.divider} style={{ margin: '0 16px 8px' }} />
+      <div className={`${styles.divider} ${styles.dividerInset}`} />
 
       {/* Nav links */}
       <nav className="flex-1 px-3 pt-1 space-y-0.5">

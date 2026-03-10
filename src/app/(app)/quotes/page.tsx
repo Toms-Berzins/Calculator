@@ -3,11 +3,11 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils/format'
 import styles from './quotes.module.css'
 
-const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  draft:    { bg: 'var(--status-draft-bg)',    text: 'var(--status-draft-text)',    label: 'Draft' },
-  sent:     { bg: 'var(--status-sent-bg)',     text: 'var(--status-sent-text)',     label: 'Sent' },
-  accepted: { bg: 'var(--status-accepted-bg)', text: 'var(--status-accepted-text)', label: 'Accepted' },
-  rejected: { bg: 'var(--status-rejected-bg)', text: 'var(--status-rejected-text)', label: 'Rejected' },
+const STATUS_STYLES: Record<string, { className: string; label: string }> = {
+  draft: { className: styles.statusDraft, label: 'Draft' },
+  sent: { className: styles.statusSent, label: 'Sent' },
+  accepted: { className: styles.statusAccepted, label: 'Accepted' },
+  rejected: { className: styles.statusRejected, label: 'Rejected' },
 }
 
 export default async function QuotesPage() {
@@ -106,8 +106,7 @@ export default async function QuotesPage() {
 
                 <div className="ml-4 flex shrink-0 items-center gap-3">
                   <span
-                    className={styles.statusBadge}
-                    style={{ background: st.bg, color: st.text }}
+                    className={`${styles.statusBadge} ${st.className}`}
                   >
                     {st.label}
                   </span>

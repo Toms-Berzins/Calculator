@@ -8,6 +8,7 @@ import { generateAndStorePDF } from '@/lib/actions/pdf'
 import { QuoteItemsTable } from '@/components/QuoteItemsTable/QuoteItemsTable'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import type { QuoteWithRelations, Quote, QuoteStatus } from '@/types/database'
+import styles from './QuoteEditor.module.css'
 
 interface Props {
   quote: QuoteWithRelations
@@ -17,6 +18,7 @@ export function QuoteEditor({ quote }: Props) {
   const [notes, setNotes] = useState(quote.notes ?? '')
   const [saving, setSaving] = useState(false)
   const [pdfUrl, setPdfUrl] = useState(quote.pdf_url ?? '')
+  const [pdfError, setPdfError] = useState('')
   const [generatingPdf, setGeneratingPdf] = useState(false)
   const [syncIndicator, setSyncIndicator] = useState(false)
 
@@ -43,8 +45,11 @@ export function QuoteEditor({ quote }: Props) {
   async function handleGeneratePDF() {
     setGeneratingPdf(true)
     try {
+      setPdfError('')
       const url = await generateAndStorePDF(quote.id)
       setPdfUrl(url)
+    } catch (error) {
+      setPdfError(error instanceof Error ? error.message : 'Failed to generate PDF')
     } finally {
       setGeneratingPdf(false)
     }
@@ -54,24 +59,24 @@ export function QuoteEditor({ quote }: Props) {
   const job = quote.jobs
 
   return (
-    <div>
+    <div className={styles.editor}>
       {/* Header */}
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+      <div className={styles.headerCard}>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{job?.title ?? 'Quote'}</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className={styles.title}>{job?.title ?? 'Quote'}</h1>
+          <p className={styles.subtitle}>
             {customer?.company ?? customer?.name ?? '—'} · {formatDate(quote.created_at)}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           {syncIndicator && (
-            <span className="text-xs text-blue-500 animate-pulse">Syncing…</span>
+            <span className={styles.syncBadge}>Syncing…</span>
           )}
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            className="btn-primary rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -79,95 +84,109 @@ export function QuoteEditor({ quote }: Props) {
       </div>
 
       {/* Line items */}
-      <QuoteItemsTable
-        items={items}
-        onAdd={addItem}
-        onRemove={removeItem}
-        onUpdate={updateItem}
-      />
+      <section className={styles.itemsCard}>
+        <div className={styles.sectionHead}>
+          <h2 className={styles.sectionTitle}>Line items</h2>
+          <span className={styles.sectionMeta}>
+            {items.length} {items.length === 1 ? 'item' : 'items'}
+          </span>
+        </div>
+        <QuoteItemsTable
+          items={items}
+          onAdd={addItem}
+          onRemove={removeItem}
+          onUpdate={updateItem}
+        />
+      </section>
 
-      {/* Tax & totals */}
-      <div className="mt-4 flex justify-end">
-        <div className="w-full max-w-xs space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Subtotal</span>
-            <span className="font-medium">{formatCurrency(subtotal)}</span>
+      <div className={styles.bottomGrid}>
+        {/* Tax & totals */}
+        <aside className={styles.totalsCard}>
+          <h2 className={styles.sectionTitle}>Summary</h2>
+          <div className={styles.totalsList}>
+            <div className={styles.totalRow}>
+              <span className={styles.totalLabel}>Subtotal</span>
+              <span className={styles.totalValue}>{formatCurrency(subtotal)}</span>
+            </div>
+            <div className={styles.totalRow}>
+              <label htmlFor="taxRate" className={styles.totalLabel}>
+                VAT %
+              </label>
+              <input
+                id="taxRate"
+                type="number"
+                min={0}
+                max={100}
+                step={0.1}
+                value={taxRate}
+                onChange={(e) => setTaxRate(Number(e.target.value))}
+                className="input-field w-24 rounded-lg px-2 py-1.5 text-right text-sm tabular-nums"
+              />
+            </div>
+            {taxRate > 0 && (
+              <div className={styles.totalRow}>
+                <span className={styles.totalLabel}>VAT</span>
+                <span className={styles.totalValue}>{formatCurrency(taxAmount)}</span>
+              </div>
+            )}
+            <div className={styles.totalDivider}>
+              <span className={styles.totalAmountLabel}>Total</span>
+              <span className={styles.totalAmount}>{formatCurrency(total)}</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <label htmlFor="taxRate" className="text-gray-600">
-              VAT %
-            </label>
-            <input
-              id="taxRate"
-              type="number"
-              min={0}
-              max={100}
-              step={0.1}
-              value={taxRate}
-              onChange={(e) => setTaxRate(Number(e.target.value))}
-              className="w-20 rounded border border-gray-300 px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+        </aside>
+
+        {/* Notes + status + PDF */}
+        <section className={styles.metaCard}>
+          <div>
+            <label htmlFor="notes" className={styles.fieldLabel}>Notes</label>
+            <textarea
+              id="notes"
+              rows={3}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Any additional notes for the customer…"
+              aria-label="Additional notes for the customer"
+              className="input-field w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
-          {taxRate > 0 && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">VAT</span>
-              <span className="font-medium">{formatCurrency(taxAmount)}</span>
-            </div>
-          )}
-          <div className="flex items-center justify-between border-t border-gray-200 pt-2 text-base font-bold">
-            <span>Total</span>
-            <span className="text-blue-700">{formatCurrency(total)}</span>
+
+          <div className={styles.actionRow}>
+            <label htmlFor="quoteStatus" className="sr-only">Quote Status</label>
+            <select
+              id="quoteStatus"
+              defaultValue={quote.status}
+              onChange={(e) => updateQuoteStatus(quote.id, e.target.value as QuoteStatus)}
+              className={`input-field rounded-lg px-3 py-2 text-sm ${styles.statusSelect}`}
+            >
+              {['draft', 'sent', 'accepted', 'rejected'].map((s) => (
+                <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+              ))}
+            </select>
+
+            <button
+              onClick={handleGeneratePDF}
+              disabled={generatingPdf}
+              className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60"
+            >
+              {generatingPdf ? 'Generating…' : 'Generate PDF'}
+            </button>
+
+            {pdfUrl && (
+              <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className={`btn-ghost rounded-lg px-4 py-2 text-sm font-semibold ${styles.downloadLink}`}
+              >
+                Download PDF
+              </a>
+            )}
           </div>
-        </div>
-      </div>
 
-      {/* Notes */}
-      <div className="mt-6">
-        <label htmlFor="notes" className="mb-1 block text-sm font-medium text-gray-700">Notes</label>
-        <textarea
-          id="notes"
-          rows={3}
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Any additional notes for the customer…"
-          aria-label="Additional notes for the customer"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-      </div>
-
-      {/* Status + PDF */}
-      <div className="mt-6 flex flex-wrap gap-3">
-        <label htmlFor="quoteStatus" className="sr-only">Quote Status</label>
-        <select
-          id="quoteStatus"
-          defaultValue={quote.status}
-          onChange={(e) => updateQuoteStatus(quote.id, e.target.value as QuoteStatus)}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          {['draft', 'sent', 'accepted', 'rejected'].map((s) => (
-            <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
-          ))}
-        </select>
-
-        <button
-          onClick={handleGeneratePDF}
-          disabled={generatingPdf}
-          className="rounded-lg bg-gray-800 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-60"
-        >
-          {generatingPdf ? 'Generating…' : 'Generate PDF'}
-        </button>
-
-        {pdfUrl && (
-          <a
-            href={pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            className="rounded-lg border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50"
-          >
-            Download PDF
-          </a>
-        )}
+          {pdfError && <p className={styles.errorText}>{pdfError}</p>}
+        </section>
       </div>
     </div>
   )

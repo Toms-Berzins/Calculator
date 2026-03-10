@@ -1,5 +1,18 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.desktopWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--bg-surface);
+}
+
 .tableHeader {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-muted);
   color: var(--text-faint);
 }
 
@@ -7,12 +20,25 @@
   border-bottom: 1px solid var(--border-muted);
 }
 
+.tableRow:last-child {
+  border-bottom: none;
+}
+
 .subtotalCell {
   color: var(--text-strong);
 }
 
 .removeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.7rem;
+  font-size: 1rem;
+  line-height: 1;
   color: var(--text-faint);
+  background: transparent;
   transition: color 150ms, background 150ms;
 }
 
@@ -24,20 +50,30 @@
 .mobileCard {
   background: var(--bg-surface);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 .mobileLabel {
   color: var(--text-faint);
 }
 
+.removeButtonMobile {
+  color: var(--status-rejected-text);
+}
+
+.removeButtonMobile:hover {
+  opacity: 0.85;
+}
+
 .addButton {
   border-color: var(--border);
   color: var(--text-muted);
-  background: transparent;
-  transition: border-color 150ms, color 150ms;
+  background: var(--bg-surface);
+  transition: border-color 150ms, color 150ms, background 150ms;
 }
 
 .addButton:hover {
   border-color: var(--accent);
   color: var(--accent-text);
+  background: var(--accent-muted);
 }

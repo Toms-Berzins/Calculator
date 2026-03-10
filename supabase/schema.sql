@@ -17,7 +17,14 @@ create table if not exists public.customers (
 );
 
 -- ── Jobs ─────────────────────────────────────────────────────
-create type if not exists job_status as enum ('open', 'won', 'lost', 'archived');
+do $$
+begin
+  if not exists (
+    select 1 from pg_type where typname = 'job_status'
+  ) then
+    create type job_status as enum ('open', 'won', 'lost', 'archived');
+  end if;
+end $$;
 
 create table if not exists public.jobs (
   id          uuid primary key default gen_random_uuid(),
@@ -29,8 +36,30 @@ create table if not exists public.jobs (
   created_at  timestamptz not null default now()
 );
 
+-- ── Calculator Settings ────────────────────────────────────
+create table if not exists public.calculator_settings (
+  id                        uuid primary key default gen_random_uuid(),
+  user_id                   uuid not null unique references auth.users(id) on delete cascade,
+  material_price_per_kg     numeric(10, 2) not null default 24,
+  machine_rate_per_hour     numeric(10, 2) not null default 6,
+  labor_rate_per_hour       numeric(10, 2) not null default 20,
+  power_consumption_kw      numeric(10, 3) not null default 0.22,
+  electricity_rate_per_kwh  numeric(10, 2) not null default 0.18,
+  failure_rate_percent      numeric(5, 2) not null default 12,
+  margin_percent            numeric(5, 2) not null default 35,
+  created_at                timestamptz not null default now(),
+  updated_at                timestamptz not null default now()
+);
+
 -- ── Quotes ───────────────────────────────────────────────────
-create type if not exists quote_status as enum ('draft', 'sent', 'accepted', 'rejected');
+do $$
+begin
+  if not exists (
+    select 1 from pg_type where typname = 'quote_status'
+  ) then
+    create type quote_status as enum ('draft', 'sent', 'accepted', 'rejected');
+  end if;
+end $$;
 
 create table if not exists public.quotes (
   id         uuid primary key default gen_random_uuid(),
@@ -59,6 +88,10 @@ create trigger quotes_updated_at
   before update on public.quotes
   for each row execute procedure public.set_updated_at();
 
+create trigger calculator_settings_updated_at
+  before update on public.calculator_settings
+  for each row execute procedure public.set_updated_at();
+
 -- ── Quote Items ───────────────────────────────────────────────
 create table if not exists public.quote_items (
   id          uuid primary key default gen_random_uuid(),
@@ -76,6 +109,7 @@ create table if not exists public.quote_items (
 
 alter table public.customers enable row level security;
 alter table public.jobs enable row level security;
+alter table public.calculator_settings enable row level security;
 alter table public.quotes enable row level security;
 alter table public.quote_items enable row level security;
 
@@ -92,6 +126,13 @@ create policy "employees_all_jobs"
   to authenticated
   using (true)
   with check (true);
+
+-- Calculator settings (per-user)
+create policy "users_own_calculator_settings"
+  on public.calculator_settings for all
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 -- Quotes
 create policy "employees_all_quotes"

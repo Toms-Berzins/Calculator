@@ -38,6 +38,26 @@
   font-weight: 600;
 }
 
+.statusDraft {
+  background: var(--status-draft-bg);
+  color: var(--status-draft-text);
+}
+
+.statusSent {
+  background: var(--status-sent-bg);
+  color: var(--status-sent-text);
+}
+
+.statusAccepted {
+  background: var(--status-accepted-bg);
+  color: var(--status-accepted-text);
+}
+
+.statusRejected {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-text);
+}
+
 .quoteAmount {
   color: var(--text-strong);
   font-size: 0.875rem;

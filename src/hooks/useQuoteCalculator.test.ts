@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { useQuoteCalculator } from '@/hooks/useQuoteCalculator'
+import { calculate3DPrintPrice, useQuoteCalculator } from '@/hooks/useQuoteCalculator'
 
 describe('useQuoteCalculator', () => {
   it('starts with empty items and zero totals', () => {
@@ -66,5 +66,60 @@ describe('useQuoteCalculator', () => {
     act(() => result.current.updateItem(b, 'unit_price', 20))
 
     expect(result.current.subtotal).toBe(120) // 20 + 100
+  })
+
+  it('upserts an item by tempId', () => {
+    const { result } = renderHook(() => useQuoteCalculator())
+
+    act(() =>
+      result.current.upsertItem({
+        tempId: 'calc-item',
+        description: '3D print job',
+        quantity: 1,
+        unit_price: 50,
+        sort_order: 0,
+      }),
+    )
+
+    expect(result.current.items).toHaveLength(1)
+    expect(result.current.items[0].subtotal).toBe(50)
+
+    act(() =>
+      result.current.upsertItem({
+        tempId: 'calc-item',
+        description: '3D print job',
+        quantity: 1,
+        unit_price: 80,
+        sort_order: 0,
+      }),
+    )
+
+    expect(result.current.items).toHaveLength(1)
+    expect(result.current.items[0].subtotal).toBe(80)
+  })
+
+  it('calculates precise 3D print unit price breakdown', () => {
+    const breakdown = calculate3DPrintPrice({
+      materialWeightGrams: 200,
+      materialPricePerKg: 25,
+      printTimeHours: 8,
+      machineRatePerHour: 5,
+      setupTimeHours: 1,
+      laborRatePerHour: 20,
+      powerConsumptionKw: 0.25,
+      electricityRatePerKwh: 0.2,
+      postProcessingCost: 3,
+      failureRatePercent: 10,
+      marginPercent: 30,
+    })
+
+    expect(breakdown.materialCost).toBe(5)
+    expect(breakdown.machineCost).toBe(40)
+    expect(breakdown.laborCost).toBe(20)
+    expect(breakdown.energyCost).toBe(0.45)
+    expect(breakdown.baseCost).toBe(68.45)
+    expect(breakdown.riskCost).toBe(6.85)
+    expect(breakdown.marginAmount).toBe(22.59)
+    expect(breakdown.unitPrice).toBe(97.88)
   })
 })

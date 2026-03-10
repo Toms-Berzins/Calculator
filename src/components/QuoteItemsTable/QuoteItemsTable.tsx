@@ -11,35 +11,35 @@ interface Props {
 
 export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
   return (
-    <div>
+    <div className={styles.root}>
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className={`hidden md:block ${styles.desktopWrap}`}>
+        <table className="w-full min-w-160 text-sm">
           <thead>
             <tr
               className={`text-left text-xs font-semibold uppercase tracking-wide ${styles.tableHeader}`}
             >
-              <th className="pb-2 pr-3">Description</th>
-              <th className="pb-2 pr-3 w-20 text-right">Qty</th>
-              <th className="pb-2 pr-3 w-28 text-right">Unit Price</th>
-              <th className="pb-2 pr-3 w-28 text-right">Subtotal</th>
-              <th className="pb-2 w-8" />
+              <th className="px-3 py-3">Description</th>
+              <th className="w-24 px-3 py-3 text-right">Qty</th>
+              <th className="w-32 px-3 py-3 text-right">Unit Price</th>
+              <th className="w-32 px-3 py-3 text-right">Subtotal</th>
+              <th className="w-12 px-3 py-3" />
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
               <tr key={item.tempId} className={styles.tableRow}>
-                <td className="py-2 pr-3">
+                <td className="px-3 py-2.5">
                   <input
                     type="text"
                     value={item.description}
                     onChange={(e) => onUpdate(item.tempId, 'description', e.target.value)}
                     placeholder="Item description"
                     aria-label="Item description"
-                    className="input-field w-full rounded-lg px-2 py-1.5 text-sm"
+                    className="input-field w-full rounded-lg px-3 py-2 text-sm"
                   />
                 </td>
-                <td className="py-2 pr-3">
+                <td className="px-3 py-2.5">
                   <input
                     type="number"
                     min={0}
@@ -47,10 +47,10 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
                     value={item.quantity}
                     onChange={(e) => onUpdate(item.tempId, 'quantity', Number(e.target.value))}
                     aria-label="Quantity"
-                    className="input-field w-full rounded-lg px-2 py-1.5 text-right text-sm tabular-nums"
+                    className="input-field w-full rounded-lg px-3 py-2 text-right text-sm tabular-nums"
                   />
                 </td>
-                <td className="py-2 pr-3">
+                <td className="px-3 py-2.5">
                   <input
                     type="number"
                     min={0}
@@ -58,20 +58,20 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
                     value={item.unit_price}
                     onChange={(e) => onUpdate(item.tempId, 'unit_price', Number(e.target.value))}
                     aria-label="Unit price"
-                    className="input-field w-full rounded-lg px-2 py-1.5 text-right text-sm tabular-nums"
+                    className="input-field w-full rounded-lg px-3 py-2 text-right text-sm tabular-nums"
                   />
                 </td>
                 <td
-                  className={`py-2 pr-3 text-right font-medium tabular-nums ${styles.subtotalCell}`}
+                  className={`px-3 py-2.5 text-right text-sm font-semibold tabular-nums ${styles.subtotalCell}`}
                 >
                   {formatCurrency(item.subtotal)}
                 </td>
-                <td className="py-2">
+                <td className="px-3 py-2.5">
                   <button
                     type="button"
                     onClick={() => onRemove(item.tempId)}
                     aria-label="Remove item"
-                    className={`flex h-7 w-7 items-center justify-center rounded-lg text-base leading-none ${styles.removeButton}`}
+                    className={styles.removeButton}
                   >
                     ×
                   </button>
@@ -152,7 +152,7 @@ export function QuoteItemsTable({ items, onAdd, onRemove, onUpdate }: Props) {
       <button
         type="button"
         onClick={onAdd}
-        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-3 text-sm font-medium ${styles.addButton}`}
+        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-3 text-sm font-semibold ${styles.addButton}`}
       >
         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
           <path

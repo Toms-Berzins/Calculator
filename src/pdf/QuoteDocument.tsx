@@ -39,7 +39,7 @@ const s = StyleSheet.create({
 })
 
 function fmt(n: number) {
-  return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(n)
+  return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' }).format(n)
 }
 
 function fmtDate(iso: string) {

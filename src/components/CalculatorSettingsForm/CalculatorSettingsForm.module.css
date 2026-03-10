@@ -1,0 +1,21 @@
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.label {
+  color: var(--text-muted);
+}
+
+.timestampValue {
+  color: var(--text-strong);
+}
+
+.success {
+  color: var(--accent-text);
+}
+
+.error {
+  color: var(--status-rejected-text);
+}

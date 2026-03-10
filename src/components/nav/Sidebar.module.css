@@ -16,6 +16,10 @@
   background: var(--border);
 }
 
+.dividerInset {
+  margin: 0 16px 8px;
+}
+
 .dividerSpaced {
   height: 1px;
   background: var(--border);

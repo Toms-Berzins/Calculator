@@ -10,6 +10,91 @@
   color: var(--text-muted);
 }
 
+.calculatorCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.calculatorSummary {
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.settingsLink {
+  color: var(--accent-text);
+}
+
+.constantsWrap {
+  border-top: 1px solid var(--border-muted);
+  padding-top: 0.75rem;
+}
+
+.constantChip {
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: var(--bg);
+}
+
+.constantChipButton {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  color: var(--text-strong);
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.constantChipButton:hover {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+
+.constantChipWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.constantChipRemove {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--status-rejected-text);
+  background: transparent;
+  border: none;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.constantChipRemove:hover {
+  color: var(--status-rejected-text);
+  opacity: 0.85;
+  transform: scale(1.12);
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--text-strong) 25%, transparent);
+}
+
+.modalCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-hover);
+}
+
 .totalsCard {
   background: var(--bg-surface);
   border: 1px solid var(--border);

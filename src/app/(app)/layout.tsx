@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!user) redirect('/login')
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg-base)' }}>
+    <div className="flex h-screen overflow-hidden bg-(--bg-base)">
       {/* Desktop sidebar */}
       <Sidebar />
 

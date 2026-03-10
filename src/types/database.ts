@@ -74,6 +74,48 @@ export interface Database {
           },
         ]
       }
+      calculator_settings: {
+        Row: {
+          id: string
+          user_id: string
+          material_price_per_kg: number
+          machine_rate_per_hour: number
+          labor_rate_per_hour: number
+          power_consumption_kw: number
+          electricity_rate_per_kwh: number
+          failure_rate_percent: number
+          margin_percent: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          material_price_per_kg?: number
+          machine_rate_per_hour?: number
+          labor_rate_per_hour?: number
+          power_consumption_kw?: number
+          electricity_rate_per_kwh?: number
+          failure_rate_percent?: number
+          margin_percent?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          material_price_per_kg?: number
+          machine_rate_per_hour?: number
+          labor_rate_per_hour?: number
+          power_consumption_kw?: number
+          electricity_rate_per_kwh?: number
+          failure_rate_percent?: number
+          margin_percent?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quotes: {
         Row: {
           id: string
@@ -176,6 +218,7 @@ export interface Database {
 // Convenience row types
 export type Customer = Database['public']['Tables']['customers']['Row']
 export type Job = Database['public']['Tables']['jobs']['Row']
+export type CalculatorSettings = Database['public']['Tables']['calculator_settings']['Row']
 export type Quote = Database['public']['Tables']['quotes']['Row']
 export type QuoteItem = Database['public']['Tables']['quote_items']['Row']
 

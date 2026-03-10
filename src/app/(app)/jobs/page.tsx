@@ -58,6 +58,7 @@ export default async function JobsPage() {
             (j.customers as { company: string; name: string } | null)?.company ??
             (j.customers as { name: string } | null)?.name ??
             '—'
+          const isOpenJob = (j.status ?? 'open') === 'open'
 
           return (
             <li
@@ -66,11 +67,20 @@ export default async function JobsPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p
-                    className={`truncate font-semibold text-sm ${styles.jobTitle}`}
-                  >
-                    {j.title}
-                  </p>
+                  {isOpenJob ? (
+                    <Link
+                      href={`/quotes/new?jobId=${j.id}`}
+                      className={`truncate font-semibold text-sm ${styles.jobTitle} ${styles.jobLink}`}
+                    >
+                      {j.title}
+                    </Link>
+                  ) : (
+                    <p
+                      className={`truncate font-semibold text-sm ${styles.jobTitle}`}
+                    >
+                      {j.title}
+                    </p>
+                  )}
                   <p
                     className={`mt-0.5 text-sm ${styles.jobCustomer}`}
                   >
@@ -110,7 +120,7 @@ export default async function JobsPage() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  Create quote
+                  {isOpenJob ? 'Continue job' : 'Create quote'}
                 </Link>
               </div>
             </li>
