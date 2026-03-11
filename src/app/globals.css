@@ -28,11 +28,11 @@
   /* Status */
   --status-draft-bg:    #e0e0e0;
   --status-draft-text:  #353636;
-  --status-sent-bg:     rgba(50, 85, 227, 0.1);
+  --status-sent-bg:     #eaeefc;
   --status-sent-text:   #3255e3;
-  --status-accepted-bg: rgba(34, 139, 34, 0.15); /* Industrial green */
+  --status-accepted-bg: #deeede; /* Industrial green */
   --status-accepted-text: #1b5e20;
-  --status-rejected-bg: rgba(220, 53, 69, 0.1); /* Alert red */
+  --status-rejected-bg: #fbeaec; /* Alert red */
   --status-rejected-text: #b02a37;
 
   /* Sidebar */
@@ -83,11 +83,11 @@
     /* Status */
     --status-draft-bg:    #333333;
     --status-draft-text:  #a6a6a6;
-    --status-sent-bg:     rgba(74, 108, 240, 0.2);
+    --status-sent-bg:     #262d48;
     --status-sent-text:   #7591f4;
-    --status-accepted-bg: rgba(56, 142, 60, 0.2);
+    --status-accepted-bg: #222e23;
     --status-accepted-text: #66bb6a;
-    --status-rejected-bg: rgba(220, 53, 69, 0.2);
+    --status-rejected-bg: #432125;
     --status-rejected-text: #e57373;
 
     /* Sidebar */

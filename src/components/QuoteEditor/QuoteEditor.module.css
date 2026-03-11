@@ -51,10 +51,11 @@
   justify-content: space-between;
   gap: 0.875rem;
   padding: 1.125rem 1.25rem;
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border: 2px solid var(--nb-ink);
+  border-radius: 0;
   background: var(--bg-surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  transition: box-shadow 100ms ease, transform 100ms ease;
 }
 
 .headerMeta {
@@ -80,10 +81,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  border-radius: 9999px;
+  border-radius: 2px;
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   flex-shrink: 0;
 }
 
@@ -123,13 +127,16 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  border-radius: 9999px;
-  border: 1px solid var(--accent);
+  border-radius: 2px;
+  border: 2px solid var(--accent);
   background: var(--accent-muted);
   color: var(--accent-text);
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .statusSelectWrap {
@@ -152,11 +159,12 @@
 .itemsCard,
 .notesCard,
 .totalsCard {
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border: 2px solid var(--nb-ink);
+  border-radius: 0;
   background: var(--bg-surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: 3px 3px 0 var(--nb-ink);
   padding: 1.125rem 1.25rem;
+  transition: box-shadow 100ms ease, transform 100ms ease;
 }
 
 .sectionHead {
@@ -288,11 +296,12 @@
 
 /* ── 3D Print Calculator card ────────────────────────────────────────────── */
 .calculatorCard {
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border: 2px solid var(--nb-ink);
+  border-radius: 0;
   background: var(--bg-surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: 3px 3px 0 var(--nb-ink);
   padding: 1.125rem 1.25rem;
+  transition: box-shadow 100ms ease, transform 100ms ease;
 }
 
 .inputLabel {
@@ -304,7 +313,8 @@
 
 .calculatorSummary {
   margin-top: 1rem;
-  border-radius: 0.875rem;
+  border-radius: 0;
+  border: 1.5px solid var(--border);
   background: var(--bg-muted);
   padding: 0.875rem;
 }

@@ -66,6 +66,7 @@
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
+  color-scheme: light;
   transition: background-color 80ms ease;
 }
 
