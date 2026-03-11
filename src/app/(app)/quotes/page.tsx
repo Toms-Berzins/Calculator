@@ -84,7 +84,7 @@ export default async function QuotesPage() {
 
       {/* ── Summary strip ── */}
       {all.length > 0 && (
-        <div className={`mb-6 grid grid-cols-3 gap-3 ${styles.summaryStrip}`}>
+        <div className={`mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3 ${styles.summaryStrip}`}>
           {/* Accepted revenue card */}
           <div className={`${styles.summaryCard} ${styles.summaryCardAccepted}`}>
             <div className={styles.summaryHeader}>

@@ -8,6 +8,8 @@ export const lv: Translations = {
     customers: 'Klienti',
     settings: 'Iestatījumi',
     signOut: 'Izrakstīties',
+    openMenu: 'Atvērt izvēlni',
+    closeMenu: 'Aizvērt izvēlni',
   },
   dashboard: {
     title: 'Pārskats',

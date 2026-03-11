@@ -6,6 +6,8 @@ export const en = {
     customers: 'Customers',
     settings: 'Settings',
     signOut: 'Sign out',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
   },
   dashboard: {
     title: 'Dashboard',

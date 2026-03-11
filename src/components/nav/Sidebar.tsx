@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { navLinks } from './navLinks'
 import { useT } from '@/i18n/context'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher/LanguageSwitcher'
@@ -14,6 +15,7 @@ export function Sidebar() {
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
   const t = useT()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -21,10 +23,8 @@ export function Sidebar() {
     router.refresh()
   }
 
-  return (
-    <aside
-      className={`hidden w-56 shrink-0 flex-col md:flex ${styles.sidebar}`}
-    >
+  const sidebarContent = (
+    <>
       {/* Brand */}
       <div className="px-5 py-5">
         <div className="flex items-center gap-2.5">
@@ -55,6 +55,7 @@ export function Sidebar() {
               href={l.href}
               aria-current={active ? 'page' : undefined}
               className={`${styles.navLink} ${active ? styles.navLinkActive : ''}`}
+              onClick={() => setMobileOpen(false)}
             >
               {l.icon}
               {t.nav[l.labelKey]}
@@ -86,6 +87,62 @@ export function Sidebar() {
           {t.nav.signOut}
         </button>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className={`hidden w-56 shrink-0 flex-col md:flex ${styles.sidebar}`}>
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile: hamburger button */}
+      <button
+        className={`fixed left-3 top-3 z-50 md:hidden ${styles.hamburger}`}
+        onClick={() => setMobileOpen(true)}
+        aria-label={t.nav.openMenu}
+      >
+        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+          <path
+            fillRule="evenodd"
+            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+
+      {/* Mobile: backdrop overlay */}
+      {mobileOpen && (
+        <div
+          className={`fixed inset-0 z-40 md:hidden ${styles.overlay}`}
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile: slide-in drawer */}
+      <aside
+        className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col md:hidden ${styles.sidebar} ${styles.mobileDrawer} ${mobileOpen ? styles.mobileDrawerOpen : ''}`}
+      >
+        {/* Close button row */}
+        <div className="flex justify-end px-3 pt-3">
+          <button
+            onClick={() => setMobileOpen(false)}
+            className={styles.closeButton}
+            aria-label={t.nav.closeMenu}
+          >
+            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+        {sidebarContent}
+      </aside>
+    </>
   )
 }
