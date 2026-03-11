@@ -224,12 +224,13 @@
   margin-bottom: 0.25rem;
 }
 
-/* Compact status stamp shown in the card header */
+/* Compact status stamp shown in the card header — always grey/neutral */
 .summaryStatusBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   border-radius: 2px;
+  border: 1.5px solid var(--border);
   padding: 0.15rem 0.45rem;
   font-size: 0.625rem;
   font-weight: 700;
@@ -238,6 +239,9 @@
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  box-shadow: 1px 1px 0 var(--border);
 }
 
 .summaryLabel {

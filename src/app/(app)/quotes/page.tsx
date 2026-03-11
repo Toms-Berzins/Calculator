@@ -89,7 +89,7 @@ export default async function QuotesPage() {
           <div className={`${styles.summaryCard} ${styles.summaryCardAccepted}`}>
             <div className={styles.summaryHeader}>
               <p className={styles.summaryLabel}>{t.quotes.acceptedRevenue}</p>
-              <span className={`${styles.summaryStatusBadge} ${styles.statusAccepted}`}
+              <span className={styles.summaryStatusBadge}
                     aria-label={t.quotes.status.accepted}>
                 <span className={`${styles.statusDot} ${styles.dotAccepted}`} aria-hidden />
                 {t.quotes.status.accepted}
@@ -105,7 +105,7 @@ export default async function QuotesPage() {
           <div className={`${styles.summaryCard} ${styles.summaryCardSent}`}>
             <div className={styles.summaryHeader}>
               <p className={styles.summaryLabel}>{t.quotes.pipelineValue}</p>
-              <span className={`${styles.summaryStatusBadge} ${styles.statusSent}`}
+              <span className={styles.summaryStatusBadge}
                     aria-label={t.quotes.status.sent}>
                 <span className={`${styles.statusDot} ${styles.dotSent}`} aria-hidden />
                 {t.quotes.status.sent}
@@ -121,7 +121,7 @@ export default async function QuotesPage() {
           <div className={`${styles.summaryCard} ${styles.summaryCardDraft}`}>
             <div className={styles.summaryHeader}>
               <p className={styles.summaryLabel}>{t.quotes.drafts}</p>
-              <span className={`${styles.summaryStatusBadge} ${styles.statusDraft}`}
+              <span className={styles.summaryStatusBadge}
                     aria-label={t.quotes.status.draft}>
                 <span className={`${styles.statusDot} ${styles.dotDraft}`} aria-hidden />
                 {t.quotes.status.draft}
