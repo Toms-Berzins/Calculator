@@ -231,38 +231,38 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
               value={partName}
               onChange={(e) => setPartName(e.target.value)}
               placeholder={t.newQuote.jobPartNamePlaceholder}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm"
+              className="input-field w-full px-3 py-2 text-sm"
             />
           </label>
           <label className="text-sm">
             <span className={styles.inputLabel}>{t.newQuote.quantity}</span>
             <input type="number" min={1} step={1} value={partQuantity}
               onChange={(e) => setPartQuantity(Math.max(1, Number(e.target.value) || 1))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+              className="input-field w-full px-3 py-2 text-sm" />
           </label>
           <label className="text-sm">
             <span className={styles.inputLabel}>{t.newQuote.materialWeight}</span>
             <input type="number" min={0} step={1} value={materialWeightGrams}
               onChange={(e) => setMaterialWeightGrams(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+              className="input-field w-full px-3 py-2 text-sm" />
           </label>
           <label className="text-sm">
             <span className={styles.inputLabel}>{t.newQuote.printTime}</span>
             <input type="number" min={0} step={0.1} value={printTimeHours}
               onChange={(e) => setPrintTimeHours(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+              className="input-field w-full px-3 py-2 text-sm" />
           </label>
           <label className="text-sm">
             <span className={styles.inputLabel}>{t.newQuote.setupTime}</span>
             <input type="number" min={0} step={0.1} value={setupTimeHours}
               onChange={(e) => setSetupTimeHours(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+              className="input-field w-full px-3 py-2 text-sm" />
           </label>
           <label className="text-sm md:col-span-2">
             <span className={styles.inputLabel}>{t.newQuote.postProcessing}</span>
             <input type="number" min={0} step={0.01} value={postProcessingCost}
               onChange={(e) => setPostProcessingCost(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+              className="input-field w-full px-3 py-2 text-sm" />
           </label>
         </div>
 
@@ -294,7 +294,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
                 <span className={`text-right text-xs tabular-nums ${styles.summaryLabel}`}>{formatCurrency(pricing.shippingCost)}</span>
               </>
             )}
-            <div className="col-span-2 my-1.5 border-t border-current opacity-20" />
+            <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
             <span className={styles.summaryLabel}>{t.newQuote.baseCostPerUnit}</span>
             <span className={`text-right tabular-nums ${styles.summaryValue}`}>{formatCurrency(pricing.baseCost)}</span>
             <span className={styles.summaryLabel}>{t.newQuote.riskPerUnit}</span>
@@ -303,7 +303,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
             <span className={`text-right tabular-nums ${styles.summaryValue}`}>{formatCurrency(pricing.marginAmount)}</span>
             <span className={styles.summaryLabel}>{t.newQuote.difficultyFactor}</span>
             <span className={`text-right tabular-nums ${styles.summaryValue}`}>{difficultyLabel}</span>
-            <div className="col-span-2 my-1.5 border-t border-current opacity-20" />
+            <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
             <span className={`pt-1 font-semibold ${styles.summaryStrong}`}>{t.newQuote.calculatedUnitPrice}</span>
             <span className={`pt-1 text-right font-bold tabular-nums ${styles.summaryAccent}`}>{formatCurrency(calculatedUnitPrice)}</span>
             <span className={`pt-1 font-semibold ${styles.summaryStrong}`}>{t.newQuote.calculatedLineTotal}</span>
@@ -314,7 +314,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
             <button
               type="button"
               onClick={handleAddToQuote}
-              className={`btn-primary shrink-0 rounded-xl px-4 py-2 text-sm font-semibold ${styles.addToQuoteBtn}`}
+              className={`btn-primary shrink-0 px-4 py-2 text-sm font-semibold ${styles.addToQuoteBtn}`}
             >
               {t.quote.addToQuote}
             </button>

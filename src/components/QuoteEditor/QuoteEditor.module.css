@@ -162,8 +162,7 @@
 
 /* ── Cards shared ─────────────────────────────────────────────────────────── */
 .itemsCard,
-.notesCard,
-.totalsCard {
+.notesCard {
   border: 1.5px solid var(--border);
   border-radius: 2px;
   background: var(--bg-surface);
@@ -171,6 +170,15 @@
   overflow: hidden;
   padding: 1.125rem 1.25rem;
   transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
+}
+
+.totalsCard {
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  background: var(--bg-muted);
+  box-shadow: 2px 2px 0 var(--border);
+  overflow: hidden;
+  padding: 1.125rem 1.25rem;
 }
 
 .sectionHead {
@@ -240,13 +248,13 @@
 
 .totalLabel {
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .totalValue {
   color: var(--text-strong);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -263,18 +271,29 @@
 }
 
 .totalAmountLabel {
-  color: var(--text-strong);
-  font-size: 1rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .totalAmount {
-  color: var(--accent-text);
-  font-size: 1.125rem;
+  color: #ff5e00;
+  font-size: 1rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  background-color: rgba(255, 94, 0, 0.08);
+  border: 1px solid rgba(255, 94, 0, 0.2);
+  border-radius: 4px;
+  padding: 0.1rem 0.375rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  .totalAmount {
+    color: #ff7b30;
+  }
 }
 
 /* ── Export section ──────────────────────────────────────────────────────── */
@@ -328,10 +347,15 @@
 
 .calculatorSummary {
   margin-top: 1rem;
-  border-radius: 0;
+  border-radius: 2px;
   border: 1.5px solid var(--border);
   background: var(--bg-muted);
   padding: 0.875rem;
+  box-shadow: 2px 2px 0 var(--border);
+}
+
+.divider {
+  border-color: var(--border);
 }
 
 .summaryLabel {
@@ -347,11 +371,28 @@
 }
 
 .summaryStrong {
-  color: var(--text-strong);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .summaryAccent {
-  color: var(--accent-text);
+  color: #ff5e00;
+  font-weight: 700;
+  background-color: rgba(255, 94, 0, 0.08);
+  border: 1px solid rgba(255, 94, 0, 0.2);
+  border-radius: 4px;
+  padding: 0.1rem 0.375rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  justify-self: end;
+}
+
+@media (prefers-color-scheme: dark) {
+  .summaryAccent {
+    color: #ff7b30;
+  }
 }
 
 .summaryNote {
