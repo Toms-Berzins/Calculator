@@ -15,7 +15,7 @@ export function Sidebar() {
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
   const t = useT()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false)
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -27,17 +27,31 @@ export function Sidebar() {
     <>
       {/* Brand */}
       <div className="px-5 py-5">
-        <div className="flex items-center gap-2.5">
-          <div
-            className={`flex h-7 w-7 items-center justify-center text-white text-xs font-bold ${styles.brandIcon}`}
-          >
-            Q
+        <div className="flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <div
+              className={`flex h-7 w-7 items-center justify-center text-white text-xs font-bold ${styles.brandIcon}`}
+            >
+              Q
+            </div>
+            <span
+              className={`text-[15px] font-bold tracking-tight ${styles.brandText}`}
+            >
+              QuoteCalc
+            </span>
           </div>
-          <span
-            className={`text-[15px] font-bold tracking-tight ${styles.brandText}`}
+          {/* Desktop-only collapse button */}
+          <button
+            className={`hidden md:flex ${styles.closeButton}`}
+            onClick={() => setDesktopCollapsed(true)}
+            aria-label={t.nav.closeMenu}
           >
-            QuoteCalc
-          </span>
+            {/* sidebar-collapse: vertical bar + left arrow */}
+            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+              <rect x="3" y="4" width="1.5" height="12" rx="0.75" />
+              <path fillRule="evenodd" d="M11.78 5.22a.75.75 0 010 1.06L8.56 9.5h7.19a.75.75 0 010 1.5H8.56l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 011.06 0z" clipRule="evenodd" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -55,7 +69,6 @@ export function Sidebar() {
               href={l.href}
               aria-current={active ? 'page' : undefined}
               className={`${styles.navLink} ${active ? styles.navLinkActive : ''}`}
-              onClick={() => setMobileOpen(false)}
             >
               {l.icon}
               {t.nav[l.labelKey]}
@@ -93,56 +106,22 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className={`hidden w-56 shrink-0 flex-col md:flex ${styles.sidebar}`}>
+      <aside className={`hidden shrink-0 flex-col md:flex ${styles.sidebar} ${desktopCollapsed ? styles.sidebarCollapsed : ''}`}>
         {sidebarContent}
       </aside>
 
-      {/* Mobile: hamburger button */}
-      <button
-        className={`fixed left-3 top-3 z-50 md:hidden ${styles.hamburger}`}
-        onClick={() => setMobileOpen(true)}
-        aria-label={t.nav.openMenu}
-      >
-        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-          <path
-            fillRule="evenodd"
-            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
-
-      {/* Mobile: backdrop overlay */}
-      {mobileOpen && (
-        <div
-          className={`fixed inset-0 z-40 md:hidden ${styles.overlay}`}
-          onClick={() => setMobileOpen(false)}
-          aria-hidden="true"
-        />
+      {/* Desktop: reopen button when collapsed */}
+      {desktopCollapsed && (
+        <button
+          className={`hidden md:flex fixed left-3 top-3 z-50 ${styles.hamburger}`}
+          onClick={() => setDesktopCollapsed(false)}
+          aria-label={t.nav.openMenu}
+        >
+          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+          </svg>
+        </button>
       )}
-
-      {/* Mobile: slide-in drawer */}
-      <aside
-        className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col md:hidden ${styles.sidebar} ${styles.mobileDrawer} ${mobileOpen ? styles.mobileDrawerOpen : ''}`}
-      >
-        {/* Close button row */}
-        <div className="flex justify-end px-3 pt-3">
-          <button
-            onClick={() => setMobileOpen(false)}
-            className={styles.closeButton}
-            aria-label={t.nav.closeMenu}
-          >
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-              <path
-                fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        </div>
-        {sidebarContent}
-      </aside>
     </>
   )
 }
