@@ -196,7 +196,6 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
       {/* ── Header ── */}
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>{t.jobs.title}</h1>
-        <p className={styles.pageSubtitle}>{t.jobs.total(jobs?.length ?? 0)}</p>
       </div>
 
       {message && (

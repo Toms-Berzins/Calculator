@@ -307,11 +307,11 @@ a, button, input, select, textarea {
 
 /* Ghost / tertiary button */
 .btn-ghost {
-  background: transparent;
-  border: 1.5px solid var(--border);
+  background: #ffffff;
+  border: 1.5px solid var(--nb-ink);
   color: var(--text-default);
   border-radius: 2px;
-  box-shadow: 2px 2px 0 var(--border);
+  box-shadow: 2px 2px 0 var(--nb-ink);
   transition: all 120ms cubic-bezier(0.25, 0, 0.6, 1);
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -326,11 +326,11 @@ a, button, input, select, textarea {
   background: var(--bg-muted);
   color: var(--text-strong);
   transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--border);
+  box-shadow: 3px 3px 0 var(--nb-ink);
 }
 .btn-ghost:active {
   transform: translate(2px, 2px);
-  box-shadow: 0 0 0 var(--border);
+  box-shadow: 0 0 0 var(--nb-ink);
 }
 
 /* Muted text link that turns accent on hover */

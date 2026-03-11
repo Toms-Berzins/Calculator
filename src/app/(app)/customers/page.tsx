@@ -118,7 +118,6 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.pageTitle}>{t.customers.title}</h1>
-          <p className={styles.pageSubtitle}>{t.customers.total(stats.total)}</p>
         </div>
       </div>
 
