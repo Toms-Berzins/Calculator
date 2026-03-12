@@ -49,3 +49,17 @@ public/workbox-*.js.map
 
 # temp files
 tmpclaude-*
+
+# Playwright
+/playwright-report
+/playwright-report.zip
+/playwright-report.html
+/playwright-report.json
+/playwright-report.trace.zip
+/playwright-report/videos
+/playwright-report/screenshots
+/playwright-report/traces
+/playwright-report/trace.zip
+/playwright-report/videos.zip
+/playwright-report/screenshots.zip
+.playwright-mcp

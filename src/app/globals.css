@@ -307,7 +307,7 @@ a, button, input, select, textarea {
 
 /* Ghost / tertiary button */
 .btn-ghost {
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1.5px solid var(--nb-ink);
   color: var(--text-default);
   border-radius: 2px;
