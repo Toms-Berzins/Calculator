@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { useQuoteCalculator } from '@/hooks/useQuoteCalculator'
+import { LineItemsTable } from './LineItemsTable'
 import { useRealtimeQuote } from '@/hooks/useRealtimeQuote'
 import { updateQuoteItems, updateQuoteStatus } from '@/lib/actions/quotes'
 import { generateAndStorePDF } from '@/lib/actions/pdf'
@@ -22,13 +23,6 @@ interface Props {
   calculatorDefaults: CalculatorSettingsValues
 }
 
-const STATUS_BADGE: Record<string, string> = {
-  draft:    'statusDraft',
-  sent:     'statusSent',
-  accepted: 'statusAccepted',
-  rejected: 'statusRejected',
-}
-
 export function QuoteEditor({ quote, calculatorDefaults }: Props) {
   const [notes, setNotes] = useState(quote.notes ?? '')
   const [saving, setSaving] = useState(false)
@@ -37,6 +31,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
   const [generatingPdf, setGeneratingPdf] = useState(false)
   const [syncIndicator, setSyncIndicator] = useState(false)
   const [status, setStatus] = useState<QuoteStatus>((quote.status ?? 'draft') as QuoteStatus)
+  const [jobAutoUpdated, setJobAutoUpdated] = useState<'won' | 'lost' | ''>('')
 
   // ── Calculator state ──────────────────────────────────────────────────────
   const [partName, setPartName] = useState('')
@@ -48,10 +43,35 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
 
   const t = useT()
 
-  const { items, taxRate, subtotal, taxAmount, total, setTaxRate, upsertItem } = useQuoteCalculator(
+  const { items, taxRate, subtotal, taxAmount, total, addItem, removeItem, updateItem, setTaxRate, upsertItem } = useQuoteCalculator(
     quote.quote_items.map((i) => ({ ...i, tempId: i.id })),
     quote.tax_rate,
   )
+
+  const [savedSnapshot, setSavedSnapshot] = useState(() =>
+    JSON.stringify({
+      items: quote.quote_items.map((i) => ({ ...i, tempId: i.id })),
+      notes: quote.notes ?? '',
+      taxRate: quote.tax_rate,
+    })
+  )
+
+  const isDirty = useMemo(
+    () => JSON.stringify({ items, notes, taxRate }) !== savedSnapshot,
+    [items, notes, taxRate, savedSnapshot],
+  )
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault()
+        if (!saving) handleSave()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saving])
 
   const handleRemoteUpdate = useCallback((updated: Partial<Quote>) => {
     setSyncIndicator(true)
@@ -102,7 +122,23 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
 
   async function handleSave() {
     setSaving(true)
-    await updateQuoteItems(quote.id, items, taxRate, notes)
+    let itemsToSave = items
+    if (partName.trim()) {
+      const calcItem = {
+        tempId: CALC_ITEM_ID,
+        description: calculatedDescription,
+        quantity: partQuantity,
+        unit_price: calculatedUnitPrice,
+        subtotal: calculatedLineSubtotal,
+        sort_order: 0,
+      }
+      const idx = itemsToSave.findIndex(i => i.tempId === CALC_ITEM_ID)
+      itemsToSave = idx === -1
+        ? [...itemsToSave, calcItem]
+        : itemsToSave.map(i => i.tempId === CALC_ITEM_ID ? calcItem : i)
+    }
+    await updateQuoteItems(quote.id, itemsToSave, taxRate, notes)
+    setSavedSnapshot(JSON.stringify({ items, notes, taxRate }))
     setSaving(false)
   }
 
@@ -119,14 +155,17 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
     }
   }
 
-  function handleStatusChange(next: QuoteStatus) {
+  async function handleStatusChange(next: QuoteStatus) {
     setStatus(next)
-    updateQuoteStatus(quote.id, next)
+    const result = await updateQuoteStatus(quote.id, next)
+    if (result?.jobAutoUpdated) {
+      setJobAutoUpdated(result.jobAutoUpdated)
+      setTimeout(() => setJobAutoUpdated(''), 8000)
+    }
   }
 
   const customer = quote.jobs?.customers
   const job = quote.jobs
-  const badgeClass = styles[STATUS_BADGE[status] as keyof typeof styles]
 
   return (
     <div className={styles.editor}>
@@ -148,10 +187,6 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
         <div className={styles.headerMeta}>
           <div className={styles.headerTop}>
             <h1 className={styles.title}>{job?.title ?? 'Quote'}</h1>
-            <span className={`${styles.statusBadge} ${badgeClass}`}>
-              <span className={styles.statusDot} aria-hidden />
-              {t.quote.status[status]}
-            </span>
           </div>
           <p className={styles.subtitle}>
             {customer?.company ?? customer?.name ?? '—'}
@@ -161,6 +196,23 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
         </div>
 
         <div className={styles.headerActions}>
+          {job && (
+            <Link
+              href={`/jobs?edit=${job.id}`}
+              className={`btn-ghost rounded-xl px-3 py-2 text-sm font-semibold ${styles.editJobBtn}`}
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+              </svg>
+              {t.quote.editJob}
+            </Link>
+          )}
+          {isDirty && !saving && (
+            <span className={styles.dirtyBadge}>
+              {t.quote.unsavedChanges}
+            </span>
+          )}
+
           {syncIndicator && (
             <span className={styles.syncBadge}>
               <svg className="w-3 h-3 animate-spin" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
@@ -207,6 +259,22 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
           </button>
         </div>
       </div>
+
+      {/* ── Job auto-update notification ── */}
+      {jobAutoUpdated !== '' && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`${styles.jobUpdateBanner} ${
+            jobAutoUpdated === 'won' ? styles.jobUpdateBannerWon : styles.jobUpdateBannerLost
+          }`}
+        >
+          <svg className="w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          {t.quote.jobAutoUpdated[jobAutoUpdated as 'won' | 'lost']}
+        </div>
+      )}
 
       {/* ── 3D Print Calculator ── */}
       <section className={styles.calculatorCard}>
@@ -309,18 +377,26 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
             <span className={`pt-1 font-semibold ${styles.summaryStrong}`}>{t.newQuote.calculatedLineTotal}</span>
             <span className={`pt-1 text-right font-bold tabular-nums ${styles.summaryAccent}`}>{formatCurrency(calculatedLineSubtotal)}</span>
           </div>
-          <div className="mt-3 flex items-center justify-between gap-2">
-            <p className={styles.summaryNote}>{t.newQuote.calculatedLineNote}</p>
+          <div className={styles.summaryNoteRow}>
             <button
               type="button"
               onClick={handleAddToQuote}
-              className={`btn-primary shrink-0 px-4 py-2 text-sm font-semibold ${styles.addToQuoteBtn}`}
+              className={`btn-primary px-4 py-2 text-sm font-semibold ${styles.addToQuoteBtn}`}
             >
               {t.quote.addToQuote}
             </button>
+            <p className={styles.summaryNote}>{t.newQuote.calculatedLineNote}</p>
           </div>
         </div>
       </section>
+
+      {/* ── Line items ── */}
+      <LineItemsTable
+        items={items}
+        onUpdate={updateItem}
+        onRemove={removeItem}
+        onAdd={addItem}
+      />
 
       {/* ── Bottom grid: notes + totals ── */}
       <div className={styles.bottomGrid}>

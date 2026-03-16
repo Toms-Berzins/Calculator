@@ -9,7 +9,7 @@ import styles from './jobs.module.css'
 const JOB_STATUS_VALUES = ['open', 'won', 'lost', 'archived'] as const
 
 interface JobsPageProps {
-  searchParams?: Promise<{ status?: string; message?: string; jobStatus?: string; q?: string; sort?: string; new?: string }>
+  searchParams?: Promise<{ status?: string; message?: string; jobStatus?: string; q?: string; sort?: string; new?: string; edit?: string }>
 }
 
 function getErrorMessage(caught: unknown) {
@@ -47,6 +47,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
       ? (resolvedSearchParams.jobStatus as (typeof JOB_STATUS_VALUES)[number])
       : null
   const newJobOpen = resolvedSearchParams?.new === '1'
+  const editJobId = resolvedSearchParams?.edit ?? null
   const searchQuery = (resolvedSearchParams?.q ?? '').trim().toLowerCase()
   const sortParam = (['newest', 'oldest', 'title'] as const).includes(
     resolvedSearchParams?.sort as 'newest' | 'oldest' | 'title'
@@ -143,8 +144,14 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     archived: jobs?.filter((j) => j.status === 'archived').length ?? 0,
   }
 
+  const activeCount = jobs?.filter((j) => (j.status ?? 'open') !== 'archived').length ?? 0
+
   const visibleJobs = jobs?.filter((j) => {
-    const matchesStatus = selectedJobStatus === null || (j.status ?? 'open') === selectedJobStatus
+    const jobStatus = j.status ?? 'open'
+    // By default hide archived jobs; only show them when explicitly filtered
+    const matchesStatus = selectedJobStatus !== null
+      ? jobStatus === selectedJobStatus
+      : jobStatus !== 'archived'
     if (!matchesStatus) return false
     if (!searchQuery) return true
     const customerName =
@@ -211,7 +218,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             href={getAllHref()}
             className={`${styles.statCard} ${styles.statCardLink} ${styles.statAll} ${selectedJobStatus === null && !searchQuery ? styles.statCardActive : ''}`}
           >
-            <span className={styles.statValue}>{jobs.length}</span>
+            <span className={styles.statValue}>{activeCount}</span>
             <span className={styles.statLabel}>{t.jobs.allJobs}</span>
           </Link>
           {([
@@ -382,7 +389,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                     </Link>
                     <DeleteJobButton jobId={j.id} action={handleDeleteJob} labels={deleteLabels} />
                     {/* Edit toggle — panel is a full-width sibling below, shown via CSS :has() */}
-                    <details className={styles.editDetails}>
+                    <details className={styles.editDetails} {...(editJobId === j.id ? { open: true } : {})}>
                       <summary className={styles.editSummary}>
                         <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                           <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />

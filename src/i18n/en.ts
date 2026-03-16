@@ -87,7 +87,7 @@ export const en = {
       archived: 'Archived',
     },
     newJob: 'New job',
-    allJobs: 'All',
+    allJobs: 'Active',
     searchPlaceholder: 'Search jobs…',
     noJobsFiltered: 'No jobs match the filter',
     clearFilters: 'Clear filters',
@@ -198,6 +198,12 @@ export const en = {
       accepted: 'Accepted',
       rejected: 'Rejected',
     },
+    jobAutoUpdated: {
+      won: 'Job automatically marked as won — a quote was accepted.',
+      lost: 'Job automatically marked as lost — all quotes were rejected.',
+    },
+    unsavedChanges: 'Unsaved changes',
+    editJob: 'Edit job',
   },
   table: {
     description: 'Description',

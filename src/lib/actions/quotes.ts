@@ -82,13 +82,49 @@ export async function updateQuoteItems(
     .eq('id', quoteId)
 
   revalidatePath(`/quotes/${quoteId}`)
+  revalidatePath('/quotes')
 }
 
 export async function updateQuoteStatus(quoteId: string, status: QuoteStatus) {
   const supabase = await createServerSupabaseClient()
+
+  // Fetch the quote so we know which job to update
+  const { data: quote, error: quoteError } = await supabase
+    .from('quotes')
+    .select('id, job_id')
+    .eq('id', quoteId)
+    .single()
+
+  if (quoteError || !quote) throw new Error(quoteError?.message ?? 'Quote not found')
+
   await supabase.from('quotes').update({ status }).eq('id', quoteId)
+
+  let jobAutoUpdated: 'won' | 'lost' | undefined
+
+  if (status === 'accepted') {
+    // Quote accepted → mark the parent job as won
+    await supabase.from('jobs').update({ status: 'won' }).eq('id', quote.job_id)
+    jobAutoUpdated = 'won'
+    revalidatePath('/jobs')
+  } else if (status === 'rejected') {
+    // Check whether every remaining quote for this job is also rejected
+    const { count } = await supabase
+      .from('quotes')
+      .select('id', { count: 'exact', head: true })
+      .eq('job_id', quote.job_id)
+      .neq('status', 'rejected')
+
+    if ((count ?? 0) === 0) {
+      // All quotes are rejected → mark the job as lost
+      await supabase.from('jobs').update({ status: 'lost' }).eq('id', quote.job_id)
+      jobAutoUpdated = 'lost'
+      revalidatePath('/jobs')
+    }
+  }
+
   revalidatePath(`/quotes/${quoteId}`)
   revalidatePath('/quotes')
+  return { jobAutoUpdated }
 }
 
 export async function deleteDraftQuote(quoteId: string) {

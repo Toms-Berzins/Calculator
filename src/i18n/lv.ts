@@ -89,7 +89,7 @@ export const lv: Translations = {
       archived: 'Arhivēts',
     },
     newJob: 'Jauns darbs',
-    allJobs: 'Visi',
+    allJobs: 'Aktīvie',
     searchPlaceholder: 'Meklēt darbus…',
     noJobsFiltered: 'Neviens darbs neatbilst filtram',
     clearFilters: 'Notīrīt filtrus',
@@ -200,6 +200,12 @@ export const lv: Translations = {
       accepted: 'Pieņemts',
       rejected: 'Noraidīts',
     },
+    jobAutoUpdated: {
+      won: 'Darbs automātiski atzīmēts kā uzvarēts — piedāvājums tika pieņemts.',
+      lost: 'Darbs automātiski atzīmēts kā zaudēts — visi piedāvājumi tika noraidīti.',
+    },
+    unsavedChanges: 'Nesaglabātas izmaiņas',
+    editJob: 'Rediģēt darbu',
   },
   table: {
     description: 'Apraksts',
