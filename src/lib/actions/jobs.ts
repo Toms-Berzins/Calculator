@@ -135,6 +135,8 @@ export async function createCustomer(data: {
   company: string
   email: string
   phone: string
+  address: string
+  vat_number: string
 }) {
   const supabase = await createServerSupabaseClient()
 
@@ -145,6 +147,8 @@ export async function createCustomer(data: {
       company: toNullable(data.company),
       email: toNullable(data.email),
       phone: toNullable(data.phone),
+      address: toNullable(data.address),
+      vat_number: toNullable(data.vat_number),
     })
     .select()
     .single()
@@ -162,6 +166,8 @@ export async function updateCustomer(data: {
   company: string
   email: string
   phone: string
+  address: string
+  vat_number: string
 }) {
   const supabase = await createServerSupabaseClient()
 
@@ -175,6 +181,8 @@ export async function updateCustomer(data: {
       company: toNullable(data.company),
       email: toNullable(data.email),
       phone: toNullable(data.phone),
+      address: toNullable(data.address),
+      vat_number: toNullable(data.vat_number),
     })
     .eq('id', data.id)
     .select()

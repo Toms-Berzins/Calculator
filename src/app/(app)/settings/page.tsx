@@ -1,10 +1,15 @@
-import { getCalculatorSettings } from '@/lib/actions/calculatorSettings'
+import { getCalculatorSettings, getCompanyInfo } from '@/lib/actions/calculatorSettings'
 import { CalculatorSettingsForm } from '@/components/CalculatorSettingsForm/CalculatorSettingsForm'
+import { CompanyInfoForm } from '@/components/CompanyInfoForm/CompanyInfoForm'
 import { getDict } from '@/i18n/server'
 import styles from './settings.module.css'
 
 export default async function SettingsPage() {
-  const [settings, t] = await Promise.all([getCalculatorSettings(), getDict()])
+  const [settings, company, t] = await Promise.all([
+    getCalculatorSettings(),
+    getCompanyInfo(),
+    getDict(),
+  ])
 
   return (
     <div>
@@ -15,10 +20,14 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <CalculatorSettingsForm
-        initialValues={settings.values}
-        initialUpdatedAt={settings.updatedAt}
-      />
+      <div className="flex flex-col gap-4">
+        <CompanyInfoForm initialCompany={company} />
+
+        <CalculatorSettingsForm
+          initialValues={settings.values}
+          initialUpdatedAt={settings.updatedAt}
+        />
+      </div>
     </div>
   )
 }

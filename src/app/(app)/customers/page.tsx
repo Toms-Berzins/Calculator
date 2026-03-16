@@ -30,6 +30,8 @@ function getCustomerFormPayload(formData: FormData) {
     company: readField(formData, 'company'),
     email: readField(formData, 'email'),
     phone: readField(formData, 'phone'),
+    address: readField(formData, 'address'),
+    vat_number: readField(formData, 'vat_number'),
     password: readField(formData, 'password'),
   }
 }
@@ -46,14 +48,14 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
   async function handleCreateCustomer(formData: FormData) {
     'use server'
 
-    const { name, company, email, phone } = getCustomerFormPayload(formData)
+    const { name, company, email, phone, address, vat_number } = getCustomerFormPayload(formData)
 
     if (!name) {
       redirectWithStatus('error', 'Customer name is required')
     }
 
     try {
-      await createCustomer({ name, company, email, phone })
+      await createCustomer({ name, company, email, phone, address, vat_number })
     } catch (caught) {
       redirectFromError(caught)
     }
@@ -64,14 +66,14 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
   async function handleUpdateCustomer(formData: FormData) {
     'use server'
 
-    const { id, name, company, email, phone } = getCustomerFormPayload(formData)
+    const { id, name, company, email, phone, address, vat_number } = getCustomerFormPayload(formData)
 
     if (!id || !name) {
       redirectWithStatus('error', 'Customer name is required')
     }
 
     try {
-      await updateCustomer({ id, name, company, email, phone })
+      await updateCustomer({ id, name, company, email, phone, address, vat_number })
     } catch (caught) {
       redirectFromError(caught)
     }
@@ -101,7 +103,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
 
   const { data: customers } = await supabase
     .from('customers')
-    .select('id, name, company, email, phone')
+    .select('id, name, company, email, phone, address, vat_number')
     .order('name')
 
   const stats = {
@@ -170,6 +172,14 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
               <label className="text-sm">
                 <span className={styles.fieldLabel}>{t.customers.phone}</span>
                 <input name="phone" className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.phonePlaceholder} />
+              </label>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.customers.address}</span>
+                <input name="address" className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.addressPlaceholder} />
+              </label>
+              <label className="text-sm">
+                <span className={styles.fieldLabel}>{t.customers.vatNumber}</span>
+                <input name="vat_number" className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.vatNumberPlaceholder} />
               </label>
             </div>
             <div className={styles.actionRow}>
@@ -262,6 +272,14 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                     <label className="text-sm">
                       <span className={styles.fieldLabel}>{t.customers.phone}</span>
                       <input name="phone" defaultValue={c.phone ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+                    </label>
+                    <label className="text-sm">
+                      <span className={styles.fieldLabel}>{t.customers.address}</span>
+                      <input name="address" defaultValue={c.address ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.addressPlaceholder} />
+                    </label>
+                    <label className="text-sm">
+                      <span className={styles.fieldLabel}>{t.customers.vatNumber}</span>
+                      <input name="vat_number" defaultValue={c.vat_number ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.vatNumberPlaceholder} />
                     </label>
                   </div>
                   <div className={styles.actionRow}>

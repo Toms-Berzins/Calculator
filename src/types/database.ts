@@ -16,6 +16,8 @@ export interface Database {
           company: string | null
           email: string | null
           phone: string | null
+          address: string | null
+          vat_number: string | null
           created_at: string
         }
         Insert: {
@@ -24,6 +26,8 @@ export interface Database {
           company?: string | null
           email?: string | null
           phone?: string | null
+          address?: string | null
+          vat_number?: string | null
           created_at?: string
         }
         Update: {
@@ -32,6 +36,8 @@ export interface Database {
           company?: string | null
           email?: string | null
           phone?: string | null
+          address?: string | null
+          vat_number?: string | null
           created_at?: string
         }
         Relationships: []
@@ -88,6 +94,12 @@ export interface Database {
           material_overhead_percent: number
           packaging_cost: number
           shipping_cost: number
+          company_name: string | null
+          company_address: string | null
+          company_vat_number: string | null
+          company_email: string | null
+          company_phone: string | null
+          company_website: string | null
           created_at: string
           updated_at: string
         }
@@ -104,6 +116,12 @@ export interface Database {
           material_overhead_percent?: number
           packaging_cost?: number
           shipping_cost?: number
+          company_name?: string | null
+          company_address?: string | null
+          company_vat_number?: string | null
+          company_email?: string | null
+          company_phone?: string | null
+          company_website?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -120,6 +138,12 @@ export interface Database {
           material_overhead_percent?: number
           packaging_cost?: number
           shipping_cost?: number
+          company_name?: string | null
+          company_address?: string | null
+          company_vat_number?: string | null
+          company_email?: string | null
+          company_phone?: string | null
+          company_website?: string | null
           created_at?: string
           updated_at?: string
         }

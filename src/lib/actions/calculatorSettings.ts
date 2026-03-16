@@ -4,8 +4,10 @@ import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import {
   DEFAULT_CALCULATOR_SETTINGS,
+  DEFAULT_COMPANY_INFO,
   type CalculatorSettingsPayload,
   type CalculatorSettingsValues,
+  type CompanyInfo,
 } from '@/lib/calculatorSettings'
 
 function isMissingCalculatorSettingsTableError(error: { code?: string; message?: string } | null) {
@@ -197,4 +199,61 @@ export async function saveCalculatorSettings(
     values: mapSettingsValues(data as Partial<CalculatorSettingsValues> & { updated_at?: string }),
     updatedAt: (data as { updated_at?: string }).updated_at ?? null,
   }
+}
+
+const COMPANY_SELECT =
+  `company_name, company_address, company_vat_number, company_email, company_phone, company_website`
+
+export async function getCompanyInfo(): Promise<CompanyInfo> {
+  const supabase = await createServerSupabaseClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) return DEFAULT_COMPANY_INFO
+
+  const { data, error } = await supabase
+    .from('calculator_settings')
+    .select(COMPANY_SELECT)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (error || !data) return DEFAULT_COMPANY_INFO
+
+  return {
+    company_name:       (data as unknown as CompanyInfo).company_name       ?? null,
+    company_address:    (data as unknown as CompanyInfo).company_address    ?? null,
+    company_vat_number: (data as unknown as CompanyInfo).company_vat_number ?? null,
+    company_email:      (data as unknown as CompanyInfo).company_email      ?? null,
+    company_phone:      (data as unknown as CompanyInfo).company_phone      ?? null,
+    company_website:    (data as unknown as CompanyInfo).company_website    ?? null,
+  }
+}
+
+export async function saveCompanyInfo(info: CompanyInfo): Promise<void> {
+  const supabase = await createServerSupabaseClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) throw new Error('Unauthenticated')
+
+  const { error } = await supabase
+    .from('calculator_settings')
+    .upsert(
+      {
+        user_id: user.id,
+        company_name:       info.company_name       ?? null,
+        company_address:    info.company_address    ?? null,
+        company_vat_number: info.company_vat_number ?? null,
+        company_email:      info.company_email      ?? null,
+        company_phone:      info.company_phone      ?? null,
+        company_website:    info.company_website    ?? null,
+      },
+      { onConflict: 'user_id' },
+    )
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/settings')
 }

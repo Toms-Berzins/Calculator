@@ -4,6 +4,8 @@ import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { QuoteDocument } from '@/pdf/QuoteDocument'
 import type { QuoteWithRelations } from '@/types/database'
+import { getLocale } from '@/i18n/server'
+import { getCompanyInfo } from '@/lib/actions/calculatorSettings'
 import React from 'react'
 
 const DEFAULT_PDF_BUCKET = 'pdfs'
@@ -27,9 +29,13 @@ export async function generateAndStorePDF(quoteId: string): Promise<string> {
 
   if (!quote) throw new Error('Quote not found')
 
+  const locale = await getLocale()
+  const company = await getCompanyInfo()
   const buffer = await renderToBuffer(
     React.createElement(QuoteDocument, {
       quote: quote as QuoteWithRelations,
+      locale,
+      company,
     }) as React.ReactElement<DocumentProps>,
   )
 

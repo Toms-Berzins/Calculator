@@ -16,6 +16,9 @@ create table if not exists public.customers (
   created_at timestamptz not null default now()
 );
 
+alter table public.customers add column if not exists address     text;
+alter table public.customers add column if not exists vat_number  text;
+
 -- ── Jobs ─────────────────────────────────────────────────────
 do $$
 begin
@@ -64,6 +67,25 @@ alter table public.calculator_settings
 
 alter table public.calculator_settings
   add column if not exists shipping_cost numeric(10, 2) not null default 0;
+
+-- ── Migration: add company/supplier info to existing databases ───────────────
+alter table public.calculator_settings
+  add column if not exists company_name text;
+
+alter table public.calculator_settings
+  add column if not exists company_address text;
+
+alter table public.calculator_settings
+  add column if not exists company_vat_number text;
+
+alter table public.calculator_settings
+  add column if not exists company_email text;
+
+alter table public.calculator_settings
+  add column if not exists company_phone text;
+
+alter table public.calculator_settings
+  add column if not exists company_website text;
 
 -- ── Quotes ───────────────────────────────────────────────────
 do $$

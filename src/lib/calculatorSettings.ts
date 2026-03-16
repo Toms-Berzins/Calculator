@@ -12,6 +12,24 @@ export interface CalculatorSettingsValues {
   shipping_cost: number
 }
 
+export interface CompanyInfo {
+  company_name: string | null
+  company_address: string | null
+  company_vat_number: string | null
+  company_email: string | null
+  company_phone: string | null
+  company_website: string | null
+}
+
+export const DEFAULT_COMPANY_INFO: CompanyInfo = {
+  company_name: null,
+  company_address: null,
+  company_vat_number: null,
+  company_email: null,
+  company_phone: null,
+  company_website: null,
+}
+
 export interface CalculatorSettingsPayload {
   values: CalculatorSettingsValues
   updatedAt: string | null
