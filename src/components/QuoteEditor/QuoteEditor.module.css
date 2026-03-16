@@ -117,6 +117,38 @@
   flex-wrap: wrap;
 }
 
+.editJobIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: 4px;
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity 140ms ease, color 140ms ease, background 140ms ease;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.headerMeta:hover .editJobIconBtn,
+.editJobIconBtn:focus-visible {
+  opacity: 1;
+}
+
+/* Always visible on touch devices (no hover capability) */
+@media (hover: none) {
+  .editJobIconBtn {
+    opacity: 1;
+    color: var(--text-muted);
+  }
+}
+
+.editJobIconBtn:hover {
+  color: var(--text-strong);
+  background: var(--bg-hover, rgba(0,0,0,0.06));
+}
+
 .title {
   color: var(--text-strong);
   font-size: 1.25rem;
@@ -495,15 +527,6 @@
     background: rgba(251, 191, 36, 0.08);
     color: #fbbf24;
   }
-}
-
-/* ── Edit job link button ────────────────────────────────────────────────── */
-.editJobBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  min-height: 2.5rem;
-  white-space: nowrap;
 }
 
 /* ── Line items table ────────────────────────────────────────────────────── */

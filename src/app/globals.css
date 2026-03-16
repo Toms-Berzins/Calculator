@@ -1,5 +1,18 @@
 @import 'tailwindcss';
 
+/* ── Safe-area utilities (iOS notch / home bar) ────────────────────────── */
+/* viewportFit: 'cover' in layout.tsx lets content extend behind home bar;
+   these classes then add the correct padding to push content above it.   */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* ── Design tokens: Soft Industrial ────────────────────────────────────── */
 :root {
   /* Backgrounds */

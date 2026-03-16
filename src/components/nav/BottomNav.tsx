@@ -28,7 +28,7 @@ export function BottomNav() {
               {l.icon}
             </span>
             <span
-              className={`text-[10px] font-medium leading-none ${active ? styles.navLabelActive : styles.navLabelInactive}`}
+              className={`text-[11px] font-medium leading-none ${active ? styles.navLabelActive : styles.navLabelInactive}`}
             >
               {t.nav[l.labelKey]}
             </span>

@@ -255,7 +255,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
             label={t.settings.electricityRate}
             hint={t.settings.electricityRateHint}
             value={values.electricity_rate_per_kwh}
-            step={0.01}
+            step={0.000001}
             suffix="€/kWh"
             onChange={(v) => setNumber('electricity_rate_per_kwh', v)}
           />
