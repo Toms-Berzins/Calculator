@@ -108,6 +108,8 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
         company: newCustomerCompany.trim(),
         email: '',
         phone: '',
+        address: '',
+        vat_number: '',
       })) as CreatedCustomer
 
       const nextCustomer: Customer = {
