@@ -267,6 +267,8 @@ export const en = {
     customerNamePlaceholder: 'Example: John Smith',
     companyOptional: 'Company (optional)',
     companyPlaceholder: 'Example: Acme Labs',
+    addressOptional: 'Address (optional)',
+    addressPlaceholder: 'Start typing an address…',
     createCustomerAndSelect: 'Create customer & select',
     createJobAndSelect: 'Create job & select',
     creating3DPrint: 'Creating…',

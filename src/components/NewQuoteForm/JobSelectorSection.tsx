@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createCustomer, createJob } from '@/lib/actions/jobs'
 import { useT } from '@/i18n/context'
+import { AddressAutocomplete } from '@/components/AddressAutocomplete/AddressAutocomplete'
 import styles from './NewQuoteForm.module.css'
 import {
   CREATE_NEW_CUSTOMER_VALUE,
@@ -29,6 +30,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
   const [newJobCustomerId, setNewJobCustomerId] = useState('')
   const [newCustomerName, setNewCustomerName] = useState('')
   const [newCustomerCompany, setNewCustomerCompany] = useState('')
+  const [newCustomerAddress, setNewCustomerAddress] = useState('')
   const [creatingJob, setCreatingJob] = useState(false)
   const [creatingCustomer, setCreatingCustomer] = useState(false)
   const [createJobError, setCreateJobError] = useState('')
@@ -108,7 +110,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
         company: newCustomerCompany.trim(),
         email: '',
         phone: '',
-        address: '',
+        address: newCustomerAddress.trim(),
         vat_number: '',
       })) as CreatedCustomer
 
@@ -122,6 +124,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
       setNewJobCustomerId(nextCustomer.id)
       setNewCustomerName('')
       setNewCustomerCompany('')
+      setNewCustomerAddress('')
     } catch (error) {
       setCreateCustomerError(error instanceof Error ? error.message : t.newQuote.failedToCreateCustomer)
     } finally {
@@ -223,6 +226,16 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
                       value={newCustomerCompany}
                       onChange={(e) => setNewCustomerCompany(e.target.value)}
                       placeholder={t.newQuote.companyPlaceholder}
+                      className="input-field w-full px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <label className="text-sm md:col-span-2">
+                    <span className={styles.createJobFieldLabel}>{t.newQuote.addressOptional}</span>
+                    <AddressAutocomplete
+                      value={newCustomerAddress}
+                      onChange={setNewCustomerAddress}
+                      onSelect={(s) => setNewCustomerAddress(s.formatted)}
+                      placeholder={t.newQuote.addressPlaceholder}
                       className="input-field w-full px-3 py-2 text-sm"
                     />
                   </label>

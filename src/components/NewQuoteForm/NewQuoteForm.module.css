@@ -97,7 +97,10 @@
   background: var(--bg-surface);
   box-shadow: 5px 5px 0 var(--border);
   transform: translate(-1px, -1px);
-  overflow: hidden;
+}
+
+.createJobHeader {
+  border-radius: 2px 2px 0 0;
 }
 
 .createJobHeader {

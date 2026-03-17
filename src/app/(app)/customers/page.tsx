@@ -3,6 +3,7 @@ import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/actions/jo
 import { redirect } from 'next/navigation'
 import { getDict } from '@/i18n/server'
 import { DeleteCustomerButton } from '@/components/customers/DeleteCustomerButton'
+import { AddressField } from '@/components/AddressAutocomplete/AddressField'
 import styles from './customers.module.css'
 
 interface CustomersPageProps {
@@ -175,7 +176,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
               </label>
               <label className="text-sm">
                 <span className={styles.fieldLabel}>{t.customers.address}</span>
-                <input name="address" className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.addressPlaceholder} />
+                <AddressField className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.addressPlaceholder} />
               </label>
               <label className="text-sm">
                 <span className={styles.fieldLabel}>{t.customers.vatNumber}</span>
@@ -275,7 +276,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                     </label>
                     <label className="text-sm">
                       <span className={styles.fieldLabel}>{t.customers.address}</span>
-                      <input name="address" defaultValue={c.address ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.addressPlaceholder} />
+                      <AddressField defaultValue={c.address ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.customers.addressPlaceholder} />
                     </label>
                     <label className="text-sm">
                       <span className={styles.fieldLabel}>{t.customers.vatNumber}</span>

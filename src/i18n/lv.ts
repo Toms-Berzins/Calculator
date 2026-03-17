@@ -269,6 +269,8 @@ export const lv: Translations = {
     customerNamePlaceholder: 'Piemērs: Jānis Bērziņš',
     companyOptional: 'Uzņēmums (neobligāts)',
     companyPlaceholder: 'Piemērs: Acme Labs',
+    addressOptional: 'Adrese (neobligāta)',
+    addressPlaceholder: 'Sāciet rakstīt adresi…',
     createCustomerAndSelect: 'Izveidot klientu un atlasīt',
     createJobAndSelect: 'Izveidot darbu un atlasīt',
     creating3DPrint: 'Izveido…',
