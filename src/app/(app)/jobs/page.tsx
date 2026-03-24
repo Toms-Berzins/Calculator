@@ -203,7 +203,9 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
 
       {/* ── Header ── */}
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>{t.jobs.title}</h1>
+        <div>
+          <h1 className={styles.pageTitle}>{t.jobs.title}</h1>
+        </div>
       </div>
 
       {message && (
@@ -263,7 +265,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
               />
             </div>
           </form>
-          <div className={styles.sortGroup}>
+          <div className={styles.sortGroup} role="group" aria-label="Sort jobs">
             {([
               { key: 'newest', label: t.jobs.sortNewest },
               { key: 'oldest', label: t.jobs.sortOldest },
@@ -292,39 +294,39 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         <div className={styles.createCard}>
           <form action={handleCreateJob} className={styles.jobForm}>
             <div className={styles.formGrid}>
-              <label className="text-sm">
+              <label>
                 <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
-                <input name="title" required className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.jobs.titlePlaceholder} />
+                <input name="title" required className="input-field w-full" placeholder={t.jobs.titlePlaceholder} />
               </label>
-              <label className="text-sm">
+              <label>
                 <span className={styles.fieldLabel}>{t.jobs.customer}</span>
-                <select name="customerId" required className="input-field w-full rounded-lg px-3 py-2 text-sm" defaultValue="">
+                <select name="customerId" required className="input-field w-full" defaultValue="">
                   <option value="" disabled>{t.jobs.selectCustomer}</option>
                   {customers?.map((c) => (
                     <option key={c.id} value={c.id}>{c.company ?? c.name}</option>
                   ))}
                 </select>
               </label>
-              <label className="text-sm md:col-span-2">
+              <label className="md:col-span-2">
                 <span className={styles.fieldLabel}>{t.jobs.description}</span>
-                <textarea name="description" rows={2} className="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder={t.jobs.descriptionPlaceholder} />
+                <textarea name="description" rows={2} className="input-field w-full" placeholder={t.jobs.descriptionPlaceholder} />
               </label>
             </div>
             <div className={styles.actionRow}>
-              <button type="submit" className="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">{t.jobs.createJob}</button>
+              <button type="submit" className={`btn-primary ${styles.formSubmitBtn}`}>{t.jobs.createJob}</button>
             </div>
           </form>
         </div>
       </details>
 
       {!jobs?.length && (
-        <div className={`flex flex-col items-center justify-center rounded-2xl py-16 text-center ${styles.emptyCard}`}>
+        <div className={`flex flex-col items-center justify-center py-16 text-center ${styles.emptyCard}`}>
           <svg className={`mb-3 w-10 h-10 ${styles.emptyIcon}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
             <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" />
             <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
           </svg>
           <p className={`text-sm font-medium ${styles.emptyText}`}>{t.jobs.noJobs}</p>
-          <Link href="/jobs?new=1" className="mt-4 btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold">
+          <Link href="/jobs?new=1" className={`mt-4 btn-primary ${styles.emptyAddBtn}`}>
             {t.jobs.addJob}
           </Link>
         </div>
@@ -332,7 +334,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
 
       {/* ── Filtered / search empty state ── */}
       {!!jobs?.length && !visibleJobs?.length && (
-        <div className={`flex flex-col items-center justify-center rounded-2xl py-14 text-center ${styles.emptyCard}`}>
+        <div className={`flex flex-col items-center justify-center py-14 text-center ${styles.emptyCard}`}>
           <svg className={`mb-3 w-10 h-10 ${styles.emptyIcon}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
             <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
           </svg>
@@ -415,33 +417,33 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                   <form action={handleUpdateJob} className={styles.jobForm}>
                     <input type="hidden" name="id" value={j.id} />
                     <div className={styles.formGrid}>
-                      <label className="text-sm">
+                      <label>
                         <span className={styles.fieldLabel}>{t.jobs.titleField}</span>
-                        <input name="title" required defaultValue={j.title} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+                        <input name="title" required defaultValue={j.title} className="input-field w-full" />
                       </label>
-                      <label className="text-sm">
+                      <label>
                         <span className={styles.fieldLabel}>{t.jobs.customer}</span>
-                        <select name="customerId" required defaultValue={j.customer_id} className="input-field w-full rounded-lg px-3 py-2 text-sm">
+                        <select name="customerId" required defaultValue={j.customer_id} className="input-field w-full">
                           {customers?.map((c) => (
                             <option key={c.id} value={c.id}>{c.company ?? c.name}</option>
                           ))}
                         </select>
                       </label>
-                      <label className="text-sm">
+                      <label>
                         <span className={styles.fieldLabel}>{t.jobs.status}</span>
-                        <select name="status" defaultValue={j.status ?? 'open'} className="input-field w-full rounded-lg px-3 py-2 text-sm">
+                        <select name="status" defaultValue={j.status ?? 'open'} className="input-field w-full">
                           {JOB_STATUS_VALUES.map((value) => (
                             <option key={value} value={value}>{t.jobs.statusValues[value]}</option>
                           ))}
                         </select>
                       </label>
-                      <label className="text-sm md:col-span-2">
+                      <label className="md:col-span-2">
                         <span className={styles.fieldLabel}>{t.jobs.description}</span>
-                        <textarea name="description" rows={2} defaultValue={j.description ?? ''} className="input-field w-full rounded-lg px-3 py-2 text-sm" />
+                        <textarea name="description" rows={2} defaultValue={j.description ?? ''} className="input-field w-full" />
                       </label>
                     </div>
                     <div className={styles.actionRow}>
-                      <button type="submit" className="btn-ghost rounded-lg px-4 py-2 text-sm font-semibold">{t.jobs.saveChanges}</button>
+                      <button type="submit" className={`btn-secondary ${styles.formSubmitBtn}`}>{t.jobs.saveChanges}</button>
                     </div>
                   </form>
                 </div>
