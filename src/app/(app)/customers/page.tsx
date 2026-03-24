@@ -1,13 +1,15 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createCustomer, updateCustomer, deleteCustomer } from '@/lib/actions/jobs'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { getDict } from '@/i18n/server'
 import { DeleteCustomerButton } from '@/components/customers/DeleteCustomerButton'
 import { AddressField } from '@/components/AddressAutocomplete/AddressField'
+import { FeedbackBanner } from '@/components/FeedbackBanner/FeedbackBanner'
 import styles from './customers.module.css'
 
 interface CustomersPageProps {
-  searchParams?: Promise<{ status?: string; message?: string }>
+  searchParams?: Promise<{ status?: string; message?: string; new?: string }>
 }
 
 function getErrorMessage(caught: unknown) {
@@ -45,6 +47,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
   const resolvedSearchParams = await searchParams
   const status = resolvedSearchParams?.status
   const message = resolvedSearchParams?.message
+  const newOpen = resolvedSearchParams?.new === '1'
 
   async function handleCreateCustomer(formData: FormData) {
     'use server'
@@ -125,9 +128,13 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
       </div>
 
       {message && (
-        <p className={`${styles.feedback} ${status === 'error' ? styles.feedbackError : styles.feedbackSuccess}`}>
-          {message}
-        </p>
+        <FeedbackBanner
+          message={message}
+          status={status}
+          baseClass={styles.feedback}
+          successClass={styles.feedbackSuccess}
+          errorClass={styles.feedbackError}
+        />
       )}
 
       {/* ── Stats strip ── */}
@@ -148,7 +155,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
       )}
 
       {/* ── Add customer (collapsible) ── */}
-      <details className={styles.createDetails}>
+      <details className={styles.createDetails} {...(newOpen ? { open: true } : {})}>
         <summary className={styles.createSummary}>
           <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -197,6 +204,9 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
           </svg>
           <p className={`text-sm font-medium ${styles.emptyText}`}>{t.customers.noCustomers}</p>
+          <Link href="/customers?new=1" className="mt-4 btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold">
+            {t.customers.addCustomer}
+          </Link>
         </div>
       )}
 

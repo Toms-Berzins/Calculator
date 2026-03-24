@@ -6,6 +6,8 @@ export const en = {
     customers: 'Customers',
     settings: 'Settings',
     signOut: 'Sign out',
+    signOutConfirm: 'Sign out of QuoteCalc?',
+    menu: 'Menu',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
   },
@@ -36,6 +38,10 @@ export const en = {
     createFirst: 'Create your first quote to get started',
     untitledJob: 'Untitled job',
     delete: 'Delete',
+    confirmDelete: 'Delete draft',
+    confirmDeleteDesc: 'This draft quote will be permanently deleted.',
+    cancelLabel: 'Cancel',
+    deleteConfirm: 'Delete',
     jobCol: 'Job',
     dateCol: 'Date',
     amountCol: 'Amount',
@@ -131,6 +137,7 @@ export const en = {
     subtitle: 'Pricing constants used by the 3D print calculator',
     lastSaved: 'Last saved:',
     notSavedYet: 'Not saved yet',
+    defaultsWarning: "You're using default pricing constants. Set your actual rates to get accurate quotes.",
     unsavedChanges: 'Unsaved changes',
     // Sections
     sectionMaterials: 'Materials',
@@ -197,6 +204,7 @@ export const en = {
     password: 'Password',
     signIn: 'Sign in',
     signingIn: 'Signing in…',
+    forgotPassword: 'Forgot password?',
   },
   quote: {
     lineItems: 'Line items',
@@ -226,6 +234,8 @@ export const en = {
       lost: 'Job automatically marked as lost — all quotes were rejected.',
     },
     unsavedChanges: 'Unsaved changes',
+    saved: 'Saved',
+    saveError: 'Failed to save',
     editJob: 'Edit job',
   },
   table: {
@@ -244,6 +254,7 @@ export const en = {
   newQuote: {
     title: 'New Quote',
     subtitle: 'Select a job and add line items',
+    selectJobPrompt: 'Select a job above to start calculating',
     jobPartName: 'Job / Part name',
     jobPartNamePlaceholder: 'Example: Gear housing prototype',
     quantity: 'Quantity',

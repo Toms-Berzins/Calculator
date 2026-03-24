@@ -26,6 +26,8 @@ interface Props {
 export function QuoteEditor({ quote, calculatorDefaults }: Props) {
   const [notes, setNotes] = useState(quote.notes ?? '')
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
+  const [savedBadge, setSavedBadge] = useState(false)
   const [pdfUrl, setPdfUrl] = useState(quote.pdf_url ?? '')
   const [pdfError, setPdfError] = useState('')
   const [generatingPdf, setGeneratingPdf] = useState(false)
@@ -60,6 +62,17 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
     () => JSON.stringify({ items, notes, taxRate }) !== savedSnapshot,
     [items, notes, taxRate, savedSnapshot],
   )
+
+  // beforeunload guard — warn if user tries to leave with unsaved changes
+  useEffect(() => {
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      if (isDirty && !saving) {
+        e.preventDefault()
+      }
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [isDirty, saving])
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -122,6 +135,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
 
   async function handleSave() {
     setSaving(true)
+    setSaveError('')
     let itemsToSave = items
     if (partName.trim()) {
       const calcItem = {
@@ -137,9 +151,16 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
         ? [...itemsToSave, calcItem]
         : itemsToSave.map(i => i.tempId === CALC_ITEM_ID ? calcItem : i)
     }
-    await updateQuoteItems(quote.id, itemsToSave, taxRate, notes)
-    setSavedSnapshot(JSON.stringify({ items, notes, taxRate }))
-    setSaving(false)
+    try {
+      await updateQuoteItems(quote.id, itemsToSave, taxRate, notes)
+      setSavedSnapshot(JSON.stringify({ items, notes, taxRate }))
+      setSavedBadge(true)
+      setTimeout(() => setSavedBadge(false), 2500)
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : (t.quote.saveError ?? 'Failed to save'))
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function handleGeneratePDF() {
@@ -156,11 +177,16 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
   }
 
   async function handleStatusChange(next: QuoteStatus) {
+    const prev = status
     setStatus(next)
-    const result = await updateQuoteStatus(quote.id, next)
-    if (result?.jobAutoUpdated) {
-      setJobAutoUpdated(result.jobAutoUpdated)
-      setTimeout(() => setJobAutoUpdated(''), 8000)
+    try {
+      const result = await updateQuoteStatus(quote.id, next)
+      if (result?.jobAutoUpdated) {
+        setJobAutoUpdated(result.jobAutoUpdated)
+        setTimeout(() => setJobAutoUpdated(''), 8000)
+      }
+    } catch {
+      setStatus(prev)
     }
   }
 
@@ -211,6 +237,15 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
           {isDirty && !saving && (
             <span className={styles.dirtyBadge}>
               {t.quote.unsavedChanges}
+            </span>
+          )}
+
+          {savedBadge && (
+            <span className={styles.savedBadge} role="status" aria-live="polite">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              {t.quote.saved ?? 'Saved'}
             </span>
           )}
 
@@ -274,6 +309,22 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
           {t.quote.jobAutoUpdated[jobAutoUpdated as 'won' | 'lost']}
+          <button
+            type="button"
+            onClick={() => setJobAutoUpdated('')}
+            className={styles.bannerClose}
+            aria-label="Dismiss notification"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {saveError && (
+        <div role="alert" aria-live="assertive" className={styles.saveErrorBanner}>
+          {saveError}
         </div>
       )}
 
@@ -488,7 +539,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
               </a>
             )}
 
-            {pdfError && <p className={styles.errorText}>{pdfError}</p>}
+            {pdfError && <p className={styles.errorText} role="alert" aria-live="assertive">{pdfError}</p>}
           </div>
         </aside>
       </div>

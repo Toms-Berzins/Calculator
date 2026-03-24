@@ -20,6 +20,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
   const calculatedItemTempId = 'calculated-3d-print-item'
   const [selectedJobId, setSelectedJobId] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [partName, setPartName] = useState('')
   const [partQuantity, setPartQuantity] = useState(1)
   const [materialWeightGrams, setMaterialWeightGrams] = useState(150)
@@ -85,9 +86,12 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
       sort_order: 0,
     }
     setSubmitting(true)
+    setSubmitError(null)
     try {
       const quoteId = await createQuote(selectedJobId, taxRate, [calculatedItem])
       router.push(`/quotes/${quoteId}`)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to create quote')
     } finally {
       setSubmitting(false)
     }
@@ -95,6 +99,11 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
 
   return (
     <form onSubmit={handleSubmit}>
+      {submitError && (
+        <p role="alert" aria-live="assertive" className={`mb-4 rounded-sm border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700`}>
+          {submitError}
+        </p>
+      )}
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>
           {t.newQuote.title}
@@ -131,19 +140,25 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
           }}
         />
 
+        {!selectedJobId && (
+          <p className={`mt-4 py-5 text-center text-sm ${styles.pageSubtitle}`}>
+            {t.newQuote.selectJobPrompt}
+          </p>
+        )}
+
+        {selectedJobId && (
+        <>
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-          {selectedJobId && (
-            <label className="text-sm md:col-span-2">
-              <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
-              <input
-                type="text"
-                value={partName}
-                onChange={(e) => setPartName(e.target.value)}
-                placeholder={t.newQuote.jobPartNamePlaceholder}
-                className="input-field w-full px-3 py-2 text-sm"
-              />
-            </label>
-          )}
+          <label className="text-sm md:col-span-2">
+            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
+            <input
+              type="text"
+              value={partName}
+              onChange={(e) => setPartName(e.target.value)}
+              placeholder={t.newQuote.jobPartNamePlaceholder}
+              className="input-field w-full px-3 py-2 text-sm"
+            />
+          </label>
           <label className="text-sm">
             <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.quantity}</span>
             <input
@@ -201,7 +216,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
           </label>
         </div>
 
-        <div className={`mt-4 p-3 ${styles.calculatorSummary}`}>
+        <div className={`mt-4 p-3 ${styles.calculatorSummary}`} aria-live="polite" aria-atomic="true">
           <div className="grid grid-cols-2 gap-y-0.5 text-sm">
             <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.materialCostRow}</span>
             <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.materialCost)}</span>
@@ -249,7 +264,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             <label htmlFor="tax" className={styles.totalRow}>
               {t.quote.vat}
             </label>
-            <div className="text-right">
+            <div className="flex items-center justify-end gap-1">
               <input
                 id="tax"
                 type="number"
@@ -257,9 +272,11 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
                 max={100}
                 step={0.1}
                 value={taxRate}
-                onChange={(e) => setTaxRate(Number(e.target.value))}
-                className="input-field w-20 px-2 py-1 text-right text-sm tabular-nums"
+                onChange={(e) => setTaxRate(Math.min(100, Math.max(0, Number(e.target.value))))}
+                className="input-field w-16 px-2 py-1 text-right text-sm tabular-nums"
+                aria-label={`${t.quote.vat} percentage`}
               />
+              <span className="text-sm" aria-hidden="true">%</span>
             </div>
 
             {taxRate > 0 && (
@@ -282,6 +299,8 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             {t.newQuote.calculatedLineNote}
           </p>
         </div>
+        </>
+        )}
       </div>
 
       <button

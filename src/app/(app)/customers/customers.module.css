@@ -28,7 +28,7 @@
 .pageSubtitle {
   color: var(--text-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -63,8 +63,14 @@
 /* ── Stats strip ─────────────────────────────────────────────────────────── */
 .statsStrip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+  .statsStrip {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .statCard {
@@ -115,7 +121,7 @@
 }
 
 .statLabel {
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;

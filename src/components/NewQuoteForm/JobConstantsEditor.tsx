@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import styles from './NewQuoteForm.module.css'
 import { useT } from '@/i18n/context'
 import { CONSTANT_DEFINITIONS } from './NewQuoteForm.types'
@@ -28,6 +29,29 @@ interface JobConstantsEditorProps {
 
 export function JobConstantsEditor(props: JobConstantsEditorProps) {
   const t = useT()
+  const dialogRef = useRef<HTMLDialogElement>(null)
+
+  const {
+    editingConstant: editingConstantForEffect,
+  } = props.state
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+    if (editingConstantForEffect) {
+      if (!dialog.open) {
+        dialog.showModal()
+        document.body.style.overflow = 'hidden' // prevent iOS background scroll
+      }
+    } else {
+      if (dialog.open) {
+        dialog.close()
+        document.body.style.overflow = ''
+      }
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [editingConstantForEffect])
+
   const {
     constantChips,
     canUndoRemove,
@@ -101,11 +125,19 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
         ))}
       </div>
 
-      {editingConstant && (
-        <div className={styles.modalBackdrop} role="dialog" aria-modal="true">
-          <div className={`w-full max-w-md rounded-2xl p-4 ${styles.modalCard}`}>
+      <dialog
+        ref={dialogRef}
+        className={`w-full max-w-md p-4 ${styles.modalCard}`}
+        onCancel={(e) => { e.preventDefault(); onCloseConstantEditor() }}
+        aria-labelledby="constant-editor-title"
+      >
+        {editingConstant && (
+          <>
             <div className="flex items-center justify-between gap-2">
-              <h3 className={`text-base font-semibold ${styles.pageTitle}`}>
+              <h3
+                id="constant-editor-title"
+                className={`text-base font-semibold ${styles.pageTitle}`}
+              >
                 {t.newQuote.editConstantTitle(editingConstant.label)}
               </h3>
               <button
@@ -131,6 +163,7 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
                 value={editingConstantValue}
                 onChange={(e) => onChangeEditingConstantValue(e.target.value)}
                 className="input-field w-full rounded-lg px-3 py-2 text-sm"
+                autoFocus
               />
             </label>
 
@@ -156,9 +189,9 @@ export function JobConstantsEditor(props: JobConstantsEditorProps) {
                 {t.newQuote.save}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </dialog>
     </>
   )
 }

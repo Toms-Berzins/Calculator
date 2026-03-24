@@ -136,15 +136,15 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
     <div className="mb-6">
       {!isCreatingNewJob ? (
         <>
-          <label className={styles.jobLabel}>
+          <label htmlFor="job-select" className={styles.jobLabel}>
             {t.newQuote.job}
           </label>
           <div className={styles.jobSelectWrap}>
             <select
+              id="job-select"
               required
               value={selectedJobId}
               onChange={(e) => handleSelectJob(e.target.value)}
-              aria-label={t.newQuote.selectJob}
               className={styles.jobSelect}
             >
               <option value="">{t.newQuote.selectJob}</option>

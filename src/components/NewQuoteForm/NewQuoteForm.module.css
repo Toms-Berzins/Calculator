@@ -63,8 +63,8 @@
     linear-gradient(to bottom, var(--bg-surface), var(--bg-muted));
   border: none;
   outline: none;
-  appearance: none;
   -webkit-appearance: none;
+  appearance: none;
   cursor: pointer;
   color-scheme: light;
   transition: background-color 80ms ease;
@@ -181,7 +181,8 @@
   background: var(--bg-surface);
   box-shadow: 4px 4px 0 var(--border);
   border-radius: 0;
-  padding: 0.35rem 0.75rem;
+  padding: 0.625rem 0.875rem;
+  min-height: 2.75rem; /* 44px minimum touch target */
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -224,6 +225,13 @@
   transition: transform 80ms cubic-bezier(0.25, 0, 0.6, 1), box-shadow 80ms cubic-bezier(0.25, 0, 0.6, 1), background 80ms ease, color 80ms ease;
 }
 
+/* Expand touch target to 44px without changing visual size */
+.constantChipRemove::before {
+  content: '';
+  position: absolute;
+  inset: -0.75rem;
+}
+
 .constantChipRemove:hover {
   color: #fff;
   background: var(--status-rejected-text);
@@ -253,6 +261,13 @@
   border: 1.5px solid var(--border);
   border-radius: 2px;
   box-shadow: 5px 5px 0 var(--border);
+  /* Constrain to viewport on mobile and center the native dialog */
+  width: min(28rem, calc(100vw - 2rem));
+  margin: auto;
+}
+
+.modalCard::backdrop {
+  background: color-mix(in srgb, var(--text-strong) 25%, transparent);
 }
 
 .totalsCard {

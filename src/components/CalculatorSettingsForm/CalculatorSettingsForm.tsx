@@ -96,6 +96,7 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
   }
 
   function handleReset() {
+    if (!window.confirm('Reset all settings to defaults? This cannot be undone.')) return
     setValues(DEFAULT_CALCULATOR_SETTINGS)
     setSaved(false)
   }
@@ -126,6 +127,11 @@ export function CalculatorSettingsForm({ initialValues, initialUpdatedAt }: Prop
 
   return (
     <form onSubmit={handleSubmit} className={`p-5 ${styles.card}`}>
+      {!updatedAt && (
+        <p role="alert" className={`mb-4 rounded-sm border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800`}>
+          {t.settings.defaultsWarning}
+        </p>
+      )}
       {/* Header row */}
       <div className={styles.formHeader}>
         <p className={`text-sm ${styles.label}`}>

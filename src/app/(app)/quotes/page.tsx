@@ -3,9 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { deleteDraftQuote } from '@/lib/actions/quotes'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { getDict } from '@/i18n/server'
-import { NewQuoteForm } from '@/components/NewQuoteForm/NewQuoteForm'
-import { getCalculatorSettings } from '@/lib/actions/calculatorSettings'
-import { DEFAULT_CALCULATOR_SETTINGS } from '@/lib/calculatorSettings'
+import { DeleteDraftQuoteButton } from '@/components/quotes/DeleteDraftQuoteButton'
 import styles from './quotes.module.css'
 
 export default async function QuotesPage() {
@@ -19,7 +17,7 @@ export default async function QuotesPage() {
     rejected: { rowClass: styles.rowRejected, badgeClass: styles.statusRejected, dotClass: styles.dotRejected, label: t.quotes.status.rejected, hint: t.quotes.statusHint.rejected, amountClass: styles.amountRejected },
   }
 
-  const [{ data: quotes }, { data: jobs }, { data: customers }, calculatorSettings] = await Promise.all([
+  const [{ data: quotes }] = await Promise.all([
     supabase
       .from('quotes')
       .select(`
@@ -27,16 +25,6 @@ export default async function QuotesPage() {
         jobs ( title, customers ( name, company ) )
       `)
       .order('created_at', { ascending: false }),
-    supabase
-      .from('jobs')
-      .select('id, title, customers ( name, company )')
-      .eq('status', 'open')
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('customers')
-      .select('id, name, company')
-      .order('name'),
-    getCalculatorSettings().catch(() => ({ values: DEFAULT_CALCULATOR_SETTINGS, updatedAt: null })),
   ])
 
   const all = quotes ?? []
@@ -48,39 +36,47 @@ export default async function QuotesPage() {
   const rejectedCount = all.filter((q) => q.status === 'rejected').length
 
   return (
-    <div>
+    <div className={styles.shell}>
       {/* ── Page header ── */}
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>
-            {t.quotes.title}
-          </h1>
-          {all.length > 0 ? (
-            <div className={styles.statsStrip}>
-              <div className={`${styles.statCard} ${styles.statAccepted}`}>
-                <span className={styles.statValue}>{acceptedCount}</span>
-                <span className={styles.statLabel}>{t.quotes.status.accepted}</span>
-              </div>
-              <div className={`${styles.statCard} ${styles.statSent}`}>
-                <span className={styles.statValue}>{sentCount}</span>
-                <span className={styles.statLabel}>{t.quotes.status.sent}</span>
-              </div>
-              <div className={`${styles.statCard} ${styles.statDraft}`}>
-                <span className={styles.statValue}>{draftCount}</span>
-                <span className={styles.statLabel}>{t.quotes.status.draft}</span>
-              </div>
-              <div className={`${styles.statCard} ${styles.statRejected}`}>
-                <span className={styles.statValue}>{rejectedCount}</span>
-                <span className={styles.statLabel}>{t.quotes.status.rejected}</span>
-              </div>
-            </div>
-          ) : (
-            <p className={`mt-1 text-sm ${styles.quoteCount}`}>
-              {t.quotes.total(all.length)}
-            </p>
+          <h1 className={styles.pageTitle}>{t.quotes.title}</h1>
+          {all.length === 0 && (
+            <p className={styles.pageSubtitle}>{t.quotes.total(all.length)}</p>
           )}
         </div>
+        <Link
+          href="/quotes/new"
+          className={`btn-primary ${styles.pageHeaderCta}`}
+        >
+          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          {t.quotes.new}
+        </Link>
       </div>
+
+      {/* ── Status stats strip ── */}
+      {all.length > 0 && (
+        <div className={styles.statsStrip} role="group" aria-label={t.quotes.title}>
+          <div className={`${styles.statCard} ${styles.statAccepted}`}>
+            <span className={styles.statValue}>{acceptedCount}</span>
+            <span className={styles.statLabel}>{t.quotes.status.accepted}</span>
+          </div>
+          <div className={`${styles.statCard} ${styles.statSent}`}>
+            <span className={styles.statValue}>{sentCount}</span>
+            <span className={styles.statLabel}>{t.quotes.status.sent}</span>
+          </div>
+          <div className={`${styles.statCard} ${styles.statDraft}`}>
+            <span className={styles.statValue}>{draftCount}</span>
+            <span className={styles.statLabel}>{t.quotes.status.draft}</span>
+          </div>
+          <div className={`${styles.statCard} ${styles.statRejected}`}>
+            <span className={styles.statValue}>{rejectedCount}</span>
+            <span className={styles.statLabel}>{t.quotes.status.rejected}</span>
+          </div>
+        </div>
+      )}
 
       {/* ── Summary strip ── */}
       {all.length > 0 && (
@@ -134,23 +130,6 @@ export default async function QuotesPage() {
           </div>
         </div>
       )}
-
-      {/* ── New quote (collapsible) ── */}
-      <details className={styles.createDetails}>
-        <summary className={styles.createSummary}>
-          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-          </svg>
-          {t.quotes.new}
-        </summary>
-        <div className={styles.createCard}>
-          <NewQuoteForm
-            jobs={jobs ?? []}
-            customers={customers ?? []}
-            calculatorDefaults={calculatorSettings.values}
-          />
-        </div>
-      </details>
 
       {/* ── Empty state ── */}
       {!all.length && (
@@ -240,18 +219,17 @@ export default async function QuotesPage() {
                   </Link>
 
                   {isDraft && (
-                    <form action={deleteAction} className={styles.deleteForm}>
-                      <button
-                        type="submit"
-                        className={styles.deleteBtn}
-                        aria-label={`${t.quotes.delete} ${jobTitle}`}
-                        title={t.quotes.delete}
-                      >
-                        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                    </form>
+                    <DeleteDraftQuoteButton
+                      action={deleteAction}
+                      jobTitle={jobTitle}
+                      labels={{
+                        trigger: t.quotes.delete,
+                        modalTitle: t.quotes.confirmDelete,
+                        modalDesc: t.quotes.confirmDeleteDesc,
+                        cancel: t.quotes.cancelLabel,
+                        confirm: t.quotes.deleteConfirm,
+                      }}
+                    />
                   )}
                 </li>
               )

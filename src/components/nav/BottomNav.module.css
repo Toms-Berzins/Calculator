@@ -9,6 +9,8 @@
 .navItemActive {
   color: var(--text-strong); /* Near-black in light, near-white in dark */
   min-height: 56px;
+  border-top: 3px solid var(--accent);
+  padding-top: calc(0.75rem - 3px);
 }
 
 .navItemInactive {

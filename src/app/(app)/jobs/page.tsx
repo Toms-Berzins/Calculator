@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createJob, updateJob, deleteJob } from '@/lib/actions/jobs'
 import { DeleteJobButton } from '@/components/jobs/DeleteJobButton'
+import { FeedbackBanner } from '@/components/FeedbackBanner/FeedbackBanner'
 import { redirect } from 'next/navigation'
 import { getDict } from '@/i18n/server'
 import styles from './jobs.module.css'
@@ -206,9 +207,13 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
       </div>
 
       {message && (
-        <p className={`${styles.feedback} ${status === 'error' ? styles.feedbackError : styles.feedbackSuccess}`}>
-          {message}
-        </p>
+        <FeedbackBanner
+          message={message}
+          status={status}
+          baseClass={styles.feedback}
+          successClass={styles.feedbackSuccess}
+          errorClass={styles.feedbackError}
+        />
       )}
 
       {/* ── Stats strip ── */}
@@ -319,6 +324,9 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
           </svg>
           <p className={`text-sm font-medium ${styles.emptyText}`}>{t.jobs.noJobs}</p>
+          <Link href="/jobs?new=1" className="mt-4 btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold">
+            {t.jobs.addJob}
+          </Link>
         </div>
       )}
 
@@ -381,12 +389,14 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                   </span>
 
                   <div className={styles.rowActions}>
-                    <Link href={`/quotes/new?jobId=${j.id}`} className={styles.actionLink}>
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                      </svg>
-                      {isOpenJob ? t.jobs.continueJob : t.jobs.createQuote}
-                    </Link>
+                    {isOpenJob && (
+                      <Link href={`/quotes/new?jobId=${j.id}`} className={styles.actionLink}>
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                          <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                        </svg>
+                        {t.jobs.continueJob}
+                      </Link>
+                    )}
                     <DeleteJobButton jobId={j.id} action={handleDeleteJob} labels={deleteLabels} />
                     {/* Edit toggle — panel is a full-width sibling below, shown via CSS :has() */}
                     <details className={styles.editDetails} {...(editJobId === j.id ? { open: true } : {})}>

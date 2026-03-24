@@ -46,7 +46,7 @@ export function AddressAutocomplete({ value, onChange, onSelect, placeholder, cl
         if (res.ok) {
           const data = (await res.json()) as AddressSuggestion[]
           setSuggestions(data)
-          setOpen(data.length > 0)
+          setOpen(true)
           setActiveIndex(-1)
         }
       } finally {
@@ -109,9 +109,21 @@ export function AddressAutocomplete({ value, onChange, onSelect, placeholder, cl
         aria-activedescendant={activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined}
       />
       {loading && (
-        <span aria-live="polite" className={styles.loadingIndicator}>
-          …
-        </span>
+        <>
+          <span aria-hidden="true" className={styles.loadingIndicator}>
+            …
+          </span>
+          <span className="sr-only" role="status" aria-live="polite">
+            Loading address suggestions
+          </span>
+        </>
+      )}
+      {!loading && open && suggestions.length === 0 && value.length >= 2 && (
+        <ul role="listbox" aria-label="Address suggestions" className={styles.dropdown}>
+          <li role="option" aria-selected="false" className={styles.noResults}>
+            No results found
+          </li>
+        </ul>
       )}
       {open && (
         <ul

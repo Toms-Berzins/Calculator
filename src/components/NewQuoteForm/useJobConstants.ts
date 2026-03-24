@@ -9,6 +9,10 @@ import {
   type NewQuoteFormProps,
 } from './NewQuoteForm.types'
 
+type UndoEntry =
+  | { type: 'remove'; key: JobConstantKey; previousValue: number }
+  | { type: 'edit'; key: JobConstantKey; previousValue: number }
+
 interface UseJobConstantsResult {
   jobConstants: Record<JobConstantKey, number>
   constantChips: ConstantChip[]
@@ -46,9 +50,8 @@ export function useJobConstants(
   const [editingConstantKey, setEditingConstantKey] = useState<JobConstantKey | null>(null)
   const [editingConstantValue, setEditingConstantValue] = useState('')
   const [editConstantError, setEditConstantError] = useState('')
-  const [removedConstants, setRemovedConstants] = useState<{ key: JobConstantKey; previousValue: number }[]>([])
-
-  const removedConstantKeys = removedConstants.map((r) => r.key)
+  const [undoStack, setUndoStack] = useState<UndoEntry[]>([])
+  const [removedKeys, setRemovedKeys] = useState<Set<JobConstantKey>>(new Set())
 
   /** The value a constant gets when removed — neutral/zero so it doesn't affect pricing */
   function neutralValue(key: JobConstantKey): number {
@@ -117,6 +120,8 @@ export function useJobConstants(
       return
     }
 
+    const previousValue = jobConstants[editingConstantKey]
+    setUndoStack((prev) => [...prev, { type: 'edit', key: editingConstantKey, previousValue }])
     setJobConstants((prev) => ({
       ...prev,
       [editingConstantKey]: parsedValue,
@@ -133,9 +138,10 @@ export function useJobConstants(
   }
 
   function removeConstant(key: JobConstantKey) {
-    if (removedConstantKeys.includes(key)) return
+    if (removedKeys.has(key)) return
     const previousValue = jobConstants[key]
-    setRemovedConstants((prev) => [...prev, { key, previousValue }])
+    setRemovedKeys((prev) => new Set([...prev, key]))
+    setUndoStack((prev) => [...prev, { type: 'remove', key, previousValue }])
     setJobConstants((prev) => ({ ...prev, [key]: neutralValue(key) }))
     if (editingConstantKey === key) {
       closeConstantEditor()
@@ -143,9 +149,12 @@ export function useJobConstants(
   }
 
   function undoRemoveConstant() {
-    setRemovedConstants((prev) => {
+    setUndoStack((prev) => {
       if (prev.length === 0) return prev
       const last = prev[prev.length - 1]
+      if (last.type === 'remove') {
+        setRemovedKeys((rk) => { const next = new Set(rk); next.delete(last.key); return next })
+      }
       setJobConstants((jc) => ({ ...jc, [last.key]: last.previousValue }))
       return prev.slice(0, -1)
     })
@@ -153,8 +162,8 @@ export function useJobConstants(
 
   return {
     jobConstants,
-    constantChips: constantChips.filter((chip) => !removedConstantKeys.includes(chip.key)),
-    canUndoRemove: removedConstants.length > 0,
+    constantChips: constantChips.filter((chip) => !removedKeys.has(chip.key)),
+    canUndoRemove: undoStack.length > 0,
     editingConstant,
     editingConstantValue,
     editConstantError,

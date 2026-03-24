@@ -100,9 +100,6 @@
   box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
-  /* Blur the page content scrolling underneath */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 .headerMeta {
@@ -356,13 +353,13 @@
 }
 
 .totalAmount {
-  color: #ff5e00;
+  color: var(--price-accent, #e85500);
   font-size: 1rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.05em;
-  background-color: rgba(255, 94, 0, 0.08);
-  border: 1px solid rgba(255, 94, 0, 0.2);
+  background-color: var(--price-accent-bg, rgba(232, 85, 0, 0.08));
+  border: 1px solid var(--price-accent-bd, rgba(232, 85, 0, 0.2));
   border-radius: 4px;
   padding: 0.1rem 0.375rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -370,7 +367,7 @@
 
 @media (prefers-color-scheme: dark) {
   .totalAmount {
-    color: #ff7b30;
+    color: var(--price-accent, #e85500);
   }
 }
 
@@ -455,10 +452,10 @@
 }
 
 .summaryAccent {
-  color: #ff5e00;
+  color: var(--price-accent, #e85500);
   font-weight: 700;
-  background-color: rgba(255, 94, 0, 0.08);
-  border: 1px solid rgba(255, 94, 0, 0.2);
+  background-color: var(--price-accent-bg, rgba(232, 85, 0, 0.08));
+  border: 1px solid var(--price-accent-bd, rgba(232, 85, 0, 0.2));
   border-radius: 4px;
   padding: 0.1rem 0.375rem;
   font-variant-numeric: tabular-nums;
@@ -469,7 +466,7 @@
 
 @media (prefers-color-scheme: dark) {
   .summaryAccent {
-    color: #ff7b30;
+    color: var(--price-accent, #e85500);
   }
 }
 
@@ -529,6 +526,72 @@
   }
 }
 
+/* ── Saved badge ────────────────────────────────────────────────────────── */
+.savedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 2px;
+  border: 2px solid rgba(22, 163, 74, 0.5);
+  background: rgba(22, 163, 74, 0.1);
+  color: #15803d;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (prefers-color-scheme: dark) {
+  .savedBadge {
+    border-color: rgba(74, 222, 128, 0.4);
+    background: rgba(74, 222, 128, 0.08);
+    color: #4ade80;
+  }
+}
+
+/* ── Banner close button ─────────────────────────────────────────────────── */
+.bannerClose {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: inherit;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.bannerClose:hover {
+  opacity: 1;
+}
+
+/* ── Save error banner ───────────────────────────────────────────────────── */
+.saveErrorBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1.5px solid rgba(220, 38, 38, 0.3);
+  border-radius: 2px;
+  color: #b91c1c;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .saveErrorBanner {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: #f87171;
+  }
+}
+
 /* ── Line items table ────────────────────────────────────────────────────── */
 .itemsTable {
   display: grid;
@@ -542,6 +605,54 @@
   .itemsTable {
     grid-template-columns: 1fr 4rem 5.5rem 5rem 2rem;
   }
+}
+
+/* Stacked card layout on small mobile — description input is usable */
+@media (max-width: 479px) {
+  .itemsTable {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .itemsHeader {
+    display: none;
+  }
+
+  .itemsRow {
+    display: grid;
+    grid-template-columns: 4rem 5.5rem 1fr 2rem;
+    grid-template-rows: auto auto;
+    column-gap: 0.25rem;
+    row-gap: 0.375rem;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--border-muted, var(--border));
+  }
+
+  .itemsRow > * {
+    border-bottom: none;
+  }
+
+  /* Description: spans all columns, row 1 */
+  .itemsRow > :nth-child(1) {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  /* Qty: row 2, col 1 */
+  .itemsRow > :nth-child(2) { grid-column: 1; grid-row: 2; }
+
+  /* Unit price: row 2, col 2 */
+  .itemsRow > :nth-child(3) { grid-column: 2; grid-row: 2; }
+
+  /* Subtotal: row 2, col 3 — left-align to fill available space */
+  .itemsRow > :nth-child(4) {
+    grid-column: 3;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+
+  /* Delete: row 2, col 4 */
+  .itemsRow > :nth-child(5) { grid-column: 4; grid-row: 2; }
 }
 
 .itemsHeader {

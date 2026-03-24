@@ -13,6 +13,7 @@ export function BottomNav() {
   return (
     <nav
       className={`glass fixed bottom-0 left-0 right-0 z-50 flex md:hidden ${styles.nav}`}
+      aria-label={t.nav.menu ?? 'Main navigation'}
     >
       {navLinks.map((l) => {
         const active = pathname.startsWith(l.href)
@@ -20,7 +21,7 @@ export function BottomNav() {
           <Link
             key={l.href}
             href={l.href}
-            className={`flex flex-1 flex-col items-center justify-center gap-1 pb-safe py-3 ${active ? styles.navItemActive : styles.navItemInactive}`}
+            className={`flex flex-1 flex-col items-center justify-center gap-1 pb-safe-add pt-3 ${active ? styles.navItemActive : styles.navItemInactive}`}
           >
             <span
               className={`flex items-center justify-center p-1 ${active ? styles.navIconActive : styles.navIconInactive}`}
@@ -28,7 +29,7 @@ export function BottomNav() {
               {l.icon}
             </span>
             <span
-              className={`text-[11px] font-medium leading-none ${active ? styles.navLabelActive : styles.navLabelInactive}`}
+              className={`text-[12px] font-medium leading-none ${active ? styles.navLabelActive : styles.navLabelInactive}`}
             >
               {t.nav[l.labelKey]}
             </span>

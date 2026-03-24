@@ -61,6 +61,13 @@
   border-top: none; /* handled by summary border-bottom */
 }
 
+/* ── Page shell ──────────────────────────────────────────────────────────── */
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 /* ── Page header ──────────────────────────────────────────────────────────── */
 .pageTitle {
   color: var(--text-strong);
@@ -72,14 +79,31 @@
   line-height: 1.15;
 }
 
+.pageSubtitle {
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0.375rem;
+}
+
 .pageHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: 1.5rem;
-  padding-bottom: 0.875rem;
+  padding-bottom: 1rem;
   border-bottom: 2px solid var(--border);
+}
+
+.pageHeaderCta {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  gap: 0.375rem;
 }
 
 /* ── Page stats strip — replaces inline meta chips ── */
@@ -87,7 +111,6 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
-  margin-top: 0.75rem;
 }
 
 @media (min-width: 640px) {
@@ -112,9 +135,9 @@
   transition: box-shadow 100ms ease, transform 100ms ease;
 }
 
+/* Stat cards are display-only — no interactive hover lift to avoid false affordance */
 .statCard:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 5px 5px 0 var(--nb-ink);
+  opacity: 0.85;
 }
 
 .statAccepted { --stat-col: var(--status-accepted-text); }
@@ -133,7 +156,7 @@
 }
 
 .statLabel {
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -145,17 +168,9 @@
 /* Dark mode: accent shadow per card type */
 @media (prefers-color-scheme: dark) {
   .statAccepted { box-shadow: 3px 3px 0 var(--status-accepted-text); }
-  .statAccepted:hover { box-shadow: 5px 5px 0 var(--status-accepted-text); }
   .statSent     { box-shadow: 3px 3px 0 var(--status-sent-text); }
-  .statSent:hover { box-shadow: 5px 5px 0 var(--status-sent-text); }
   .statDraft    { box-shadow: 3px 3px 0 var(--status-draft-text); }
-  .statDraft:hover { box-shadow: 5px 5px 0 var(--status-draft-text); }
   .statRejected { box-shadow: 3px 3px 0 var(--status-rejected-text); }
-  .statRejected:hover { box-shadow: 5px 5px 0 var(--status-rejected-text); }
-}
-
-.quoteCount {
-  color: var(--text-muted);
 }
 
 /* ── Summary strip ──────────────────────────────────────────── */
@@ -245,7 +260,7 @@
 }
 
 .summaryLabel {
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -287,7 +302,7 @@
 
 .summaryDescriptionSub {
   margin-top: 0.2rem;
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   line-height: 1.35;
   color: var(--text-faint);
@@ -575,5 +590,81 @@
 .deleteBtn:active {
   transform: translate(2px, 2px);
   box-shadow: 0 0 0 var(--status-rejected-text);
+}
+
+/* Wider text button used inside the confirmation modal */
+.deleteBtnConfirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 2px;
+  border: 1.5px solid var(--status-rejected-text);
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--status-rejected-text);
+  transition: all 120ms cubic-bezier(0.25, 0, 0.6, 1);
+  cursor: pointer;
+}
+
+.deleteBtnConfirm:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--status-rejected-text);
+}
+
+.deleteBtnConfirm:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--status-rejected-text);
+}
+
+/* ── Delete confirmation modal ──────────────────────────────────────────── */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--text-strong) 28%, transparent);
+}
+
+.modalCard {
+  width: 100%;
+  max-width: 24rem;
+  border-radius: 2px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-hover);
+  padding: 1.25rem;
+}
+
+.modalTitle {
+  color: var(--text-strong);
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.modalText {
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.modalForm {
+  margin-top: 0.75rem;
+}
+
+.modalActions {
+  margin-top: 0.875rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 

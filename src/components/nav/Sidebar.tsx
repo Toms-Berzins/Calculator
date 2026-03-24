@@ -18,6 +18,7 @@ export function Sidebar() {
   const [desktopCollapsed, setDesktopCollapsed] = useState(false)
 
   async function handleSignOut() {
+    if (!window.confirm(t.nav.signOutConfirm ?? 'Sign out of QuoteCalc?')) return
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
@@ -59,8 +60,8 @@ export function Sidebar() {
       <div className={`${styles.divider} ${styles.dividerInset}`} />
 
       {/* Nav links */}
-      <nav className={styles.navSection}>
-        <span className={styles.navSectionLabel} aria-hidden="true">Menu</span>
+      <nav className={styles.navSection} aria-label={t.nav.menu ?? 'Main navigation'}>
+        <span className={styles.navSectionLabel}>{t.nav.menu ?? 'Menu'}</span>
         {navLinks.map((l) => {
           const active = pathname.startsWith(l.href)
           return (

@@ -101,7 +101,7 @@ export default async function DashboardPage() {
     {
       label: t.dashboard.openJobs,
       count: openJobsCount,
-      href: '/jobs',
+      href: '/jobs?jobStatus=open',
       ariaLabel: t.dashboard.viewAllJobs,
       cardClass: styles.statJobs,
       icon: (
