@@ -1,8 +1,10 @@
+
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { getDict } from '@/i18n/server'
 import { formatCurrency } from '@/lib/utils/format'
 import styles from './dashboard.module.css'
+import MaterialInventoryTableClient from '@/components/MaterialInventoryTable/MaterialInventoryTableClient';
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient()
@@ -186,7 +188,7 @@ export default async function DashboardPage() {
             />
 
             <div className="relative">
-              <div className={`mb-3 ${styles.statIcon}`}>
+              <div className={`mb-3 ${styles.statIcon}`}> 
                 {s.icon}
               </div>
               <p className={`text-sm font-medium ${styles.statLabel}`}>
@@ -247,6 +249,11 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Material Inventory Table */}
+      <section style={{ marginTop: 32 }}>
+        <MaterialInventoryTableClient />
+      </section>
     </div>
   )
 }

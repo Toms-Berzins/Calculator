@@ -6,6 +6,7 @@ export const en = {
     customers: 'Customers',
     settings: 'Settings',
     signOut: 'Sign out',
+    stock: 'Stock / Materials',
     signOutConfirm: 'Sign out of QuoteCalc?',
     menu: 'Menu',
     openMenu: 'Open menu',
@@ -250,6 +251,10 @@ export const en = {
     removeItem: 'Remove item',
     remove: 'Remove',
     addItem: 'Add item',
+    type: 'Type',
+    color: 'Color',
+    unit: 'Unit',
+    reorderPoint: 'Reorder Point',
   },
   newQuote: {
     title: 'New Quote',

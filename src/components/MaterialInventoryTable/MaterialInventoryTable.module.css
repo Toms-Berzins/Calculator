@@ -1,0 +1,59 @@
+.materialInventoryTable {
+  border: 2px solid var(--nb-ink);
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--nb-ink);
+  background: var(--bg-surface, #fff);
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.materialInventoryTable h2 {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.materialInventoryTable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.materialInventoryTable th,
+.materialInventoryTable td {
+  border: 1.5px solid var(--nb-ink);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.materialInventoryTable tr.lowStock {
+  background: var(--warning, #ffeaea);
+}
+
+.materialInventoryTable button {
+  border: 1.5px solid var(--nb-ink);
+  background: var(--bg-muted, #f5f5f5);
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 2px 10px;
+  margin-right: 4px;
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--nb-ink);
+  cursor: pointer;
+  transition: background 0.1s, box-shadow 0.1s, transform 0.1s;
+}
+
+.materialInventoryTable button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+}
+
+.materialInventoryTable button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.materialInventoryTable button:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

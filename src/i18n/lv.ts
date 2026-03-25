@@ -8,6 +8,7 @@ export const lv: Translations = {
     customers: 'Klienti',
     settings: 'Iestatījumi',
     signOut: 'Izrakstīties',
+    stock: 'Materiāli',
     signOutConfirm: 'Izrakstīties no QuoteCalc?',
     menu: 'Izvēlne',
     openMenu: 'Atvērt izvēlni',
@@ -252,6 +253,10 @@ export const lv: Translations = {
     removeItem: 'Noņemt vienumu',
     remove: 'Noņemt',
     addItem: 'Pievienot',
+    type: 'Tips',
+    color: 'Krāsa',
+    unit: 'Vienība',
+    reorderPoint: 'Pārkārtošanas slieksnis',
   },
   newQuote: {
     title: 'Jauns piedāvājums',

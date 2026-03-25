@@ -209,3 +209,47 @@ create policy "employees_pdf_update"
 -- Enable realtime on quotes table (Dashboard → Database → Replication)
 -- Or via SQL:
 alter publication supabase_realtime add table public.quotes;
+
+
+-- ── Materials Inventory ─────────────────────────────────────────
+create table if not exists public.materials (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  type text,
+  color text,
+  unit text not null default 'kg',
+  reorder_point numeric(10, 3) not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.material_stock_movements (
+  id uuid primary key default gen_random_uuid(),
+  material_id uuid not null references public.materials(id) on delete cascade,
+  qty numeric(10, 3) not null,
+  movement_type text not null check (movement_type in ('add', 'remove')),
+  reason text,
+  job_id uuid references public.jobs(id) on delete set null,
+  user_id uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+-- Triggers for updated_at
+create trigger materials_updated_at
+  before update on public.materials
+  for each row execute procedure public.set_updated_at();
+
+-- RLS for materials
+alter table public.materials enable row level security;
+create policy "employees_all_materials"
+  on public.materials for all
+  to authenticated
+  using (true)
+  with check (true);
+
+alter table public.material_stock_movements enable row level security;
+create policy "employees_all_material_stock_movements"
+  on public.material_stock_movements for all
+  to authenticated
+  using (true)
+  with check (true);
