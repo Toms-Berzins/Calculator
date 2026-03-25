@@ -9,6 +9,87 @@ export type JobStatus = 'open' | 'won' | 'lost' | 'archived'
 export interface Database {
   public: {
     Tables: {
+      materials: {
+        Row: {
+          id: string
+          name: string
+          type: string | null
+          color: string | null
+          unit: string
+          reorder_point: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          type?: string | null
+          color?: string | null
+          unit?: string
+          reorder_point?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          type?: string | null
+          color?: string | null
+          unit?: string
+          reorder_point?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      material_stock_movements: {
+        Row: {
+          id: string
+          material_id: string
+          qty: number
+          movement_type: 'add' | 'remove'
+          reason: string | null
+          job_id: string | null
+          user_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          material_id: string
+          qty: number
+          movement_type: 'add' | 'remove'
+          reason?: string | null
+          job_id?: string | null
+          user_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          material_id?: string
+          qty?: number
+          movement_type?: 'add' | 'remove'
+          reason?: string | null
+          job_id?: string | null
+          user_id?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'material_stock_movements_material_id_fkey',
+            columns: ['material_id'],
+            isOneToOne: false,
+            referencedRelation: 'materials',
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'material_stock_movements_job_id_fkey',
+            columns: ['job_id'],
+            isOneToOne: false,
+            referencedRelation: 'jobs',
+            referencedColumns: ['id']
+          }
+        ]
+      }
       customers: {
         Row: {
           id: string

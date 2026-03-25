@@ -61,6 +61,16 @@ export const navLinks: NavLink[] = [
     ),
   },
   {
+    href: '/Stock',
+    labelKey: 'stock',
+    icon: (
+      <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+        <path d="M4 3a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm0 2h12v12H4V5zm2 2v2h8V7H6zm0 4v2h8v-2H6z" />
+      </svg>
+    ),
+    // label removed, use i18n
+  },
+  {
     href: '/settings',
     labelKey: 'settings',
     icon: (
