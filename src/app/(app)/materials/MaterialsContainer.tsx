@@ -46,8 +46,9 @@ function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f:
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formGrid}>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.name} *</label>
+          <label htmlFor="create-name" className={styles.fieldLabel}>{dict.fields.name} *</label>
           <input
+            id="create-name"
             name="name"
             type="text"
             required
@@ -56,8 +57,8 @@ function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f:
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.type} *</label>
-          <select name="material_type" required className={`input-field ${styles.formInput}`}>
+          <label htmlFor="create-type" className={styles.fieldLabel}>{dict.fields.type} *</label>
+          <select id="create-type" name="material_type" required className={`input-field ${styles.formInput}`}>
             {MATERIAL_TYPES.map((t) => (
               <option key={t} value={t}>
                 {dict.types[t]}
@@ -66,8 +67,9 @@ function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f:
           </select>
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.brand}</label>
+          <label htmlFor="create-brand" className={styles.fieldLabel}>{dict.fields.brand}</label>
           <input
+            id="create-brand"
             name="brand"
             type="text"
             placeholder={dict.fields.brandPlaceholder}
@@ -75,8 +77,9 @@ function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f:
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.color}</label>
+          <label htmlFor="create-color" className={styles.fieldLabel}>{dict.fields.color}</label>
           <input
+            id="create-color"
             name="color"
             type="text"
             placeholder={dict.fields.colorPlaceholder}
@@ -84,8 +87,9 @@ function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f:
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.pricePerKg}</label>
+          <label htmlFor="create-price" className={styles.fieldLabel}>{dict.fields.pricePerKg}</label>
           <input
+            id="create-price"
             name="price_per_kg"
             type="number"
             min="0"
@@ -95,8 +99,9 @@ function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f:
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.stockGrams}</label>
+          <label htmlFor="create-stock" className={styles.fieldLabel}>{dict.fields.stockGrams}</label>
           <input
+            id="create-stock"
             name="stock_grams"
             type="number"
             min="0"
@@ -149,8 +154,9 @@ function EditForm({
       <input type="hidden" name="id" value={material.id} />
       <div className={styles.formGrid}>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.name} *</label>
+          <label htmlFor={`edit-name-${material.id}`} className={styles.fieldLabel}>{dict.fields.name} *</label>
           <input
+            id={`edit-name-${material.id}`}
             name="name"
             type="text"
             required
@@ -159,8 +165,9 @@ function EditForm({
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.type} *</label>
+          <label htmlFor={`edit-type-${material.id}`} className={styles.fieldLabel}>{dict.fields.type} *</label>
           <select
+            id={`edit-type-${material.id}`}
             name="material_type"
             required
             defaultValue={material.material_type}
@@ -174,8 +181,9 @@ function EditForm({
           </select>
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.brand}</label>
+          <label htmlFor={`edit-brand-${material.id}`} className={styles.fieldLabel}>{dict.fields.brand}</label>
           <input
+            id={`edit-brand-${material.id}`}
             name="brand"
             type="text"
             defaultValue={material.brand ?? ''}
@@ -184,8 +192,9 @@ function EditForm({
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.color}</label>
+          <label htmlFor={`edit-color-${material.id}`} className={styles.fieldLabel}>{dict.fields.color}</label>
           <input
+            id={`edit-color-${material.id}`}
             name="color"
             type="text"
             defaultValue={material.color ?? ''}
@@ -194,8 +203,9 @@ function EditForm({
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.pricePerKg}</label>
+          <label htmlFor={`edit-price-${material.id}`} className={styles.fieldLabel}>{dict.fields.pricePerKg}</label>
           <input
+            id={`edit-price-${material.id}`}
             name="price_per_kg"
             type="number"
             min="0"
@@ -205,8 +215,9 @@ function EditForm({
           />
         </div>
         <div className={styles.formField}>
-          <label className={styles.fieldLabel}>{dict.fields.stockGrams}</label>
+          <label htmlFor={`edit-stock-${material.id}`} className={styles.fieldLabel}>{dict.fields.stockGrams}</label>
           <input
+            id={`edit-stock-${material.id}`}
             name="stock_grams"
             type="number"
             min="0"
