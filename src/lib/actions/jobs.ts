@@ -139,10 +139,13 @@ export async function createCustomer(data: {
   vat_number: string
 }) {
   const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
 
   const { data: customer, error } = await supabase
     .from('customers')
     .insert({
+      created_by: user.id,
       name: data.name.trim(),
       company: toNullable(data.company),
       email: toNullable(data.email),

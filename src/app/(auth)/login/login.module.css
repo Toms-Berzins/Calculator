@@ -154,6 +154,25 @@
   border-radius: 0;
 }
 
+.successMessage {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--status-accepted-bg);
+  border: 1.5px solid var(--status-accepted-text);
+  box-shadow: 2px 2px 0 var(--status-accepted-text);
+  color: var(--status-accepted-text);
+  border-radius: 0;
+}
+
+.backLink {
+  font-size: 0.75rem;
+  text-align: center;
+}
+
 /* Matches .btn-primary from globals.css exactly */
 .submitButton {
   position: relative;

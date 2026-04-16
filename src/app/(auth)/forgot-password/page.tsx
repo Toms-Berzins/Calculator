@@ -1,7 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
+import { isEuCaptchaDone } from '@myrasec/eu-captcha'
+
+const EuCaptcha = dynamic(
+  () => import('@myrasec/eu-captcha').then((m) => m.EuCaptcha),
+  { ssr: false }
+)
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useT } from '@/i18n/context'
 import styles from '../login/login.module.css'
@@ -11,13 +18,33 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const captchaToken = useRef<string | null>(null)
   const supabase = createBrowserSupabaseClient()
   const t = useT()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
     setError(null)
+
+    if (!isEuCaptchaDone() || !captchaToken.current) {
+      setError('Please complete the CAPTCHA.')
+      return
+    }
+
+    setLoading(true)
+
+    const verifyRes = await fetch('/api/captcha/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: captchaToken.current }),
+    })
+
+    if (!verifyRes.ok) {
+      setError('CAPTCHA verification failed. Please try again.')
+      setLoading(false)
+      captchaToken.current = null
+      return
+    }
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -26,6 +53,7 @@ export default function ForgotPasswordPage() {
     if (error) {
       setError(error.message)
       setLoading(false)
+      captchaToken.current = null
       return
     }
 
@@ -44,12 +72,7 @@ export default function ForgotPasswordPage() {
 
       {sent ? (
         <div>
-          <p
-            role="status"
-            aria-live="polite"
-            className={styles.errorMessage}
-            style={{ background: 'var(--status-accepted-bg)', borderColor: 'var(--status-accepted-text)', color: 'var(--status-accepted-text)', boxShadow: '2px 2px 0 var(--status-accepted-text)' }}
-          >
+          <p role="status" aria-live="polite" className={styles.successMessage}>
             Check your email — a reset link has been sent to {email}.
           </p>
           <Link href="/login" className="btn-primary mt-4 block w-full py-3 text-center text-sm">
@@ -74,6 +97,13 @@ export default function ForgotPasswordPage() {
             />
           </div>
 
+          <EuCaptcha
+            sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY!}
+            onComplete={(token: string) => { captchaToken.current = token }}
+            onExpired={() => { captchaToken.current = null }}
+            onError={() => { captchaToken.current = null }}
+          />
+
           {error && (
             <p className={styles.errorMessage} role="alert" aria-live="assertive">
               {error}
@@ -88,7 +118,7 @@ export default function ForgotPasswordPage() {
             {loading ? 'Sending…' : 'Send reset link'}
           </button>
 
-          <p className="text-center" style={{ fontSize: '0.75rem' }}>
+          <p className={styles.backLink}>
             <Link href="/login" className={styles.forgotLink}>
               Back to sign in
             </Link>

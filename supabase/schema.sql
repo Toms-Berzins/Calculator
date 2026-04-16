@@ -9,6 +9,7 @@ create extension if not exists "pgcrypto";
 -- ── Customers ────────────────────────────────────────────────
 create table if not exists public.customers (
   id         uuid primary key default gen_random_uuid(),
+  created_by uuid not null references auth.users(id),
   name       text not null,
   company    text,
   email      text,
@@ -113,7 +114,10 @@ create table if not exists public.quotes (
 
 -- Auto-update updated_at
 create or replace function public.set_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql
+security invoker
+set search_path = ''
+as $$
 begin
   new.updated_at = now();
   return new;
@@ -150,11 +154,11 @@ alter table public.quotes enable row level security;
 alter table public.quote_items enable row level security;
 
 -- Customers
-create policy "employees_all_customers"
+create policy "users_own_customers"
   on public.customers for all
   to authenticated
-  using (true)
-  with check (true);
+  using ((select auth.uid()) = created_by)
+  with check ((select auth.uid()) = created_by);
 
 -- Jobs
 create policy "employees_all_jobs"
@@ -167,8 +171,8 @@ create policy "employees_all_jobs"
 create policy "users_own_calculator_settings"
   on public.calculator_settings for all
   to authenticated
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
 
 -- Quotes
 create policy "employees_all_quotes"
@@ -177,33 +181,60 @@ create policy "employees_all_quotes"
   using (true)
   with check (true);
 
--- Quote items
-create policy "employees_all_quote_items"
+-- Quote items (scoped via parent quote ownership)
+create policy "users_own_quote_items"
   on public.quote_items for all
   to authenticated
-  using (true)
-  with check (true);
+  using (
+    exists (
+      select 1 from public.quotes
+      where quotes.id = quote_items.quote_id
+        and quotes.created_by = (select auth.uid())
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.quotes
+      where quotes.id = quote_items.quote_id
+        and quotes.created_by = (select auth.uid())
+    )
+  );
 
 -- ── Storage bucket for PDFs ───────────────────────────────────
--- Run in Supabase Dashboard → Storage → New bucket: "pdfs" (public)
--- Or via API:
--- insert into storage.buckets (id, name, public) values ('pdfs', 'pdfs', true);
+-- Manages bucket creation and storage policies via a helper function.
+-- Call: select public.ensure_pdf_storage_setup(); after running this schema.
 
--- Allow authenticated users to upload/read PDFs
-create policy "employees_pdf_upload"
-  on storage.objects for insert
-  to authenticated
-  with check (bucket_id = 'pdfs');
+create or replace function public.ensure_pdf_storage_setup(p_bucket text default 'pdfs')
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into storage.buckets (id, name, public)
+  values (p_bucket, p_bucket, true)
+  on conflict (id) do update
+    set name = excluded.name,
+        public = excluded.public;
 
-create policy "employees_pdf_read"
-  on storage.objects for select
-  to authenticated
-  using (bucket_id = 'pdfs');
+  execute 'drop policy if exists "employees_pdf_upload" on storage.objects';
+  execute 'drop policy if exists "employees_pdf_read" on storage.objects';
+  execute 'drop policy if exists "employees_pdf_update" on storage.objects';
 
-create policy "employees_pdf_update"
-  on storage.objects for update
-  to authenticated
-  using (bucket_id = 'pdfs');
+  execute format(
+    'create policy "employees_pdf_upload" on storage.objects for insert to authenticated with check (bucket_id = %L)',
+    p_bucket
+  );
+  execute format(
+    'create policy "employees_pdf_read" on storage.objects for select to authenticated using (bucket_id = %L)',
+    p_bucket
+  );
+  execute format(
+    'create policy "employees_pdf_update" on storage.objects for update to authenticated using (bucket_id = %L)',
+    p_bucket
+  );
+end;
+$$;
 
 -- ── Materials (filament stock) ───────────────────────────────
 create table if not exists public.materials (
@@ -234,8 +265,8 @@ alter table public.materials enable row level security;
 create policy "users_own_materials"
   on public.materials for all
   to authenticated
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
 
 -- ── Realtime ──────────────────────────────────────────────────
 -- Enable realtime on quotes table (Dashboard → Database → Replication)
