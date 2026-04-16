@@ -12,5 +12,6 @@ export const config = {
      * that don't need auth.
      */
     '/((?!_next/static|_next/image|favicon.ico|icons/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/materials', // Explicitly include the materials route
   ],
 }

@@ -1,5 +1,20 @@
 {
   "servers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "codacy": {
+      "command": "npx",
+      "args": ["-y", "@codacy/codacy-mcp@latest"],
+      "env": {
+        "CODACY_ACCOUNT_TOKEN": "${input:codacyToken}"
+      }
+    },
     "exa": {
       "command": "npx",
       "args": ["-y", "exa-mcp-server"],
@@ -13,7 +28,21 @@
       "env": {
         "FIRECRAWL_API_KEY": "fc-fe8e90e45e444bfd9db1568b20fbd33f"
       }
+    },
+    "stitch": {
+      "type": "http",
+      "url": "https://stitch.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "AQ.Ab8RN6LOJOIDoIO2QimfqX-wN7HBT4g02PSE4vstsVZ6wrjoLg"
+      }
     }
   },
-  "inputs": []
+  "inputs": [
+    {
+      "id": "codacyToken",
+      "type": "promptString",
+      "description": "Codacy account API token",
+      "password": true
+    }
+  ]
 }

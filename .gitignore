@@ -50,6 +50,9 @@ public/workbox-*.js.map
 # temp files
 tmpclaude-*
 
+# Claude Code local session data
+.claude/
+
 # Playwright
 /playwright-report
 /playwright-report.zip

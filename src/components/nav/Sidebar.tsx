@@ -101,6 +101,11 @@ export function Sidebar() {
           {t.nav.signOut}
         </button>
       </div>
+
+      {/* Materials */}
+      <Link href="/materials" className={pathname === '/materials' ? styles.active : ''}>
+        {t.nav.materials}
+      </Link>
     </>
   )
 

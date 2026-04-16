@@ -38,8 +38,12 @@
 .statCount {
   color: var(--text-strong);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.875rem;
   font-weight: 900;
   letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.25rem;
 }
 
 /* Accent-coloured chevron, opacity managed via Tailwind on the element */
@@ -210,11 +214,16 @@
   gap: 0.5rem;
   padding: 0.625rem 0.875rem;
   margin-bottom: 1rem;
-  border-radius: 0.75rem;
+  border-radius: 2px;
   background: var(--status-rejected-bg);
   color: var(--status-rejected-text);
+  border: 1.5px solid var(--status-rejected-text);
+  box-shadow: 3px 3px 0 var(--status-rejected-text);
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .errorHint {

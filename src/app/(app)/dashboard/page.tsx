@@ -177,7 +177,7 @@ export default async function DashboardPage() {
             key={s.label}
             href={s.href}
             aria-label={s.ariaLabel}
-            className={`card-interactive group relative ${styles.statCard} ${s.cardClass}`}
+            className={`${styles.statCard} ${s.cardClass}`}
           >
             {/* Subtle ambient blob */}
             <div
@@ -189,12 +189,10 @@ export default async function DashboardPage() {
               <div className={`mb-3 ${styles.statIcon}`}>
                 {s.icon}
               </div>
-              <p className={`text-sm font-medium ${styles.statLabel}`}>
+              <p className={styles.statLabel}>
                 {s.label}
               </p>
-              <p
-                className={`mt-1 text-3xl font-bold tabular-nums ${styles.statCount}`}
-              >
+              <p className={styles.statCount}>
                 {s.count}
               </p>
               {'detail' in s && s.detail}
@@ -225,7 +223,7 @@ export default async function DashboardPage() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             href="/quotes/new"
-            className="btn-primary flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold"
+            className="btn-primary flex items-center gap-2 px-6 py-3"
           >
             <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
               <path
@@ -238,7 +236,7 @@ export default async function DashboardPage() {
           </Link>
           <Link
             href="/customers"
-            className="btn-ghost flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold"
+            className="btn-ghost flex items-center gap-2 px-6 py-3"
           >
             <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
               <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />

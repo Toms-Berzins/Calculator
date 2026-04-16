@@ -5,6 +5,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 
 export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
 export type JobStatus = 'open' | 'won' | 'lost' | 'archived'
+export type MaterialType = 'PLA' | 'PETG' | 'ABS' | 'TPU' | 'ASA' | 'Nylon' | 'Other'
 
 export interface Database {
   public: {
@@ -237,12 +238,55 @@ export interface Database {
           },
         ]
       }
+      materials: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          material_type: MaterialType
+          brand: string | null
+          color: string | null
+          price_per_kg: number
+          stock_grams: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          material_type: MaterialType
+          brand?: string | null
+          color?: string | null
+          price_per_kg?: number
+          stock_grams?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          material_type?: MaterialType
+          brand?: string | null
+          color?: string | null
+          price_per_kg?: number
+          stock_grams?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
     Enums: {
       job_status: JobStatus
       quote_status: QuoteStatus
+      material_type: MaterialType
     }
     CompositeTypes: Record<string, never>
   }
@@ -254,6 +298,7 @@ export type Job = Database['public']['Tables']['jobs']['Row']
 export type CalculatorSettings = Database['public']['Tables']['calculator_settings']['Row']
 export type Quote = Database['public']['Tables']['quotes']['Row']
 export type QuoteItem = Database['public']['Tables']['quote_items']['Row']
+export type Material = Database['public']['Tables']['materials']['Row']
 
 // Quote with nested relations
 export type QuoteWithRelations = Quote & {
