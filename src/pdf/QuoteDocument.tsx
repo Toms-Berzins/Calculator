@@ -262,7 +262,7 @@ export function QuoteDocument({ quote, locale, company }: Props) {
   const statusMeta  = STATUS_META[quote.status]
   const refNumber   = quote.id.slice(0, 8).toUpperCase()
   const vatAmount   = Math.round(quote.subtotal * (quote.tax_rate / 100) * 100) / 100
-  const sortedItems = [...quote.quote_items].sort((a, b) => a.sort_order - b.sort_order)
+  const sortedItems = [...(quote.quote_items ?? [])].sort((a, b) => a.sort_order - b.sort_order)
 
   return (
     <Document title={`${t.quoteTitle} #${refNumber}`} author="QuoteCalc" subject={t.quoteTitle}>

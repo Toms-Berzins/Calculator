@@ -31,13 +31,20 @@ export async function generateAndStorePDF(quoteId: string): Promise<string> {
 
   const locale = await getLocale()
   const company = await getCompanyInfo()
-  const buffer = await renderToBuffer(
-    React.createElement(QuoteDocument, {
-      quote: quote as QuoteWithRelations,
-      locale,
-      company,
-    }) as React.ReactElement<DocumentProps>,
-  )
+
+  let buffer: Buffer
+  try {
+    buffer = await renderToBuffer(
+      React.createElement(QuoteDocument, {
+        quote: quote as QuoteWithRelations,
+        locale,
+        company,
+      }) as React.ReactElement<DocumentProps>,
+    )
+  } catch (renderError) {
+    console.error('[pdf] renderToBuffer failed:', renderError)
+    throw renderError
+  }
 
   const bucketName = getPdfBucketName()
   const fileName = `quotes/${quoteId}.pdf`

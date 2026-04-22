@@ -69,6 +69,8 @@ export const en = {
       accepted: 'Booked · won',
       rejected: 'Declined by client',
     },
+    filter: 'Filter',
+    filterAll: 'All statuses',
   },
   jobs: {
     title: 'Jobs',
@@ -238,6 +240,8 @@ export const en = {
     saved: 'Saved',
     saveError: 'Failed to save',
     editJob: 'Edit job',
+    pdfStale: 'Save first to regenerate',
+    statusStepperLabel: 'Quote status',
   },
   table: {
     description: 'Description',
@@ -307,6 +311,7 @@ export const en = {
     calculatedUnitPrice: 'Calculated unit price',
     calculatedLineTotal: 'Calculated line total',
     calculatedLineNote: 'This calculated line is included automatically when you submit the quote.',
+    pricingConstants: 'Pricing constants',
     constantLabels: {
       material_price_per_kg: 'Material/kg',
       material_overhead_percent: 'Mat. overhead',
@@ -382,7 +387,7 @@ export const en = {
     },
     create: {
       summaryLabel: 'Add New Material',
-      namePlaceholder: 'e.g. eSUN PLA+ White',
+      namePlaceholder: 'e.g. PLA+ White',
       submitBtn: 'Add Material',
     },
     fields: {

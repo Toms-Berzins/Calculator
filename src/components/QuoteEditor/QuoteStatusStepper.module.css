@@ -1,0 +1,116 @@
+/* ── QuoteStatusStepper — visual step pills ── */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+/* Each step is a pill button */
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border: 1.5px solid var(--border);
+  border-left-width: 0;
+  background: var(--bg-muted);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 100ms ease, color 100ms ease, box-shadow 100ms ease;
+}
+
+.step:first-child {
+  border-left-width: 1.5px;
+  border-radius: 2px 0 0 2px;
+}
+
+.step:last-child {
+  border-radius: 0 2px 2px 0;
+}
+
+.step:hover:not(.stepActive) {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+/* Active step — highlighted with status color */
+.stepActive {
+  background: var(--bg-surface);
+  color: var(--step-col, var(--text-strong));
+  border-color: var(--step-col, var(--border));
+  box-shadow: 2px 2px 0 var(--step-col, var(--border));
+  position: relative;
+  z-index: 1;
+  cursor: default;
+}
+
+/* Done step — muted, completed */
+.stepDone {
+  color: var(--text-muted);
+  background: var(--bg-muted);
+}
+
+/* Status color tokens */
+.stepDraft    { --step-col: var(--status-draft-text); }
+.stepSent     { --step-col: var(--status-sent-text); }
+.stepAccepted { --step-col: var(--status-accepted-text); }
+.stepRejected { --step-col: var(--status-rejected-text); }
+
+/* Status dot inside steps */
+.stepDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.stepActive .stepDot {
+  opacity: 1;
+}
+
+/* Branch group: ACCEPTED and REJECTED stacked vertically */
+.branchGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.branchGroup .step {
+  border-radius: 0;
+}
+
+.branchGroup .step:first-child {
+  border-radius: 0 2px 0 0;
+}
+
+.branchGroup .step:last-child {
+  border-radius: 0 0 2px 0;
+  border-top-width: 0;
+}
+
+/* Connector arrow between main steps and the branch */
+.connector {
+  width: 0.5rem;
+  height: 1.5px;
+  background: var(--border);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stepActive {
+    box-shadow: 2px 2px 0 var(--step-col, var(--border));
+  }
+}

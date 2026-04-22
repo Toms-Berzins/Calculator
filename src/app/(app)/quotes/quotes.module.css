@@ -1,3 +1,111 @@
+/* ── Status filter (collapsible) ─────────────────────────────────────────── */
+.filterDetails {
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.filterSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  list-style: none;
+  background: linear-gradient(to bottom, var(--bg-surface), var(--bg-muted));
+  border-bottom: 1.5px solid transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background 120ms ease;
+}
+
+.filterDetails[open] > .filterSummary {
+  border-bottom-color: var(--border);
+  background: var(--bg-muted);
+}
+
+.filterSummary:hover {
+  background: var(--bg-muted);
+}
+
+.filterSummary::-webkit-details-marker {
+  display: none;
+}
+
+.filterSummary::marker {
+  content: '';
+}
+
+.filterBody {
+  padding: 0.625rem 0.875rem;
+}
+
+.filterSelectWrap {
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.filterSelectWrap:focus-within {
+  box-shadow: var(--shadow-card);
+}
+
+.filterSelect {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 2.25rem 0.625rem 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background:
+    url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235e5e5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 0.75rem center / 1rem,
+    linear-gradient(to bottom, var(--bg-surface), var(--bg-muted));
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  color-scheme: light;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background 120ms ease;
+}
+
+.filterSelect:hover {
+  background:
+    url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235e5e5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 0.75rem center / 1rem,
+    var(--bg-muted);
+}
+
+.filterSelect:focus,
+.filterSelect:focus-visible {
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .filterSelect {
+    background-image:
+      url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"),
+      linear-gradient(to bottom, var(--bg-surface), var(--bg-muted));
+  }
+}
+
 /* ── Create quote (collapsible) ─────────────────────────────────────────── */
 .createDetails {
   border: 1.5px solid var(--border);
@@ -106,210 +214,84 @@
   gap: 0.375rem;
 }
 
-/* ── Page stats strip — replaces inline meta chips ── */
-.statsStrip {
+/* ── Pipeline bar — compact single-row status overview ── */
+.pipelineBar {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
 }
 
 @media (min-width: 640px) {
-  .statsStrip {
+  .pipelineBar {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-.statCard {
-  --stat-col: var(--text-muted);
+.pipelineSegment {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 0.125rem;
-  border: 2px solid var(--nb-ink);
-  border-radius: 0;
-  padding: 0.625rem 0.5rem;
-  background: var(--bg-surface);
-  box-shadow: 3px 3px 0 var(--nb-ink);
-  color: var(--stat-col);
-  transition: box-shadow 100ms ease, transform 100ms ease;
+  padding: 0.625rem 0.875rem;
+  border-left: 4px solid var(--seg-border, var(--border));
+  border-right: 1px solid var(--border-muted, var(--border));
 }
 
-/* Stat cards are display-only — no interactive hover lift to avoid false affordance */
-.statCard:hover {
-  opacity: 0.85;
+.pipelineSegment:last-child {
+  border-right: none;
 }
 
-.statAccepted { --stat-col: var(--status-accepted-text); }
-.statSent     { --stat-col: var(--status-sent-text); }
-.statDraft    { --stat-col: var(--status-draft-text); }
-.statRejected { --stat-col: var(--status-rejected-text); }
+/* On mobile 2-col grid: bottom-left and bottom-right segments get a top border */
+@media (max-width: 639px) {
+  .pipelineSegment:nth-child(3),
+  .pipelineSegment:nth-child(4) {
+    border-top: 1px solid var(--border-muted, var(--border));
+  }
+}
 
-.statValue {
-  font-size: 1.375rem;
+.segDraft    { --seg-border: var(--status-draft-text); }
+.segSent     { --seg-border: var(--status-sent-text); }
+.segAccepted { --seg-border: var(--status-accepted-text); }
+.segRejected { --seg-border: var(--status-rejected-text); }
+
+.pipelineLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text-faint);
+}
+
+.pipelineCount {
+  font-size: 1.25rem;
   font-weight: 900;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   letter-spacing: -0.03em;
-  color: currentColor;
+  color: var(--seg-text, var(--text-strong));
 }
 
-.statLabel {
+.pipelineCurrency {
   font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  color: currentColor;
-  opacity: 0.65;
-}
-
-/* Dark mode: accent shadow per card type */
-@media (prefers-color-scheme: dark) {
-  .statAccepted { box-shadow: 3px 3px 0 var(--status-accepted-text); }
-  .statSent     { box-shadow: 3px 3px 0 var(--status-sent-text); }
-  .statDraft    { box-shadow: 3px 3px 0 var(--status-draft-text); }
-  .statRejected { box-shadow: 3px 3px 0 var(--status-rejected-text); }
-}
-
-/* ── Summary strip ──────────────────────────────────────────── */
-
-.summaryStrip {
-  gap: 0.75rem;
-}
-
-.summaryCard {
-  --card-accent: #5e5e5e; /* default — overridden per variant below */
-
-  background: var(--bg-surface);
-  border: 2px solid var(--nb-ink);           /* Fixed ink — near-black light / ghost dark */
-  border-left: 4px solid var(--card-accent); /* Accent identity bar (replaces border-top) */
-  border-radius: 0;                          /* Sharp corners — full neubrutalism */
-  padding: 0.875rem 1rem;
-  box-shadow: 3px 3px 0 var(--nb-ink);
-  transition: box-shadow 100ms ease, transform 100ms ease;
-}
-
-.summaryCard:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 var(--nb-ink);
-}
-
-.summaryCard:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 var(--nb-ink);
-}
-
-.summaryCardAccepted {
-  --card-accent: #059669;
-  background: var(--status-accepted-bg);
-}
-
-.summaryCardSent {
-  --card-accent: #3255e3;
-  background: var(--status-sent-bg);
-}
-
-.summaryCardDraft {
-  --card-accent: #5e5e5e;
-}
-
-/* Dark mode: ghost border + accent-coloured shadow — same as dashboard stat cards */
-@media (prefers-color-scheme: dark) {
-  .summaryCard {
-    box-shadow: 3px 3px 0 var(--card-accent);
-  }
-  .summaryCard:hover {
-    box-shadow: 5px 5px 0 var(--card-accent);
-  }
-  .summaryCard:active {
-    box-shadow: 1px 1px 0 var(--card-accent);
-  }
-  .summaryCardAccepted { --card-accent: #66bb6a; }
-  .summaryCardSent     { --card-accent: #7591f4; }
-  .summaryCardDraft    { --card-accent: #a6a6a6; }
-}
-
-.summaryHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.375rem;
-  margin-bottom: 0.25rem;
-}
-
-/* Compact status stamp shown in the card header — always grey/neutral */
-.summaryStatusBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 2px;
-  border: 1.5px solid var(--border);
-  padding: 0.15rem 0.45rem;
-  font-size: 0.625rem;
-  font-weight: 700;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  flex-shrink: 0;
-  background: var(--bg-muted);
-  color: var(--text-muted);
-  box-shadow: 1px 1px 0 var(--border);
-}
-
-.summaryLabel {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-faint);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
-
-.summaryValue {
-  font-size: 1.25rem;
-  font-weight: 900;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.03em;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  color: var(--text-strong);
+  color: var(--seg-text, var(--text-muted));
+  opacity: 0.85;
 }
 
-.summaryAccepted {
-  color: var(--status-accepted-text);
-}
-
-.summarySent {
-  color: var(--status-sent-text);
-}
-
-.summaryDivider {
-  border: none;
-  border-top: 1.5px solid var(--nb-ink);
-  margin: 0.5rem 0 0.375rem;
-  opacity: 0.15;
-}
-
-.summaryDescription {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  line-height: 1.4;
-  color: var(--text-muted);
-}
-
-.summaryDescriptionSub {
-  margin-top: 0.2rem;
-  font-size: 0.6875rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  line-height: 1.35;
-  color: var(--text-faint);
-  font-style: normal;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
+.segDraft    { --seg-text: var(--status-draft-text); }
+.segSent     { --seg-text: var(--status-sent-text); }
+.segAccepted { --seg-text: var(--status-accepted-text); }
+.segRejected { --seg-text: var(--status-rejected-text); }
 
 /* ── Empty state ────────────────────────────────────────────── */
 
@@ -517,11 +499,11 @@
   padding-left: 0.15rem;
 }
 
-/* Semantic coloring of the amount value per status */
+/* Amount coloring — only accepted (confirmed revenue) gets status color; others are neutral */
 .amountAccepted { color: var(--status-accepted-text); }
-.amountSent     { color: var(--status-sent-text); }
+.amountSent     { color: var(--text-strong); }
 .amountDraft    { color: var(--text-muted); }
-.amountRejected { color: var(--status-rejected-text); }
+.amountRejected { color: var(--text-faint); }
 
 /* Amount */
 .colAmount {

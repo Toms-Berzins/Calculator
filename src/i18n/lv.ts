@@ -71,6 +71,8 @@ export const lv: Translations = {
       accepted: 'Apstiprināts · uzvarēts',
       rejected: 'Klients noraidīja',
     },
+    filter: 'Filtrs',
+    filterAll: 'Visi statusi',
   },
   jobs: {
     title: 'Darbi',
@@ -240,6 +242,8 @@ export const lv: Translations = {
     saved: 'Saglabāts',
     saveError: 'Neizdevās saglabāt',
     editJob: 'Rediģēt darbu',
+    pdfStale: 'Vispirms saglabājiet',
+    statusStepperLabel: 'Piedāvājuma statuss',
   },
   table: {
     description: 'Apraksts',
@@ -307,6 +311,7 @@ export const lv: Translations = {
     calculatedUnitPrice: 'Aprēķinātā vienības cena',
     calculatedLineTotal: 'Aprēķinātā rindas kopsumma',
     calculatedLineNote: 'Šī aprēķinātā rinda tiek pievienota automātiski, iesniedzot piedāvājumu.',
+    pricingConstants: 'Cenu konstantes',
     constantLabels: {
       material_price_per_kg: 'Materiāls/kg',
       material_overhead_percent: 'Mat. pieskaitāmie',
@@ -382,7 +387,7 @@ export const lv: Translations = {
     },
     create: {
       summaryLabel: 'Pievienot materiālu',
-      namePlaceholder: 'piem. eSUN PLA+ Balts',
+      namePlaceholder: 'piem. PLA+ Balts',
       submitBtn: 'Pievienot',
     },
     fields: {

@@ -102,10 +102,6 @@ export function Sidebar() {
         </button>
       </div>
 
-      {/* Materials */}
-      <Link href="/materials" className={pathname === '/materials' ? styles.active : ''}>
-        {t.nav.materials}
-      </Link>
     </>
   )
 

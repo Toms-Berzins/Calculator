@@ -89,11 +89,8 @@
   top: 0;
   z-index: 20;
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.875rem;
-  padding: 1.125rem 1.25rem;
+  flex-direction: column;
+  gap: 0;
   border: 1.5px solid var(--border);
   border-radius: 2px;
   background: var(--bg-surface);
@@ -101,6 +98,64 @@
   overflow: hidden;
   transition: box-shadow 120ms cubic-bezier(0.25, 0, 0.6, 1), transform 120ms cubic-bezier(0.25, 0, 0.6, 1);
 }
+
+/* Row 1: title + customer + date + status chip */
+.headerIdentity {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem 0.875rem;
+}
+
+/* Row 2: save state + stepper + save button */
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 1.25rem;
+  border-top: 1px solid var(--border-muted, var(--border));
+  background: color-mix(in srgb, var(--bg-muted) 40%, var(--bg-surface));
+  flex-wrap: wrap;
+}
+
+/* Read-only status chip in the identity row */
+.headerStatusChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 2px;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0.125rem;
+}
+
+/* Compact save-state indicator */
+.saveState {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-width: 5rem;
+  flex-shrink: 0;
+  color: var(--text-faint);
+}
+
+.saveStateDirty  { color: #b45309; }
+.saveStateSaved  { color: var(--status-accepted-text); }
+.saveStateSaving { color: var(--accent); }
+.saveStateClean  { opacity: 0; pointer-events: none; } /* hidden when nothing to show */
 
 .headerMeta {
   min-width: 0;
@@ -195,37 +250,6 @@
   opacity: 0.4;
 }
 
-.headerActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.syncBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  border-radius: 2px;
-  border: 2px solid var(--accent);
-  background: var(--accent-muted);
-  color: var(--accent-text);
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.statusSelectWrap {
-  flex-shrink: 0;
-}
-
-.statusSelect {
-  min-width: 8.5rem;
-  cursor: pointer;
-}
 
 .saveBtn {
   display: inline-flex;
@@ -501,55 +525,6 @@
   }
 }
 
-/* ── Dirty / unsaved badge ───────────────────────────────────────────────── */
-.dirtyBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  border-radius: 2px;
-  border: 2px solid rgba(217, 119, 6, 0.5);
-  background: rgba(217, 119, 6, 0.1);
-  color: #b45309;
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-@media (prefers-color-scheme: dark) {
-  .dirtyBadge {
-    border-color: rgba(251, 191, 36, 0.4);
-    background: rgba(251, 191, 36, 0.08);
-    color: #fbbf24;
-  }
-}
-
-/* ── Saved badge ────────────────────────────────────────────────────────── */
-.savedBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  border-radius: 2px;
-  border: 2px solid rgba(22, 163, 74, 0.5);
-  background: rgba(22, 163, 74, 0.1);
-  color: #15803d;
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-@media (prefers-color-scheme: dark) {
-  .savedBadge {
-    border-color: rgba(74, 222, 128, 0.4);
-    background: rgba(74, 222, 128, 0.08);
-    color: #4ade80;
-  }
-}
 
 /* ── Banner close button ─────────────────────────────────────────────────── */
 .bannerClose {

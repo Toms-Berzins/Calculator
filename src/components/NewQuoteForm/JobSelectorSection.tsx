@@ -38,6 +38,7 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
 
   const isCreatingNewJob = selectedJobId === CREATE_NEW_JOB_VALUE
   const isCreatingNewCustomer = newJobCustomerId === CREATE_NEW_CUSTOMER_VALUE
+  const [panelOpen, setPanelOpen] = useState(true)
 
   useEffect(() => {
     if (!selectedJobId || selectedJobId === CREATE_NEW_JOB_VALUE) {
@@ -133,154 +134,159 @@ export function JobSelectorSection({ jobs, customers, initialJobId, onJobSelecte
   }
 
   return (
-    <div className="mb-6">
+    <details
+      className={styles.constantsDetails}
+      open={panelOpen}
+      onToggle={(e) => setPanelOpen((e.currentTarget as HTMLDetailsElement).open)}
+    >
+      <summary className={styles.constantsSummary}>
+        <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+          <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" />
+        </svg>
+        {t.newQuote.job}
+      </summary>
+
       {!isCreatingNewJob ? (
-        <>
-          <label htmlFor="job-select" className={styles.jobLabel}>
-            {t.newQuote.job}
-          </label>
-          <div className={styles.jobSelectWrap}>
-            <select
-              id="job-select"
-              required
-              value={selectedJobId}
-              onChange={(e) => handleSelectJob(e.target.value)}
-              className={styles.jobSelect}
-            >
-              <option value="">{t.newQuote.selectJob}</option>
-              {jobOptions.map((job) => (
-                <option key={job.id} value={job.id}>
-                  {job.title} — {job.customers?.company ?? job.customers?.name ?? '?'}
-                </option>
-              ))}
-              <option value={CREATE_NEW_JOB_VALUE}>{t.newQuote.createNewJob}</option>
-            </select>
-          </div>
-        </>
-      ) : null}
-
-      {isCreatingNewJob && (
-        <div className={styles.createJobPanel}>
-          <div className={styles.createJobHeader}>
-            <span className={styles.jobLabel}>{t.newQuote.createNewJob.replace(/^\+ /, '')}</span>
-            <button
-              type="button"
-              onClick={() => handleSelectJob('')}
-              className="btn-ghost px-2.5 py-1 text-xs font-medium"
-            >
-              ← {t.newQuote.cancel}
-            </button>
-          </div>
-          <div className={styles.createJobCard}>
-            <div className={styles.createJobForm}>
-              <div className={styles.createJobGrid}>
-                <label className="text-sm md:col-span-2">
-                  <span className={styles.createJobFieldLabel}>{t.newQuote.jobTitle}</span>
-                  <input
-                    type="text"
-                    value={newJobTitle}
-                    onChange={(e) => setNewJobTitle(e.target.value)}
-                    placeholder={t.newQuote.jobTitlePlaceholder}
-                    className="input-field w-full px-3 py-2 text-sm"
-                  />
-                </label>
-                <label className="text-sm md:col-span-2">
-                  <span className={styles.createJobFieldLabel}>{t.newQuote.customer}</span>
-                  <select
-                    value={newJobCustomerId}
-                    onChange={(e) => {
-                      setNewJobCustomerId(e.target.value)
-                      setCreateCustomerError('')
-                      setCreateJobError('')
-                    }}
-                    aria-label={t.newQuote.selectCustomer}
-                    className="input-field w-full px-3 py-2 text-sm"
-                  >
-                    <option value="" disabled>{t.newQuote.selectCustomer}</option>
-                    {customerOptions.map((customer) => (
-                      <option key={customer.id} value={customer.id}>
-                        {customer.company ?? customer.name}
-                      </option>
-                    ))}
-                    <option value={CREATE_NEW_CUSTOMER_VALUE}>{t.newQuote.createNewCustomer}</option>
-                  </select>
-                </label>
-              </div>
-
-              {isCreatingNewCustomer && (
-                <div className={`mt-3 ${styles.createJobGrid}`}>
+        <select
+          id="job-select"
+          required
+          aria-label={t.newQuote.job}
+          value={selectedJobId}
+          onChange={(e) => handleSelectJob(e.target.value)}
+          className={styles.jobSelect}
+        >
+          <option value="">{t.newQuote.selectJob}</option>
+          {jobOptions.map((job) => (
+            <option key={job.id} value={job.id}>
+              {job.title} — {job.customers?.company ?? job.customers?.name ?? '?'}
+            </option>
+          ))}
+          <option value={CREATE_NEW_JOB_VALUE}>{t.newQuote.createNewJob}</option>
+        </select>
+      ) : (
+        <div className={styles.constantsBody}>
+          <div className={styles.createJobPanel}>
+            <div className={styles.createJobHeader}>
+              <span className={styles.jobLabel}>{t.newQuote.createNewJob.replace(/^\+ /, '')}</span>
+              <button
+                type="button"
+                onClick={() => handleSelectJob('')}
+                className="btn-ghost px-2.5 py-1 text-xs font-medium"
+              >
+                ← {t.newQuote.cancel}
+              </button>
+            </div>
+            <div className={styles.createJobCard}>
+              <div className={styles.createJobForm}>
+                <div className={styles.createJobGrid}>
                   <label className="text-sm md:col-span-2">
-                    <span className={styles.createJobFieldLabel}>{t.newQuote.customerName}</span>
+                    <span className={styles.createJobFieldLabel}>{t.newQuote.jobTitle}</span>
                     <input
                       type="text"
-                      value={newCustomerName}
-                      onChange={(e) => setNewCustomerName(e.target.value)}
-                      placeholder={t.newQuote.customerNamePlaceholder}
+                      value={newJobTitle}
+                      onChange={(e) => setNewJobTitle(e.target.value)}
+                      placeholder={t.newQuote.jobTitlePlaceholder}
                       className="input-field w-full px-3 py-2 text-sm"
                     />
                   </label>
                   <label className="text-sm md:col-span-2">
-                    <span className={styles.createJobFieldLabel}>{t.newQuote.companyOptional}</span>
-                    <input
-                      type="text"
-                      value={newCustomerCompany}
-                      onChange={(e) => setNewCustomerCompany(e.target.value)}
-                      placeholder={t.newQuote.companyPlaceholder}
+                    <span className={styles.createJobFieldLabel}>{t.newQuote.customer}</span>
+                    <select
+                      value={newJobCustomerId}
+                      onChange={(e) => {
+                        setNewJobCustomerId(e.target.value)
+                        setCreateCustomerError('')
+                        setCreateJobError('')
+                      }}
+                      aria-label={t.newQuote.selectCustomer}
                       className="input-field w-full px-3 py-2 text-sm"
-                    />
+                    >
+                      <option value="" disabled>{t.newQuote.selectCustomer}</option>
+                      {customerOptions.map((customer) => (
+                        <option key={customer.id} value={customer.id}>
+                          {customer.company ?? customer.name}
+                        </option>
+                      ))}
+                      <option value={CREATE_NEW_CUSTOMER_VALUE}>{t.newQuote.createNewCustomer}</option>
+                    </select>
                   </label>
-                  <label className="text-sm md:col-span-2">
-                    <span className={styles.createJobFieldLabel}>{t.newQuote.addressOptional}</span>
-                    <AddressAutocomplete
-                      value={newCustomerAddress}
-                      onChange={setNewCustomerAddress}
-                      onSelect={(s) => setNewCustomerAddress(s.formatted)}
-                      placeholder={t.newQuote.addressPlaceholder}
-                      className="input-field w-full px-3 py-2 text-sm"
-                    />
-                  </label>
+                </div>
 
-                  {createCustomerError && (
-                    <p role="alert" className={`text-xs md:col-span-2 ${styles.createJobFieldLabel}`}>
-                      {createCustomerError}
-                    </p>
-                  )}
+                {isCreatingNewCustomer && (
+                  <div className={`mt-3 ${styles.createJobGrid}`}>
+                    <label className="text-sm md:col-span-2">
+                      <span className={styles.createJobFieldLabel}>{t.newQuote.customerName}</span>
+                      <input
+                        type="text"
+                        value={newCustomerName}
+                        onChange={(e) => setNewCustomerName(e.target.value)}
+                        placeholder={t.newQuote.customerNamePlaceholder}
+                        className="input-field w-full px-3 py-2 text-sm"
+                      />
+                    </label>
+                    <label className="text-sm md:col-span-2">
+                      <span className={styles.createJobFieldLabel}>{t.newQuote.companyOptional}</span>
+                      <input
+                        type="text"
+                        value={newCustomerCompany}
+                        onChange={(e) => setNewCustomerCompany(e.target.value)}
+                        placeholder={t.newQuote.companyPlaceholder}
+                        className="input-field w-full px-3 py-2 text-sm"
+                      />
+                    </label>
+                    <label className="text-sm md:col-span-2">
+                      <span className={styles.createJobFieldLabel}>{t.newQuote.addressOptional}</span>
+                      <AddressAutocomplete
+                        value={newCustomerAddress}
+                        onChange={setNewCustomerAddress}
+                        onSelect={(s) => setNewCustomerAddress(s.formatted)}
+                        placeholder={t.newQuote.addressPlaceholder}
+                        className="input-field w-full px-3 py-2 text-sm"
+                      />
+                    </label>
 
-                  <div className={`md:col-span-2 ${styles.createJobActions}`}>
+                    {createCustomerError && (
+                      <p role="alert" className={`text-xs md:col-span-2 ${styles.createJobFieldLabel}`}>
+                        {createCustomerError}
+                      </p>
+                    )}
+
+                    <div className={`md:col-span-2 ${styles.createJobActions}`}>
+                      <button
+                        type="button"
+                        onClick={handleCreateCustomer}
+                        disabled={creatingCustomer || !newCustomerName.trim()}
+                        className="btn-primary px-4 py-2 text-sm font-semibold disabled:opacity-60"
+                      >
+                        {creatingCustomer ? t.newQuote.creating3DPrint : t.newQuote.createCustomerAndSelect}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {createJobError && (
+                  <p role="alert" className={`mt-2 text-xs ${styles.createJobFieldLabel}`}>
+                    {createJobError}
+                  </p>
+                )}
+
+                {!isCreatingNewCustomer && (
+                  <div className={styles.createJobActions}>
                     <button
                       type="button"
-                      onClick={handleCreateCustomer}
-                      disabled={creatingCustomer || !newCustomerName.trim()}
+                      onClick={handleCreateJob}
+                      disabled={creatingJob || !newJobTitle.trim() || !newJobCustomerId}
                       className="btn-primary px-4 py-2 text-sm font-semibold disabled:opacity-60"
                     >
-                      {creatingCustomer ? t.newQuote.creating3DPrint : t.newQuote.createCustomerAndSelect}
+                      {creatingJob ? t.newQuote.creating3DPrint : t.newQuote.createJobAndSelect}
                     </button>
                   </div>
-                </div>
-              )}
-
-              {createJobError && (
-                <p role="alert" className={`mt-2 text-xs ${styles.createJobFieldLabel}`}>
-                  {createJobError}
-                </p>
-              )}
-
-              {!isCreatingNewCustomer && (
-                <div className={styles.createJobActions}>
-                  <button
-                    type="button"
-                    onClick={handleCreateJob}
-                    disabled={creatingJob || !newJobTitle.trim() || !newJobCustomerId}
-                    className="btn-primary px-4 py-2 text-sm font-semibold disabled:opacity-60"
-                  >
-                    {creatingJob ? t.newQuote.creating3DPrint : t.newQuote.createJobAndSelect}
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </details>
   )
 }

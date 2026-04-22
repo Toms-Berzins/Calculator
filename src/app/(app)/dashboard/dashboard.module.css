@@ -65,6 +65,7 @@
   border-left: 4px solid var(--stat-accent); /* Accent identity bar */
   padding: 1.25rem;
   overflow: hidden;
+  background: var(--bg-surface);
   box-shadow: 3px 3px 0 var(--nb-ink);
   transition: transform 100ms ease, box-shadow 100ms ease;
 }

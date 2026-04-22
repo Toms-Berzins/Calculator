@@ -4,11 +4,19 @@ import { deleteDraftQuote } from '@/lib/actions/quotes'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { getDict } from '@/i18n/server'
 import { DeleteDraftQuoteButton } from '@/components/quotes/DeleteDraftQuoteButton'
+import { QuoteFilterSelect } from './QuoteFilterSelect'
 import styles from './quotes.module.css'
 
-export default async function QuotesPage() {
+export default async function QuotesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>
+}) {
   const supabase = await createServerSupabaseClient()
   const t = await getDict()
+  const { status: statusFilter } = await searchParams
+  const validStatuses = ['draft', 'sent', 'accepted', 'rejected']
+  const activeFilter = validStatuses.includes(statusFilter ?? '') ? statusFilter! : ''
 
   const STATUS_META: Record<string, { rowClass: string; badgeClass: string; dotClass: string; label: string; hint: string; amountClass: string }> = {
     draft:    { rowClass: styles.rowDraft,    badgeClass: styles.statusDraft,    dotClass: styles.dotDraft,    label: t.quotes.status.draft,    hint: t.quotes.statusHint.draft,    amountClass: styles.amountDraft },
@@ -17,23 +25,28 @@ export default async function QuotesPage() {
     rejected: { rowClass: styles.rowRejected, badgeClass: styles.statusRejected, dotClass: styles.dotRejected, label: t.quotes.status.rejected, hint: t.quotes.statusHint.rejected, amountClass: styles.amountRejected },
   }
 
-  const [{ data: quotes }] = await Promise.all([
-    supabase
-      .from('quotes')
-      .select(`
-        id, status, total, created_at,
-        jobs ( title, customers ( name, company ) )
-      `)
-      .order('created_at', { ascending: false }),
+  let listQuery = supabase
+    .from('quotes')
+    .select(`
+      id, status, total, created_at,
+      jobs ( title, customers ( name, company ) )
+    `)
+    .order('created_at', { ascending: false })
+  if (activeFilter) listQuery = listQuery.eq('status', activeFilter)
+
+  const [{ data: quotes }, { data: allQuotes }] = await Promise.all([
+    listQuery,
+    supabase.from('quotes').select('status, total'),
   ])
 
   const all = quotes ?? []
-  const acceptedValue = all.filter((q) => q.status === 'accepted').reduce((s, q) => s + (q.total ?? 0), 0)
-  const pipelineValue = all.filter((q) => q.status === 'sent').reduce((s, q) => s + (q.total ?? 0), 0)
-  const acceptedCount = all.filter((q) => q.status === 'accepted').length
-  const sentCount = all.filter((q) => q.status === 'sent').length
-  const draftCount    = all.filter((q) => q.status === 'draft').length
-  const rejectedCount = all.filter((q) => q.status === 'rejected').length
+  const totals = allQuotes ?? []
+  const acceptedValue = totals.filter((q) => q.status === 'accepted').reduce((s, q) => s + (q.total ?? 0), 0)
+  const pipelineValue = totals.filter((q) => q.status === 'sent').reduce((s, q) => s + (q.total ?? 0), 0)
+  const acceptedCount = totals.filter((q) => q.status === 'accepted').length
+  const sentCount = totals.filter((q) => q.status === 'sent').length
+  const draftCount    = totals.filter((q) => q.status === 'draft').length
+  const rejectedCount = totals.filter((q) => q.status === 'rejected').length
 
   return (
     <div className={styles.shell}>
@@ -56,80 +69,64 @@ export default async function QuotesPage() {
         </Link>
       </div>
 
-      {/* ── Status stats strip ── */}
-      {all.length > 0 && (
-        <div className={styles.statsStrip} role="group" aria-label={t.quotes.title}>
-          <div className={`${styles.statCard} ${styles.statAccepted}`}>
-            <span className={styles.statValue}>{acceptedCount}</span>
-            <span className={styles.statLabel}>{t.quotes.status.accepted}</span>
+      {/* ── Pipeline bar ── */}
+      {totals.length > 0 && (
+        <div className={styles.pipelineBar} role="group" aria-label="Quote pipeline">
+          <div className={`${styles.pipelineSegment} ${styles.segDraft}`}>
+            <span className={styles.pipelineLabel}>
+              <span className={`${styles.statusDot} ${styles.dotDraft}`} aria-hidden />
+              {t.quotes.status.draft}
+            </span>
+            <span className={styles.pipelineCount}>{draftCount}</span>
           </div>
-          <div className={`${styles.statCard} ${styles.statSent}`}>
-            <span className={styles.statValue}>{sentCount}</span>
-            <span className={styles.statLabel}>{t.quotes.status.sent}</span>
+          <div className={`${styles.pipelineSegment} ${styles.segSent}`}>
+            <span className={styles.pipelineLabel}>
+              <span className={`${styles.statusDot} ${styles.dotSent}`} aria-hidden />
+              {t.quotes.status.sent}
+            </span>
+            <span className={styles.pipelineCount}>{sentCount}</span>
+            {sentCount > 0 && <span className={styles.pipelineCurrency}>{formatCurrency(pipelineValue)}</span>}
           </div>
-          <div className={`${styles.statCard} ${styles.statDraft}`}>
-            <span className={styles.statValue}>{draftCount}</span>
-            <span className={styles.statLabel}>{t.quotes.status.draft}</span>
+          <div className={`${styles.pipelineSegment} ${styles.segAccepted}`}>
+            <span className={styles.pipelineLabel}>
+              <span className={`${styles.statusDot} ${styles.dotAccepted}`} aria-hidden />
+              {t.quotes.status.accepted}
+            </span>
+            <span className={styles.pipelineCount}>{acceptedCount}</span>
+            {acceptedCount > 0 && <span className={styles.pipelineCurrency}>{formatCurrency(acceptedValue)}</span>}
           </div>
-          <div className={`${styles.statCard} ${styles.statRejected}`}>
-            <span className={styles.statValue}>{rejectedCount}</span>
-            <span className={styles.statLabel}>{t.quotes.status.rejected}</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── Summary strip ── */}
-      {all.length > 0 && (
-        <div className={`mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3 ${styles.summaryStrip}`}>
-          {/* Accepted revenue card */}
-          <div className={`${styles.summaryCard} ${styles.summaryCardAccepted}`}>
-            <div className={styles.summaryHeader}>
-              <p className={styles.summaryLabel}>{t.quotes.acceptedRevenue}</p>
-              <span className={styles.summaryStatusBadge}
-                    aria-label={t.quotes.status.accepted}>
-                <span className={`${styles.statusDot} ${styles.dotAccepted}`} aria-hidden />
-                {t.quotes.status.accepted}
-              </span>
-            </div>
-            <p className={`${styles.summaryValue} ${styles.summaryAccepted}`}>{formatCurrency(acceptedValue)}</p>
-            <hr className={styles.summaryDivider} />
-            <p className={styles.summaryDescription}>{t.quotes.summaryDescription.acceptedRevenueMain(acceptedCount)}</p>
-            <p className={styles.summaryDescriptionSub}>{t.quotes.summaryDescription.acceptedRevenueRule}</p>
-          </div>
-
-          {/* Pipeline / sent card */}
-          <div className={`${styles.summaryCard} ${styles.summaryCardSent}`}>
-            <div className={styles.summaryHeader}>
-              <p className={styles.summaryLabel}>{t.quotes.pipelineValue}</p>
-              <span className={styles.summaryStatusBadge}
-                    aria-label={t.quotes.status.sent}>
-                <span className={`${styles.statusDot} ${styles.dotSent}`} aria-hidden />
-                {t.quotes.status.sent}
-              </span>
-            </div>
-            <p className={`${styles.summaryValue} ${styles.summarySent}`}>{formatCurrency(pipelineValue)}</p>
-            <hr className={styles.summaryDivider} />
-            <p className={styles.summaryDescription}>{t.quotes.summaryDescription.pipelineValueMain(sentCount)}</p>
-            <p className={styles.summaryDescriptionSub}>{t.quotes.summaryDescription.pipelineValueRule}</p>
-          </div>
-
-          {/* Drafts card */}
-          <div className={`${styles.summaryCard} ${styles.summaryCardDraft}`}>
-            <div className={styles.summaryHeader}>
-              <p className={styles.summaryLabel}>{t.quotes.drafts}</p>
-              <span className={styles.summaryStatusBadge}
-                    aria-label={t.quotes.status.draft}>
-                <span className={`${styles.statusDot} ${styles.dotDraft}`} aria-hidden />
-                {t.quotes.status.draft}
-              </span>
-            </div>
-            <p className={styles.summaryValue}>{draftCount}</p>
-            <hr className={styles.summaryDivider} />
-            <p className={styles.summaryDescription}>{t.quotes.summaryDescription.draftsMain(draftCount)}</p>
-            <p className={styles.summaryDescriptionSub}>{t.quotes.summaryDescription.draftsRule}</p>
+          <div className={`${styles.pipelineSegment} ${styles.segRejected}`}>
+            <span className={styles.pipelineLabel}>
+              <span className={`${styles.statusDot} ${styles.dotRejected}`} aria-hidden />
+              {t.quotes.status.rejected}
+            </span>
+            <span className={styles.pipelineCount}>{rejectedCount}</span>
           </div>
         </div>
       )}
+
+      {/* ── Status filter ── */}
+      <details className={styles.filterDetails} open={!!activeFilter}>
+        <summary className={styles.filterSummary}>
+          <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.553.894l-4 2A1 1 0 016 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+          </svg>
+          {t.quotes.filter}
+        </summary>
+        <div className={styles.filterBody}>
+          <QuoteFilterSelect
+            value={activeFilter}
+            ariaLabel={t.quotes.filter}
+            options={[
+              { value: '', label: t.quotes.filterAll },
+              { value: 'draft', label: t.quotes.status.draft },
+              { value: 'sent', label: t.quotes.status.sent },
+              { value: 'accepted', label: t.quotes.status.accepted },
+              { value: 'rejected', label: t.quotes.status.rejected },
+            ]}
+          />
+        </div>
+      </details>
 
       {/* ── Empty state ── */}
       {!all.length && (

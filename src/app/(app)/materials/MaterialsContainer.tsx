@@ -27,7 +27,7 @@ interface Feedback {
 function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f: Feedback) => void }) {
   const [isPending, startTransition] = useTransition()
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const form = e.currentTarget
@@ -45,17 +45,6 @@ function CreateForm({ dict, onFeedback }: { dict: MaterialsDict; onFeedback: (f:
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formGrid}>
-        <div className={styles.formField}>
-          <label htmlFor="create-name" className={styles.fieldLabel}>{dict.fields.name} *</label>
-          <input
-            id="create-name"
-            name="name"
-            type="text"
-            required
-            placeholder={dict.create.namePlaceholder}
-            className={`input-field ${styles.formInput}`}
-          />
-        </div>
         <div className={styles.formField}>
           <label htmlFor="create-type" className={styles.fieldLabel}>{dict.fields.type} *</label>
           <select id="create-type" name="material_type" required className={`input-field ${styles.formInput}`}>
@@ -135,7 +124,7 @@ function EditForm({
 }) {
   const [isPending, startTransition] = useTransition()
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     startTransition(async () => {
@@ -153,17 +142,6 @@ function EditForm({
     <form className={styles.form} onSubmit={handleSubmit}>
       <input type="hidden" name="id" value={material.id} />
       <div className={styles.formGrid}>
-        <div className={styles.formField}>
-          <label htmlFor={`edit-name-${material.id}`} className={styles.fieldLabel}>{dict.fields.name} *</label>
-          <input
-            id={`edit-name-${material.id}`}
-            name="name"
-            type="text"
-            required
-            defaultValue={material.name}
-            className={`input-field ${styles.formInput}`}
-          />
-        </div>
         <div className={styles.formField}>
           <label htmlFor={`edit-type-${material.id}`} className={styles.fieldLabel}>{dict.fields.type} *</label>
           <select
@@ -252,7 +230,7 @@ function ToggleActiveButton({
 }) {
   const [isPending, startTransition] = useTransition()
 
-  function handleToggle(e: React.FormEvent<HTMLFormElement>) {
+  function handleToggle(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     startTransition(async () => {
@@ -306,17 +284,14 @@ function MaterialRow({
       <div className={styles.rowMain}>
         <div className={styles.rowInfo}>
           <div className={styles.rowNameLine}>
-            <span className={styles.rowName}>{material.name}</span>
+            <span className={styles.rowName}>
+              {material.brand ? `${material.brand} ${material.name}` : material.name}
+            </span>
             <span className={styles.typeBadge}>{dict.types[material.material_type]}</span>
             {!material.is_active && (
               <span className={styles.inactiveBadge}>{dict.inactiveLabel}</span>
             )}
           </div>
-          {(material.brand || material.color) && (
-            <span className={styles.rowMeta}>
-              {[material.brand, material.color].filter(Boolean).join(' · ')}
-            </span>
-          )}
         </div>
 
         <div className={styles.rowStats}>
@@ -398,19 +373,19 @@ export default function MaterialsContainer({ materials, dict }: Props) {
 
       {/* Stats strip */}
       <div className={styles.statsStrip} role="group" aria-label={dict.title}>
-        <div className={styles.statCard}>
+        <div className={`${styles.statCard} ${styles.statTotal}`}>
           <span className={styles.statValue}>{totalCount}</span>
           <span className={styles.statLabel}>{dict.stats.total}</span>
         </div>
-        <div className={styles.statCard}>
+        <div className={`${styles.statCard} ${styles.statActive}`}>
           <span className={styles.statValue}>{activeCount}</span>
           <span className={styles.statLabel}>{dict.stats.active}</span>
         </div>
-        <div className={`${styles.statCard} ${lowStockCount > 0 ? styles.statCardWarning : ''}`}>
+        <div className={`${styles.statCard} ${lowStockCount > 0 ? styles.statLow : ''}`}>
           <span className={styles.statValue}>{lowStockCount}</span>
           <span className={styles.statLabel}>{dict.stats.lowStock}</span>
         </div>
-        <div className={styles.statCard}>
+        <div className={`${styles.statCard} ${styles.statWeight}`}>
           <span className={styles.statValue}>
             {totalStockKg.toFixed(2)}
             <span className={styles.statUnit}>{dict.stats.weightUnit}</span>

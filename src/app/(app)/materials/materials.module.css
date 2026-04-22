@@ -71,6 +71,7 @@
 }
 
 .statCard {
+  --stat-col: var(--text-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,17 +83,18 @@
   background: var(--bg-surface);
   box-shadow: 3px 3px 0 var(--nb-ink);
   text-align: center;
+  color: var(--stat-col);
 }
 
-.statCardWarning {
-  border-color: var(--status-rejected-text);
-  box-shadow: 3px 3px 0 var(--status-rejected-text);
-}
+.statTotal   { --stat-col: var(--text-muted); }
+.statActive  { --stat-col: var(--status-accepted-text); }
+.statLow     { --stat-col: var(--status-rejected-text); }
+.statWeight  { --stat-col: var(--status-sent-text); }
 
 @media (prefers-color-scheme: dark) {
-  .statCardWarning {
-    box-shadow: 3px 3px 0 var(--status-rejected-text);
-  }
+  .statActive  { box-shadow: 3px 3px 0 var(--status-accepted-text); }
+  .statLow     { box-shadow: 3px 3px 0 var(--status-rejected-text); }
+  .statWeight  { box-shadow: 3px 3px 0 var(--status-sent-text); }
 }
 
 .statValue {
@@ -105,11 +107,7 @@
   font-variant-numeric: tabular-nums;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   letter-spacing: -0.03em;
-  color: var(--text-strong);
-}
-
-.statCardWarning .statValue {
-  color: var(--status-rejected-text);
+  color: currentColor;
 }
 
 .statUnit {
@@ -126,7 +124,8 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  color: var(--text-muted);
+  color: currentColor;
+  opacity: 0.65;
 }
 
 /* ── Create details ──────────────────────────────────────────────────────────── */

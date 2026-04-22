@@ -12,6 +12,8 @@ import { useJobConstants } from '@/components/NewQuoteForm/useJobConstants'
 import { useQuotePricing } from '@/components/NewQuoteForm/useQuotePricing'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { useT } from '@/i18n/context'
+import { QuoteStatusStepper } from './QuoteStatusStepper'
+import { SmartPdfButton } from './SmartPdfButton'
 import type { QuoteWithRelations, Quote, QuoteStatus } from '@/types/database'
 import type { CalculatorSettingsValues } from '@/lib/calculatorSettings'
 import styles from './QuoteEditor.module.css'
@@ -210,67 +212,75 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
 
       {/* ── Header ── */}
       <div className={styles.headerCard}>
-        <div className={styles.headerMeta}>
-          <div className={styles.headerTop}>
-            <h1 className={styles.title}>{job?.title ?? 'Quote'}</h1>
-            {job && (
-              <Link
-                href={`/jobs?edit=${job.id}`}
-                className={styles.editJobIconBtn}
-                aria-label={t.quote.editJob}
-                title={t.quote.editJob}
-              >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-              </Link>
-            )}
+        {/* Row 1: identity — title, customer, date, status chip */}
+        <div className={styles.headerIdentity}>
+          <div className={styles.headerMeta}>
+            <div className={styles.headerTop}>
+              <h1 className={styles.title}>{job?.title ?? 'Quote'}</h1>
+              {job && (
+                <Link
+                  href={`/jobs?edit=${job.id}`}
+                  className={styles.editJobIconBtn}
+                  aria-label={t.quote.editJob}
+                  title={t.quote.editJob}
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                  </svg>
+                </Link>
+              )}
+            </div>
+            <p className={styles.subtitle}>
+              {customer?.company ?? customer?.name ?? '—'}
+              <span className={styles.subtitleSep} aria-hidden>·</span>
+              {formatDate(quote.created_at)}
+            </p>
           </div>
-          <p className={styles.subtitle}>
-            {customer?.company ?? customer?.name ?? '—'}
-            <span className={styles.subtitleSep} aria-hidden>·</span>
-            {formatDate(quote.created_at)}
-          </p>
+          {/* Read-only status chip on the right */}
+          <span className={`${styles.headerStatusChip} ${styles[`status${status.charAt(0).toUpperCase()}${status.slice(1)}` as keyof typeof styles]}`}>
+            <span className={styles.statusDot} aria-hidden />
+            {t.quote.status[status]}
+          </span>
         </div>
 
-        <div className={styles.headerActions}>
-          {isDirty && !saving && (
-            <span className={styles.dirtyBadge}>
-              {t.quote.unsavedChanges}
-            </span>
-          )}
-
-          {savedBadge && (
-            <span className={styles.savedBadge} role="status" aria-live="polite">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              {t.quote.saved ?? 'Saved'}
-            </span>
-          )}
-
-          {syncIndicator && (
-            <span className={styles.syncBadge}>
+        {/* Row 2: controls — save state + stepper + save button */}
+        <div className={styles.headerControls}>
+          {/* Compact save-state indicator */}
+          <span
+            className={`${styles.saveState} ${
+              saving ? styles.saveStateSaving :
+              savedBadge ? styles.saveStateSaved :
+              syncIndicator ? styles.saveStateSaving :
+              isDirty ? styles.saveStateDirty : styles.saveStateClean
+            }`}
+            role="status"
+            aria-live="polite"
+          >
+            {saving && (
               <svg className="w-3 h-3 animate-spin" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                 <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
               </svg>
-              {t.quote.syncing}
-            </span>
-          )}
+            )}
+            {syncIndicator && !saving && (
+              <svg className="w-3 h-3 animate-spin" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+              </svg>
+            )}
+            {savedBadge && !saving && (
+              <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            )}
+            {saving ? t.quote.saving :
+             syncIndicator && !saving ? t.quote.syncing :
+             savedBadge && !saving ? (t.quote.saved ?? 'Saved') :
+             isDirty ? t.quote.unsavedChanges : null}
+          </span>
 
-          <div className={styles.statusSelectWrap}>
-            <label htmlFor="quoteStatus" className="sr-only">Status</label>
-            <select
-              id="quoteStatus"
-              value={status}
-              onChange={(e) => handleStatusChange(e.target.value as QuoteStatus)}
-              className={`input-field rounded-lg px-3 py-2 text-sm ${styles.statusSelect}`}
-            >
-              {(['draft', 'sent', 'accepted', 'rejected'] as QuoteStatus[]).map((s) => (
-                <option key={s} value={s}>{t.quote.status[s]}</option>
-              ))}
-            </select>
-          </div>
+          <QuoteStatusStepper
+            status={status}
+            onChange={handleStatusChange}
+          />
 
           <button
             onClick={handleSave}
@@ -502,44 +512,19 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
 
           {/* PDF export */}
           <div className={styles.exportSection}>
-            <button
-              onClick={handleGeneratePDF}
-              disabled={generatingPdf}
-              className={`btn-ghost w-full rounded-xl py-2.5 text-sm font-semibold disabled:opacity-60 ${styles.exportBtn}`}
-            >
-              {generatingPdf ? (
-                <>
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                  </svg>
-                  {t.quote.generating}
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                    <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clipRule="evenodd" />
-                  </svg>
-                  {t.quote.generatePDF}
-                </>
-              )}
-            </button>
-
-            {pdfUrl && (
-              <a
-                href={pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                download
-                className={`btn-ghost w-full rounded-xl py-2.5 text-sm font-semibold ${styles.downloadBtn}`}
-              >
-                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-                {t.quote.downloadPDF}
-              </a>
-            )}
-
-            {pdfError && <p className={styles.errorText} role="alert" aria-live="assertive">{pdfError}</p>}
+            <SmartPdfButton
+              pdfUrl={pdfUrl}
+              isDirty={isDirty}
+              isGenerating={generatingPdf}
+              pdfError={pdfError}
+              onGenerate={handleGeneratePDF}
+              labels={{
+                generate: t.quote.generatePDF,
+                download: t.quote.downloadPDF,
+                generating: t.quote.generating,
+                stale: t.quote.pdfStale ?? 'Save first to regenerate',
+              }}
+            />
           </div>
         </aside>
       </div>

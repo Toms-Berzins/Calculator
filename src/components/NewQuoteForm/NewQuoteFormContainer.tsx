@@ -113,203 +113,220 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
         </p>
       </div>
 
-      <JobSelectorSection
-        jobs={jobs}
-        customers={customers}
-        initialJobId={initialJobId}
-        onJobSelected={handleJobSelected}
-      />
+      <div className={styles.formGrid}>
+        {/* ── Left: job selector + part inputs ── */}
+        <div className={styles.formLeft}>
+          <JobSelectorSection
+            jobs={jobs}
+            customers={customers}
+            initialJobId={initialJobId}
+            onJobSelected={handleJobSelected}
+          />
 
-      <div className={`mb-6 p-4 ${styles.calculatorCard}`}>
-        <JobConstantsEditor
-          state={{
-            constantChips,
-            canUndoRemove,
-            editingConstant,
-            editingConstantValue,
-            editConstantError,
-          }}
-          actions={{
-            onOpenConstantEditor: openConstantEditor,
-            onCycleConstant: cycleConstant,
-            onRemoveConstant: removeConstant,
-            onUndoRemoveConstant: undoRemoveConstant,
-            onCloseConstantEditor: closeConstantEditor,
-            onChangeEditingConstantValue: setEditingConstantValue,
-            onSaveConstant: saveConstant,
-          }}
-        />
-
-        {!selectedJobId && (
-          <p className={`mt-4 py-5 text-center text-sm ${styles.pageSubtitle}`}>
-            {t.newQuote.selectJobPrompt}
-          </p>
-        )}
-
-        {selectedJobId && (
-        <>
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-          <label className="text-sm md:col-span-2">
-            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
-            <input
-              type="text"
-              value={partName}
-              onChange={(e) => setPartName(e.target.value)}
-              placeholder={t.newQuote.jobPartNamePlaceholder}
-              className="input-field w-full px-3 py-2 text-sm"
-            />
-          </label>
-          <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.quantity}</span>
-            <input
-              type="number"
-              min={1}
-              step={1}
-              value={partQuantity}
-              onChange={(e) => setPartQuantity(Math.max(1, Number(e.target.value) || 1))}
-              className="input-field w-full px-3 py-2 text-sm"
-            />
-          </label>
-          <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.materialWeight}</span>
-            <input
-              type="number"
-              min={0}
-              step={1}
-              value={materialWeightGrams}
-              onChange={(e) => setMaterialWeightGrams(Number(e.target.value))}
-              className="input-field w-full px-3 py-2 text-sm"
-            />
-          </label>
-          <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.printTime}</span>
-            <input
-              type="number"
-              min={0}
-              step={0.1}
-              value={printTimeHours}
-              onChange={(e) => setPrintTimeHours(Number(e.target.value))}
-              className="input-field w-full px-3 py-2 text-sm"
-            />
-          </label>
-          <label className="text-sm">
-            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.setupTime}</span>
-            <input
-              type="number"
-              min={0}
-              step={0.1}
-              value={setupTimeHours}
-              onChange={(e) => setSetupTimeHours(Number(e.target.value))}
-              className="input-field w-full px-3 py-2 text-sm"
-            />
-          </label>
-          <label className="text-sm md:col-span-2">
-            <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.postProcessing}</span>
-            <input
-              type="number"
-              min={0}
-              step={0.01}
-              value={postProcessingCost}
-              onChange={(e) => setPostProcessingCost(Number(e.target.value))}
-              className="input-field w-full px-3 py-2 text-sm"
-            />
-          </label>
-        </div>
-
-        <div className={`mt-4 p-3 ${styles.calculatorSummary}`} aria-live="polite" aria-atomic="true">
-          <div className="grid grid-cols-2 gap-y-0.5 text-sm">
-            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.materialCostRow}</span>
-            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.materialCost)}</span>
-            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.machineCostRow}</span>
-            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.machineCost)}</span>
-            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.laborCostRow}</span>
-            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.laborCost)}</span>
-            <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.energyCostRow}</span>
-            <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.energyCost)}</span>
-            {pricing.postProcessingCost > 0 && (
-              <>
-                <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.postProcessingLabel}</span>
-                <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.postProcessingCost)}</span>
-              </>
-            )}
-            {pricing.packagingCost > 0 && (
-              <>
-                <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.packagingLabel}</span>
-                <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.packagingCost)}</span>
-              </>
-            )}
-            {pricing.shippingCost > 0 && (
-              <>
-                <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.shippingLabel}</span>
-                <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.shippingCost)}</span>
-              </>
-            )}
-            <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
-            <span className={styles.totalRow}>{t.newQuote.baseCostPerUnit}</span>
-            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.baseCost)}</span>
-            <span className={styles.totalRow}>{t.newQuote.riskPerUnit}</span>
-            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.riskCost)}</span>
-            <span className={styles.totalRow}>{t.newQuote.marginPerUnit}</span>
-            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.marginAmount)}</span>
-            <span className={styles.totalRow}>{t.newQuote.difficultyFactor}</span>
-            <span className={`text-right tabular-nums ${styles.totalAmount}`}>{difficultyLabel}</span>
-
-            <div className={`col-span-2 my-2 border-t ${styles.divider}`} />
-
-            <span className={styles.totalRow}>{t.quote.subtotal}</span>
-            <span className={`text-right font-medium tabular-nums ${styles.totalAmount}`}>
-              {formatCurrency(quoteSubtotal)}
-            </span>
-
-            <label htmlFor="tax" className={styles.totalRow}>
-              {t.quote.vat}
-            </label>
-            <div className="flex items-center justify-end gap-1">
-              <input
-                id="tax"
-                type="number"
-                min={0}
-                max={100}
-                step={0.1}
-                value={taxRate}
-                onChange={(e) => setTaxRate(Math.min(100, Math.max(0, Number(e.target.value))))}
-                className="input-field w-16 px-2 py-1 text-right text-sm tabular-nums"
-                aria-label={`${t.quote.vat} percentage`}
-              />
-              <span className="text-sm" aria-hidden="true">%</span>
-            </div>
-
-            {taxRate > 0 && (
-              <>
-                <span className={styles.totalRow}>{t.quote.vatAmount}</span>
-                <span className={`text-right font-medium tabular-nums ${styles.totalAmount}`}>
-                  {formatCurrency(quoteTaxAmount)}
-                </span>
-              </>
-            )}
-
-            <div className={`col-span-2 mt-2 pt-2.5 border-t flex items-center justify-between text-base font-bold ${styles.divider}`}>
-              <span className={styles.pageTitle}>{t.quote.total}</span>
-              <span className={`tabular-nums ${styles.totalAccent}`}>
-                {formatCurrency(quoteTotal)}
-              </span>
+          <div className={`p-4 ${styles.calculatorCard} ${!selectedJobId ? styles.inputsDisabled : ''}`} aria-disabled={!selectedJobId || undefined}>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <label className="text-sm md:col-span-2">
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
+                <input
+                  type="text"
+                  value={partName}
+                  onChange={(e) => setPartName(e.target.value)}
+                  placeholder={!selectedJobId ? t.newQuote.selectJobPrompt : t.newQuote.jobPartNamePlaceholder}
+                  disabled={!selectedJobId}
+                  className="input-field w-full px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="text-sm">
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.quantity}</span>
+                <input
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={partQuantity}
+                  disabled={!selectedJobId}
+                  onChange={(e) => setPartQuantity(Math.max(1, Number(e.target.value) || 1))}
+                  className="input-field w-full px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="text-sm">
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.materialWeight}</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={materialWeightGrams}
+                  disabled={!selectedJobId}
+                  onChange={(e) => setMaterialWeightGrams(Number(e.target.value))}
+                  className="input-field w-full px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="text-sm">
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.printTime}</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={printTimeHours}
+                  disabled={!selectedJobId}
+                  onChange={(e) => setPrintTimeHours(Number(e.target.value))}
+                  className="input-field w-full px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="text-sm">
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.setupTime}</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={setupTimeHours}
+                  disabled={!selectedJobId}
+                  onChange={(e) => setSetupTimeHours(Number(e.target.value))}
+                  className="input-field w-full px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="text-sm md:col-span-2">
+                <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.postProcessing}</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={postProcessingCost}
+                  disabled={!selectedJobId}
+                  onChange={(e) => setPostProcessingCost(Number(e.target.value))}
+                  className="input-field w-full px-3 py-2 text-sm"
+                />
+              </label>
             </div>
           </div>
-          <p className={`mt-2 text-xs ${styles.pageSubtitle}`}>
-            {t.newQuote.calculatedLineNote}
-          </p>
         </div>
-        </>
-        )}
-      </div>
 
-      <button
-        type="submit"
-        disabled={submitting || !selectedJobId}
-        className="btn-primary mt-6 w-full py-4 text-base font-semibold disabled:opacity-60"
-      >
-        {submitting ? t.newQuote.creating : t.newQuote.createQuote}
-      </button>
+        {/* ── Right: constants (collapsed) + live pricing + submit ── */}
+        <div className={styles.formRight}>
+          {/* Pricing constants — collapsed by default */}
+          <details className={styles.constantsDetails}>
+            <summary className={styles.constantsSummary}>
+              <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+              </svg>
+              {t.newQuote.pricingConstants ?? 'Pricing constants'}
+            </summary>
+            <div className={styles.constantsBody}>
+              <JobConstantsEditor
+                state={{
+                  constantChips,
+                  canUndoRemove,
+                  editingConstant,
+                  editingConstantValue,
+                  editConstantError,
+                }}
+                actions={{
+                  onOpenConstantEditor: openConstantEditor,
+                  onCycleConstant: cycleConstant,
+                  onRemoveConstant: removeConstant,
+                  onUndoRemoveConstant: undoRemoveConstant,
+                  onCloseConstantEditor: closeConstantEditor,
+                  onChangeEditingConstantValue: setEditingConstantValue,
+                  onSaveConstant: saveConstant,
+                }}
+              />
+            </div>
+          </details>
+
+          {/* Live pricing breakdown */}
+          <div className={`p-3 ${styles.calculatorSummary}`} aria-live="polite" aria-atomic="true">
+            <div className="grid grid-cols-2 gap-y-0.5 text-sm">
+              <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.materialCostRow}</span>
+              <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.materialCost)}</span>
+              <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.machineCostRow}</span>
+              <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.machineCost)}</span>
+              <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.laborCostRow}</span>
+              <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.laborCost)}</span>
+              <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.energyCostRow}</span>
+              <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.energyCost)}</span>
+              {pricing.postProcessingCost > 0 && (
+                <>
+                  <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.postProcessingLabel}</span>
+                  <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.postProcessingCost)}</span>
+                </>
+              )}
+              {pricing.packagingCost > 0 && (
+                <>
+                  <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.packagingLabel}</span>
+                  <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.packagingCost)}</span>
+                </>
+              )}
+              {pricing.shippingCost > 0 && (
+                <>
+                  <span className={`text-xs ${styles.pageSubtitle}`}>{t.newQuote.shippingLabel}</span>
+                  <span className={`text-right text-xs tabular-nums ${styles.pageSubtitle}`}>{formatCurrency(pricing.shippingCost)}</span>
+                </>
+              )}
+              <div className={`col-span-2 my-1.5 border-t ${styles.divider}`} />
+              <span className={styles.totalRow}>{t.newQuote.baseCostPerUnit}</span>
+              <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.baseCost)}</span>
+              <span className={styles.totalRow}>{t.newQuote.riskPerUnit}</span>
+              <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.riskCost)}</span>
+              <span className={styles.totalRow}>{t.newQuote.marginPerUnit}</span>
+              <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.marginAmount)}</span>
+              <span className={styles.totalRow}>{t.newQuote.difficultyFactor}</span>
+              <span className={`text-right tabular-nums ${styles.totalAmount}`}>{difficultyLabel}</span>
+
+              <div className={`col-span-2 my-2 border-t ${styles.divider}`} />
+
+              <span className={styles.totalRow}>{t.quote.subtotal}</span>
+              <span className={`text-right font-medium tabular-nums ${styles.totalAmount}`}>
+                {formatCurrency(quoteSubtotal)}
+              </span>
+
+              <label htmlFor="tax" className={styles.totalRow}>
+                {t.quote.vat}
+              </label>
+              <div className="flex items-center justify-end gap-1">
+                <input
+                  id="tax"
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={0.1}
+                  value={taxRate}
+                  onChange={(e) => setTaxRate(Math.min(100, Math.max(0, Number(e.target.value))))}
+                  className="input-field w-16 px-2 py-1 text-right text-sm tabular-nums"
+                  aria-label={`${t.quote.vat} percentage`}
+                />
+                <span className="text-sm" aria-hidden="true">%</span>
+              </div>
+
+              {taxRate > 0 && (
+                <>
+                  <span className={styles.totalRow}>{t.quote.vatAmount}</span>
+                  <span className={`text-right font-medium tabular-nums ${styles.totalAmount}`}>
+                    {formatCurrency(quoteTaxAmount)}
+                  </span>
+                </>
+              )}
+
+              <div className={`col-span-2 mt-2 pt-2.5 border-t flex items-center justify-between text-base font-bold ${styles.divider}`}>
+                <span className={styles.pageTitle}>{t.quote.total}</span>
+                <span className={`tabular-nums ${styles.totalAccent}`}>
+                  {formatCurrency(quoteTotal)}
+                </span>
+              </div>
+            </div>
+            <p className={`mt-2 text-xs ${styles.pageSubtitle}`}>
+              {t.newQuote.calculatedLineNote}
+            </p>
+          </div>
+
+          {/* Submit button — lives in the right column next to the total */}
+          <button
+            type="submit"
+            disabled={submitting || !selectedJobId}
+            className="btn-primary w-full py-4 text-base font-semibold disabled:opacity-60"
+          >
+            {submitting ? t.newQuote.creating : t.newQuote.createQuote}
+          </button>
+        </div>
+      </div>
     </form>
   )
 }

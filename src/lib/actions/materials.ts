@@ -13,15 +13,15 @@ export async function createMaterial(formData: FormData) {
   } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthenticated')
 
-  const name = String(formData.get('name') ?? '').trim()
   const material_type = String(formData.get('material_type') ?? '') as MaterialType
   const brand = String(formData.get('brand') ?? '').trim() || null
   const color = String(formData.get('color') ?? '').trim() || null
   const price_per_kg = parseFloat(String(formData.get('price_per_kg') ?? '0'))
   const stock_grams = parseInt(String(formData.get('stock_grams') ?? '0'), 10)
 
-  if (!name) throw new Error('Name is required')
   if (!VALID_TYPES.includes(material_type)) throw new Error('Invalid material type')
+
+  const name = [material_type, color].filter(Boolean).join(' ')
 
   const { error } = await supabase.from('materials').insert({
     user_id: user.id,
@@ -45,15 +45,15 @@ export async function updateMaterial(formData: FormData) {
   if (!user) throw new Error('Unauthenticated')
 
   const id = String(formData.get('id') ?? '')
-  const name = String(formData.get('name') ?? '').trim()
   const material_type = String(formData.get('material_type') ?? '') as MaterialType
   const brand = String(formData.get('brand') ?? '').trim() || null
   const color = String(formData.get('color') ?? '').trim() || null
   const price_per_kg = parseFloat(String(formData.get('price_per_kg') ?? '0'))
   const stock_grams = parseInt(String(formData.get('stock_grams') ?? '0'), 10)
 
-  if (!name) throw new Error('Name is required')
   if (!VALID_TYPES.includes(material_type)) throw new Error('Invalid material type')
+
+  const name = [material_type, color].filter(Boolean).join(' ')
 
   const { error } = await supabase
     .from('materials')
