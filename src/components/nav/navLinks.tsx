@@ -3,7 +3,7 @@ import type { Translations } from '@/i18n/en'
 
 export type NavLabelKey = keyof Pick<
   Translations['nav'],
-  'dashboard' | 'quotes' | 'jobs' | 'customers' | 'settings' | 'materials'
+  'dashboard' | 'quotes' | 'jobs' | 'customers' | 'settings' | 'materials' | 'products'
 >
 
 export interface NavLink {
@@ -66,6 +66,16 @@ export const navLinks: NavLink[] = [
     icon: (
       <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
         <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 10a2 2 0 114 0 2 2 0 01-4 0z" />
+      </svg>
+    ),
+  },
+  {
+    href: '/products',
+    labelKey: 'products',
+    icon: (
+      <svg className={iconCls} viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+        <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
       </svg>
     ),
   },

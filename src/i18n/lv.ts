@@ -13,6 +13,7 @@ export const lv: Translations = {
     openMenu: 'Atvērt izvēlni',
     closeMenu: 'Aizvērt izvēlni',
     materials: 'Materiāli',
+    products: 'Produkti',
   },
   dashboard: {
     title: 'Pārskats',
@@ -425,5 +426,25 @@ export const lv: Translations = {
     lowStockBadge: 'Maz',
     emptyState: 'Vēl nav materiālu. Pievienojiet savu pirmo filamentu augšā.',
     inactiveLabel: 'Arhivēts',
+  },
+  products: {
+    title: 'Produkti',
+    pageDescription: 'Pārvaldiet produktu fotoattēlus un 3D modeļu failus',
+    stats: {
+      total: 'Kopā',
+      withPhoto: 'Ar fotoattēlu',
+      withModel: '3D modelis',
+    },
+    colPhoto: 'Fotoattēli',
+    colModel: '3D modelis',
+    addPhoto: '+ Foto',
+    addModel: '+ Modelis',
+    removePhoto: 'Noņemt foto',
+    removeModel: 'Noņemt modeli',
+    downloading: 'Atvērt failu',
+    uploading: (kind: string, pct: number) => `Augšupielāde ${kind}… ${pct}%`,
+    saved: 'Saglabāts',
+    errorPrefix: 'Augšupielāde neizdevās:',
+    emptyState: 'Produkti nav atrasti.',
   },
 }
