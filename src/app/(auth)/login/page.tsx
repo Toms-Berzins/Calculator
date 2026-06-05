@@ -1,20 +1,11 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import Script from 'next/script'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useT } from '@/i18n/context'
 import styles from './login.module.css'
-
-declare global {
-  interface Window {
-    onCaptchaComplete?: (token: string) => void
-    onCaptchaExpired?: () => void
-    onCaptchaError?: () => void
-  }
-}
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -22,52 +13,20 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const captchaToken = useRef<string | null>(null)
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
   const t = useT()
 
-  useEffect(() => {
-    window.onCaptchaComplete = (token: string) => { captchaToken.current = token }
-    window.onCaptchaExpired = () => { captchaToken.current = null }
-    window.onCaptchaError = () => { captchaToken.current = null }
-    return () => {
-      delete window.onCaptchaComplete
-      delete window.onCaptchaExpired
-      delete window.onCaptchaError
-    }
-  }, [])
-
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-
-    if (!captchaToken.current) {
-      setError('Please complete the CAPTCHA.')
-      return
-    }
-
     setLoading(true)
-
-    const verifyRes = await fetch('/api/captcha/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: captchaToken.current }),
-    })
-
-    if (!verifyRes.ok) {
-      setError('CAPTCHA verification failed. Please try again.')
-      setLoading(false)
-      captchaToken.current = null
-      return
-    }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
       setError(error.message)
       setLoading(false)
-      captchaToken.current = null
       return
     }
 
@@ -77,10 +36,6 @@ export default function LoginPage() {
 
   return (
     <>
-      <Script
-        src="https://cdn.eu-captcha.eu/verify.js"
-        strategy="lazyOnload"
-      />
       <div className={styles.loginCard}>
         {/* Brand */}
         <div className="mb-8 text-center">
@@ -142,14 +97,6 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
-
-          <div
-            className="eu-captcha"
-            data-sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY}
-            data-callback="onCaptchaComplete"
-            data-expired-callback="onCaptchaExpired"
-            data-error-callback="onCaptchaError"
-          />
 
           {error && (
             <p className={styles.errorMessage} role="alert" aria-live="assertive">
