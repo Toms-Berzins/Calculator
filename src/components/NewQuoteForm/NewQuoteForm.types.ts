@@ -1,4 +1,7 @@
 import type { CalculatorSettingsValues } from '@/lib/calculatorSettings'
+import type { BulkDiscountTier } from '@/types/database'
+
+export type { BulkDiscountTier }
 
 export interface Job {
   id: string
@@ -27,6 +30,7 @@ export interface NewQuoteFormProps {
   jobs: Job[]
   customers: Customer[]
   calculatorDefaults: CalculatorSettingsValues
+  bulkDiscountTiers: BulkDiscountTier[]
   initialJobId?: string
 }
 

@@ -14,7 +14,7 @@ import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { useT } from '@/i18n/context'
 import { QuoteStatusStepper } from './QuoteStatusStepper'
 import { SmartPdfButton } from './SmartPdfButton'
-import type { QuoteWithRelations, Quote, QuoteStatus } from '@/types/database'
+import type { QuoteWithRelations, Quote, QuoteStatus, BulkDiscountTier } from '@/types/database'
 import type { CalculatorSettingsValues } from '@/lib/calculatorSettings'
 import styles from './QuoteEditor.module.css'
 
@@ -23,9 +23,10 @@ const CALC_ITEM_ID = 'calc-3d-print'
 interface Props {
   quote: QuoteWithRelations
   calculatorDefaults: CalculatorSettingsValues
+  bulkDiscountTiers: BulkDiscountTier[]
 }
 
-export function QuoteEditor({ quote, calculatorDefaults }: Props) {
+export function QuoteEditor({ quote, calculatorDefaults, bulkDiscountTiers }: Props) {
   const [notes, setNotes] = useState(quote.notes ?? '')
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
@@ -123,6 +124,7 @@ export function QuoteEditor({ quote, calculatorDefaults }: Props) {
     subtotal,
     taxRate,
     jobConstants,
+    bulkDiscountTiers,
   })
 
   function handleAddToQuote() {

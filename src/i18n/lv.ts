@@ -309,6 +309,7 @@ export const lv: Translations = {
     packagingLabel: 'Iepakošana',
     shippingLabel: 'Piegāde',
     difficultyFactor: 'Grūtība',
+    bulkDiscountLabel: 'Apjoma atlaide',
     calculatedUnitPrice: 'Aprēķinātā vienības cena',
     calculatedLineTotal: 'Aprēķinātā rindas kopsumma',
     calculatedLineNote: 'Šī aprēķinātā rinda tiek pievienota automātiski, iesniedzot piedāvājumu.',

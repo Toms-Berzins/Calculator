@@ -268,6 +268,31 @@ create policy "users_own_materials"
   using ((select auth.uid()) = user_id)
   with check ((select auth.uid()) = user_id);
 
+-- ── Bulk Discount Tiers ──────────────────────────────────────
+-- Shared with the storefront; controls volume pricing on molds and custom orders.
+-- Admin-only write; public read (anyone_read_bulk_discount_tiers policy).
+create table if not exists public.bulk_discount_tiers (
+  id               serial primary key,
+  min_qty          integer not null,
+  max_qty          integer,
+  discount_percent numeric(5,2) not null default 0,
+  label            text,
+  sort_order       integer not null default 0,
+  created_at       timestamptz not null default now()
+);
+
+alter table public.bulk_discount_tiers enable row level security;
+
+create policy if not exists "anyone_read_bulk_discount_tiers"
+  on public.bulk_discount_tiers for select
+  using (true);
+
+create policy if not exists "admin_write_bulk_discount_tiers"
+  on public.bulk_discount_tiers for all
+  to authenticated
+  using (((auth.jwt() -> 'app_metadata') ->> 'role') = 'admin')
+  with check (((auth.jwt() -> 'app_metadata') ->> 'role') = 'admin');
+
 -- ── Realtime ──────────────────────────────────────────────────
 -- Enable realtime on quotes table (Dashboard → Database → Replication)
 -- Or via SQL:

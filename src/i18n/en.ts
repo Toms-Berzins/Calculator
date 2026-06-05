@@ -309,6 +309,7 @@ export const en = {
     packagingLabel: 'Packaging',
     shippingLabel: 'Shipping',
     difficultyFactor: 'Difficulty',
+    bulkDiscountLabel: 'Volume discount',
     calculatedUnitPrice: 'Calculated unit price',
     calculatedLineTotal: 'Calculated line total',
     calculatedLineNote: 'This calculated line is included automatically when you submit the quote.',

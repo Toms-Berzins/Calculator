@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { deleteDraftQuote } from '@/lib/actions/quotes'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { getDict } from '@/i18n/server'
+import type { QuoteStatus } from '@/types/database'
 import { DeleteDraftQuoteButton } from '@/components/quotes/DeleteDraftQuoteButton'
 import { QuoteFilterSelect } from './QuoteFilterSelect'
 import styles from './quotes.module.css'
@@ -32,7 +33,7 @@ export default async function QuotesPage({
       jobs ( title, customers ( name, company ) )
     `)
     .order('created_at', { ascending: false })
-  if (activeFilter) listQuery = listQuery.eq('status', activeFilter)
+  if (activeFilter) listQuery = listQuery.eq('status', activeFilter as QuoteStatus)
 
   const [{ data: quotes }, { data: allQuotes }] = await Promise.all([
     listQuery,

@@ -280,6 +280,36 @@ export interface Database {
         }
         Relationships: []
       }
+      bulk_discount_tiers: {
+        Row: {
+          id: number
+          min_qty: number
+          max_qty: number | null
+          discount_percent: number
+          label: string | null
+          sort_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          min_qty: number
+          max_qty?: number | null
+          discount_percent?: number
+          label?: string | null
+          sort_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          min_qty?: number
+          max_qty?: number | null
+          discount_percent?: number
+          label?: string | null
+          sort_order?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -305,3 +335,5 @@ export type QuoteWithRelations = Quote & {
   quote_items: QuoteItem[]
   jobs: (Job & { customers: Customer | null }) | null
 }
+
+export type BulkDiscountTier = Database['public']['Tables']['bulk_discount_tiers']['Row']

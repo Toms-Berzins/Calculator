@@ -15,7 +15,7 @@ import { useQuotePricing } from './useQuotePricing'
 import { useT } from '@/i18n/context'
 import styles from './NewQuoteForm.module.css'
 
-export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId }: NewQuoteFormProps) {
+export function NewQuoteForm({ jobs, customers, calculatorDefaults, bulkDiscountTiers, initialJobId }: NewQuoteFormProps) {
   const t = useT()
   const calculatedItemTempId = 'calculated-3d-print-item'
   const [selectedJobId, setSelectedJobId] = useState('')
@@ -51,6 +51,8 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
   const {
     pricing,
     calculatedUnitPrice,
+    discountPercent,
+    discountAmount,
     calculatedDescription,
     calculatedLineSubtotal,
     quoteSubtotal,
@@ -66,6 +68,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
     subtotal,
     taxRate,
     jobConstants,
+    bulkDiscountTiers,
   })
 
   const handleJobSelected = useCallback((jobId: string, title: string) => {
@@ -123,7 +126,7 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
             onJobSelected={handleJobSelected}
           />
 
-          <div className={`p-4 ${styles.calculatorCard} ${!selectedJobId ? styles.inputsDisabled : ''}`} aria-disabled={!selectedJobId || undefined}>
+          <div className={`p-4 ${styles.calculatorCard} ${!selectedJobId ? styles.inputsDisabled : ''}`} aria-disabled={!selectedJobId}>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <label className="text-sm md:col-span-2">
                 <span className={`mb-1 block ${styles.totalRow}`}>{t.newQuote.jobPartName}</span>
@@ -270,6 +273,15 @@ export function NewQuoteForm({ jobs, customers, calculatorDefaults, initialJobId
               <span className={`text-right tabular-nums ${styles.totalAmount}`}>{formatCurrency(pricing.marginAmount)}</span>
               <span className={styles.totalRow}>{t.newQuote.difficultyFactor}</span>
               <span className={`text-right tabular-nums ${styles.totalAmount}`}>{difficultyLabel}</span>
+
+              {discountPercent > 0 && (
+                <>
+                  <span className={`${styles.totalRow} text-emerald-500`}>{t.newQuote.bulkDiscountLabel}</span>
+                  <span className="text-right tabular-nums text-emerald-500">
+                    −{discountPercent}% (−{formatCurrency(discountAmount)}/u)
+                  </span>
+                </>
+              )}
 
               <div className={`col-span-2 my-2 border-t ${styles.divider}`} />
 
